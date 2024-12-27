@@ -1,0 +1,14 @@
+{
+  "name": "@avatar-generator/core",
+  "version": "1.0.0",
+  "description": "Core logic for avatar generation",
+  "main": "dist/index.js",
+  "types": "dist/types/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

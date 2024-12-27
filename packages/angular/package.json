@@ -1,0 +1,9 @@
+{
+  "name": "@avatar-generator/angular",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@avatar-generator/core": "^1.0.0",
+    "@angular/core": "^13.0.0"
+  }
+}
