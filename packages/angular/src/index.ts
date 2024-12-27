@@ -1,2 +1,2 @@
-export * from "./avatar.component";
-export * from "./avatar.module";
+export * from "./Avatar.component";
+export * from "./Avatar.module";

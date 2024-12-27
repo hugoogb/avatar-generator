@@ -8,9 +8,6 @@
     "build": "pnpm -r run build",
     "clean": "rm -rf node_modules && pnpm -r exec rm -rf dist node_modules"
   },
-  "dependencies": {
-    "@avatar-generator/core": "^1.0.0"
-  },
   "devDependencies": {
     "typescript": "^5.0.0"
   }

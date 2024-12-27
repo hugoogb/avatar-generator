@@ -1,5 +1,5 @@
 import { NgModule } from "@angular/core";
-import { AvatarComponent } from "./avatar.component";
+import { AvatarComponent } from "./Avatar.component";
 
 @NgModule({
   declarations: [AvatarComponent],

@@ -1,8 +1,0 @@
-{
-  "name": "@avatar-generator/vue",
-  "version": "1.0.0",
-  "type": "module",
-  "dependencies": {
-    "vue": "^3.0.0"
-  }
-}
