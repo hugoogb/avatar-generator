@@ -1,0 +1,73 @@
+---
+title: Angular Usage
+description: Learn how to use the @avatar-generator/angular package in your Angular application.
+---
+
+import { Code } from "@astrojs/starlight/components";
+
+To use `@avatar-generator/angular` in your Angular application, follow these steps to create avatars with Angular components.
+
+### Import the Avatar Module
+
+After installing the package, import the `AvatarModule` in your Angular module (usually `app.module.ts`) to use the avatar component in your templates.
+
+Here’s how you can do it:
+
+    <Code code={`
+
+import { NgModule } from "@angular/core";
+import { BrowserModule } from "@angular/platform-browser";
+import { AppComponent } from "./app.component";
+import { AvatarModule } from "@avatar-generator/angular"; // Import the AvatarModule
+
+@NgModule({
+declarations: [AppComponent],
+imports: [
+BrowserModule,
+AvatarModule, // Add AvatarModule to the imports array
+],
+bootstrap: [AppComponent],
+})
+export class AppModule {}
+`} lang="ts"></Code>
+
+### Usage Example
+
+Once the module is imported, you can use the avatar component in your Angular templates. Here is an example of how to use the component:
+
+    <Code code={`
+
+import { Component } from "@angular/core";
+
+@Component({
+selector: "app-root",
+template: \`
+
+<h1>Avatar Example</h1>
+<avatar-generator
+[name]="'John Doe'"
+[backgroundColor]="'#4CAF50'"
+[textColor]="'#FFFFFF'"
+[fontSize]="'48px'"
+[shape]="'circle'">
+</avatar-generator>
+\`,
+})
+export class AppComponent {}
+`} lang="ts"></Code>
+
+This will render the avatar with the specified options such as name, background color, text color, font size, and shape.
+
+### Summary
+
+In this guide, you learned how to use the `@avatar-generator/angular` package in your Angular project. The steps include:
+
+1. Installing `@avatar-generator/angular`.
+2. Importing the `AvatarModule` into your Angular module.
+3. Using the `<avatar-generator>` component in your templates, passing in properties such as `name`, `backgroundColor`, `textColor`, `fontSize`, and `shape` to customize the avatar.
+
+By following these steps, you can easily integrate customizable avatars into your Angular application.
+
+---
+
+This guide demonstrates how to use the Angular component from `@avatar-generator/angular` to easily generate avatars in your Angular app.

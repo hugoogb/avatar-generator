@@ -1,0 +1,49 @@
+---
+title: React Usage
+description: Learn how to use the @avatar-generator/react package in your React application.
+---
+
+import { Code } from "@astrojs/starlight/components";
+
+To use `@avatar-generator/react` in your React application, you can follow these examples to create avatars with React components.
+
+### Usage Example
+
+Here is an example of how to use the avatar component in your React project:
+
+    <Code code={`
+
+import React from "react";
+import { Avatar } from "@avatar-generator/react";
+
+const App = () => {
+return (
+
+<div>
+  <h1>Avatar Example</h1>
+  <Avatar
+    name="John Doe"
+    backgroundColor="#4CAF50"
+    textColor="#FFFFFF"
+    fontSize="48px"
+    shape="circle"
+  />
+</div>
+); };
+
+export default App;
+`} lang="js"></Code>
+
+### Summary
+
+In this guide, you learned how to use the `@avatar-generator/react` package in your React project. The steps include:
+
+1. Installing `@avatar-generator/react`.
+2. Importing the `Avatar` component from the package.
+3. Using the `Avatar` component in your app, passing in properties like `name`, `backgroundColor`, `textColor`, `fontSize`, and `shape` to customize the avatar.
+
+By following these steps, you can easily integrate customizable avatars into your React application.
+
+---
+
+This guide demonstrates how to use the React component from `@avatar-generator/react` to easily generate avatars in your React app.

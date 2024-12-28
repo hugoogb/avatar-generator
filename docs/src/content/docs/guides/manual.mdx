@@ -1,0 +1,77 @@
+---
+title: Manual Usage
+description: Learn how to use @avatar-generator manually with the core package.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { Code } from "@astrojs/starlight/components";
+
+If you prefer to manually integrate the core package `@avatar-generator/core` into your project, you can use the following approach. This guide will walk you through creating an avatar using the core package directly.
+
+### Usage Example
+
+Here is an example of how to manually generate an avatar using the core package:
+
+<Tabs syncKey="language">
+  <TabItem id="javascript" label="Javascript">
+<Code code={`
+import { createAvatar } from "@avatar-generator/core";
+
+const avatarOptions = {
+name: "John Doe",
+backgroundColor: "#4CAF50",
+textColor: "#FFFFFF",
+fontSize: "48px",
+shape: "circle",
+};
+
+const avatar = createAvatar(avatarOptions);
+
+// Add the avatar to the DOM
+document.getElementById("avatar-container").appendChild(avatar);
+`} lang="js"></Code>
+
+  </TabItem>
+  <TabItem id="typescript" label="Typescript">
+  <Code code={`
+import { createAvatar, AvatarOptions } from "@avatar-generator/core";
+
+const avatarOptions: AvatarOptions = {
+name: "John Doe",
+backgroundColor: "#4CAF50",
+textColor: "#FFFFFF",
+fontSize: "48px",
+shape: "circle",
+};
+
+const avatar = createAvatar(avatarOptions);
+
+// Add the avatar to the DOM
+document.getElementById("avatar-container")?.appendChild(avatar);
+`} lang="ts"></Code>
+
+  </TabItem>
+</Tabs>
+
+#### HTML to display the avatar
+
+<Code
+  code={`
+<div id="avatar-container"></div>
+`}
+  lang="html"
+></Code>
+
+### Summary
+
+In this guide, you learned how to manually integrate the `@avatar-generator/core` package to create customizable avatars in your project. The steps include:
+
+1. Importing the `createAvatar` function from `@avatar-generator/core`.
+2. Defining options for the avatar, such as `name`, `backgroundColor`, `textColor`, `fontSize`, and `shape`.
+3. Adding the generated avatar to the DOM.
+
+By following this approach, you can manually create avatars without using pre-built components, giving you full control over the avatar's appearance and usage in your project.
+
+---
+
+This guide demonstrates how to manually create and add an avatar to your page using the `@avatar-generator/core` package.
