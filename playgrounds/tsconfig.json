@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "baseUrl": "./",
+    "paths": {
+      "@avatar-core/*": ["../src/lib/core/*"],
+      "@avatar-react/*": ["../src/packages/react/*"]
+    }
+  }
+}
