@@ -17,6 +17,7 @@ export default defineConfig({
           items: [
             { label: "Introduction", slug: "get-started/introduction" },
             { label: "Installation", slug: "get-started/installation" },
+            { label: "Playground", slug: "get-started/playground" },
           ],
         },
         {
