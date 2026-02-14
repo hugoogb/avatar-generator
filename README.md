@@ -1,29 +1,67 @@
 # @avatar-generator
 
-Start with the documentation about the project [here](https://avatar-generator-two.vercel.app/)
+Generate unique, deterministic SVG avatars with multiple styles.
+
+## Features
+
+- **4 Unique Styles**: Initials, Geometric, Pixels, and Rings
+- **Deterministic**: Same seed = same avatar, always
+- **Tree-shakeable**: Only bundle the styles you use
+- **Framework Support**: React, Angular, or vanilla JS
+- **Tiny**: Core is under 2KB minified
+
+## Quick Start
+
+```bash
+npm install @avatar-generator/core @avatar-generator/style-initials
+```
+
+```typescript
+import { createAvatar } from "@avatar-generator/core";
+import { initials } from "@avatar-generator/style-initials";
+
+const avatar = createAvatar(initials, {
+  seed: "john.doe@example.com",
+  size: 64,
+});
+
+// Use the SVG
+img.src = avatar.toDataUri();
+```
+
+## Available Styles
+
+| Style | Package | Description |
+|-------|---------|-------------|
+| Initials | `@avatar-generator/style-initials` | Letter initials on colored backgrounds |
+| Geometric | `@avatar-generator/style-geometric` | Grid-based shapes |
+| Pixels | `@avatar-generator/style-pixels` | Retro pixel art |
+| Rings | `@avatar-generator/style-rings` | Concentric colored rings |
+
+## Framework Packages
+
+- `@avatar-generator/react` - React component
+- `@avatar-generator/angular` - Angular component
+
+## Documentation
+
+Full documentation: [avatar-generator-two.vercel.app](https://avatar-generator-two.vercel.app/)
 
 ## Playground
 
-You can test the packages by cloning the repo and then executing the respective playground.
+Test the packages locally:
 
-1. Clone the project
+```bash
+git clone https://github.com/hugoogb/avatar-generator.git
+cd avatar-generator/playgrounds
+pnpm install
+```
 
-   ```sh
-   git clone https://github.com/hugoogb/avatar-generator.git
-   ```
+| Package | Command |
+|---------|---------|
+| Core | `pnpm playground:core` |
+| React | `pnpm playground:react` |
 
-2. Navigate to playgrounds directory
+## License
 
-   ```sh
-   cd avatar-generator/playgrounds
-   ```
-
-3. Execute the desired playground
-
-| package | command                 |
-| ------- | ----------------------- |
-| core    | `pnpm playground:core`  |
-| react   | `pnpm playground:react` |
-| angular | not yet available...    |
-
-To test the packages you must update the file `consts.ts` located in `/playgrounds`.
+MIT

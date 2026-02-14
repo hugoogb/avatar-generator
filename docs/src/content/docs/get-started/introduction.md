@@ -1,35 +1,50 @@
 ---
 title: Introduction
-description: Learn about @avatar-generator, a library for generating customizable avatars across multiple frameworks.
+description: Generate unique, deterministic SVG avatars with multiple styles.
 ---
 
-Welcome to the **@avatar-generator** documentation! This library enables developers to create customizable avatar components for use in web applications. It is designed to be framework-agnostic, with support for multiple frontend frameworks such as **React** and **Angular**.
+**@avatar-generator** is a library for generating unique, deterministic SVG avatars. Give it a seed (like a user ID or email), pick a style, and get a consistent avatar every time.
 
-### Why Choose @avatar-generator?
+## Features
 
-- **Multi-Framework Support**: Provides seamless integration with React, Angular, and more.
-- **Customizable**: Adjust colors, shapes, sizes, and text to match your application's design.
-- **Core Package**: Shared logic in the `@avatar-generator/core` package ensures consistency across frameworks.
-- **Lightweight**: Minimal dependencies for fast and efficient avatar generation.
+- **4 Unique Styles**: Initials, Geometric, Pixels, and Rings
+- **Deterministic**: Same seed = same avatar, always
+- **Tree-shakeable**: Only bundle the styles you use
+- **Framework Support**: React, Angular, or vanilla JS
+- **Customizable**: Colors, size, shape, borders, and more
+- **Tiny**: Core is under 2KB minified
 
-### Features
+## Quick Example
 
-- 🎨 **Customizable Appearance**  
-  Personalize avatars with options for size, colors, shapes, and text.
+```typescript
+import { createAvatar } from "@avatar-generator/core";
+import { initials } from "@avatar-generator/style-initials";
 
-- 🌐 **Cross-Framework Compatibility**  
-  Use the same logic across different frameworks like React and Angular.
+const avatar = createAvatar(initials, {
+  seed: "john.doe@example.com",
+  size: 64,
+});
 
-- ⚡ **Easy to Integrate**  
-  Simple APIs and props make it quick to add avatars to your project.
+// Use the SVG
+img.src = avatar.toDataUri();
+```
 
-- 🛠️ **Open Source**  
-  Freely available under an open-source license for community contributions and use.
+## Available Styles
 
-### Getting Started
+| Style | Description |
+|-------|-------------|
+| **Initials** | Letter initials on colored backgrounds |
+| **Geometric** | Grid-based shapes (circles, squares, triangles) |
+| **Pixels** | Symmetric pixel art patterns |
+| **Rings** | Concentric colored rings |
 
-Follow the [Installation Guide](/installation) to learn how to set up the library for your project. Once installed, check out the framework-specific guides for [React](/guides/react) and [Angular](/guides/angular) to start creating avatars.
+## Getting Started
 
----
+1. [Install](/get-started/installation) the core package and a style
+2. Check out the [Playground](/get-started/playground) to try all styles
+3. Read the [Manual Usage](/guides/manual) guide for the core API
+4. See [React](/guides/react) or [Angular](/guides/angular) guides for framework usage
 
-Need help? Visit our [GitHub repository](https://github.com/your-username/avatar-generator) for more information, bug reports, and contributions.
+## v2.0 Changes
+
+Version 2.0 introduces a new style-based architecture. If you're upgrading from v1, see the [Migration Guide](/reference/migration).

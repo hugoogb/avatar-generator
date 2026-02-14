@@ -5,45 +5,132 @@ description: Learn how to use the @avatar-generator/react package in your React 
 
 import { Code } from "@astrojs/starlight/components";
 
-To use `@avatar-generator/react` in your React application, you can follow these examples to create avatars with React components.
+The `@avatar-generator/react` package provides a React component for rendering avatars with any style.
 
-### Usage Example
+## Basic Usage
 
-Here is an example of how to use the avatar component in your React project:
-
-    <Code code={`
-
-import React from "react";
+<Code code={`
 import { Avatar } from "@avatar-generator/react";
+import { initials } from "@avatar-generator/style-initials";
 
-const App = () => {
-return (
+function UserProfile({ user }) {
+  return (
+    <Avatar
+      style={initials}
+      options={{ seed: user.id, name: user.name, size: 48 }}
+      alt={user.name}
+    />
+  );
+}
+`} lang="tsx"></Code>
 
-<div>
-  <h1>Avatar Example</h1>
-  <Avatar
-    name="John Doe"
-    backgroundColor="#4CAF50"
-    textColor="#FFFFFF"
-    fontSize="48px"
-    shape="circle"
-  />
-</div>
-); };
+## Using Different Styles
 
-export default App;
-`} lang="js"></Code>
+<Code code={`
+import { Avatar } from "@avatar-generator/react";
+import { initials } from "@avatar-generator/style-initials";
+import { geometric } from "@avatar-generator/style-geometric";
+import { pixels } from "@avatar-generator/style-pixels";
+import { rings } from "@avatar-generator/style-rings";
 
-### Summary
+function AvatarGallery({ userId }) {
+  const commonOptions = { seed: userId, size: 64 };
 
-In this guide, you learned how to use the `@avatar-generator/react` package in your React project. The steps include:
+  return (
+    <div className="avatar-gallery">
+      <Avatar style={initials} options={commonOptions} alt="Initials" />
+      <Avatar style={geometric} options={commonOptions} alt="Geometric" />
+      <Avatar style={pixels} options={commonOptions} alt="Pixels" />
+      <Avatar style={rings} options={commonOptions} alt="Rings" />
+    </div>
+  );
+}
+`} lang="tsx"></Code>
 
-1. Installing `@avatar-generator/react`.
-2. Importing the `Avatar` component from the package.
-3. Using the `Avatar` component in your app, passing in properties like `name`, `backgroundColor`, `textColor`, `fontSize`, and `shape` to customize the avatar.
+## With Custom Options
 
-By following these steps, you can easily integrate customizable avatars into your React application.
+<Code code={`
+import { Avatar } from "@avatar-generator/react";
+import { geometric } from "@avatar-generator/style-geometric";
 
----
+function CustomAvatar({ userId }) {
+  return (
+    <Avatar
+      style={geometric}
+      options={{
+        seed: userId,
+        size: 96,
+        square: true,
+        colors: ["#FF6B6B", "#4ECDC4", "#45B7D1"],
+        border: { width: 2, color: "#333" },
+      }}
+      className="custom-avatar"
+      alt="User avatar"
+    />
+  );
+}
+`} lang="tsx"></Code>
 
-This guide demonstrates how to use the React component from `@avatar-generator/react` to easily generate avatars in your React app.
+## TypeScript Support
+
+The component is fully typed. Options are validated based on the style you pass:
+
+<Code code={`
+import { Avatar } from "@avatar-generator/react";
+import { initials, type InitialsOptions } from "@avatar-generator/style-initials";
+
+interface UserAvatarProps {
+  userId: string;
+  userName: string;
+}
+
+function UserAvatar({ userId, userName }: UserAvatarProps) {
+  const options: InitialsOptions = {
+    seed: userId,
+    name: userName,
+    size: 48,
+    fontWeight: 700,
+  };
+
+  return <Avatar style={initials} options={options} alt={userName} />;
+}
+`} lang="tsx"></Code>
+
+## Component Props
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `style` | `Style<T>` | The avatar style to use (required) |
+| `options` | `T extends AvatarOptions` | Style-specific options (required) |
+| `className` | `string` | Additional CSS classes |
+| `alt` | `string` | Alt text for accessibility (default: "Avatar") |
+
+## Performance
+
+The Avatar component uses `useMemo` to memoize SVG generation. The avatar is only regenerated when the style or options change.
+
+<Code code={`
+import { Avatar } from "@avatar-generator/react";
+import { initials } from "@avatar-generator/style-initials";
+import { useMemo } from "react";
+
+function UserList({ users }) {
+  return (
+    <ul>
+      {users.map((user) => (
+        <li key={user.id}>
+          <Avatar
+            style={initials}
+            options={useMemo(
+              () => ({ seed: user.id, name: user.name }),
+              [user.id, user.name]
+            )}
+            alt={user.name}
+          />
+          <span>{user.name}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+`} lang="tsx"></Code>

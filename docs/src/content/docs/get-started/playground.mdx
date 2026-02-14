@@ -1,15 +1,20 @@
 ---
 title: Playground
-description: Learn about @avatar-generator playground to test the library.
+description: Try out @avatar-generator styles interactively.
 ---
 
 import { Steps } from "@astrojs/starlight/components";
 import { Tabs, TabItem } from "@astrojs/starlight/components";
 import { Code } from "@astrojs/starlight/components";
+import Playground from "../../../components/Playground.astro";
 
-### Steps to play with the packages
+Try out all avatar styles with the interactive playground below.
 
-You can test the packages by cloning the repo and then executing the respective playground.
+<Playground />
+
+## Run Locally
+
+You can also run the playground locally with the full package:
 
 <Steps>
 
@@ -20,58 +25,32 @@ You can test the packages by cloning the repo and then executing the respective 
      lang="sh"
    ></Code>
 
-2. Navigate to playgrounds directory
+2. Install dependencies
 
-   <Code code={`cd avatar-generator/playgrounds`} lang="sh"></Code>
+   <Code code={`cd avatar-generator && pnpm install`} lang="sh"></Code>
 
-3. Execute the desired playground
+3. Run the playground
 
-4. Test the packages by updating the file `consts.ts` located in `/playgrounds`.
+   <Tabs syncKey="library">
+     <TabItem id="core" label="core">
+       <Code code={`pnpm playground:core`} lang="sh"></Code>
+     </TabItem>
+     <TabItem id="react" label="react">
+       <Code code={`pnpm playground:react`} lang="sh"></Code>
+     </TabItem>
+   </Tabs>
+
+4. Open your browser to the URL shown in the terminal
 
 </Steps>
 
-### Execute desired playground
+## Available Styles
 
-To execute the desired playground, run the following commands:
+| Style | Package | Description |
+|-------|---------|-------------|
+| Initials | `@avatar-generator/style-initials` | Letter initials on colored backgrounds |
+| Geometric | `@avatar-generator/style-geometric` | Grid of shapes (circles, squares, triangles, diamonds) |
+| Pixels | `@avatar-generator/style-pixels` | Symmetric pixel art patterns |
+| Rings | `@avatar-generator/style-rings` | Concentric colored rings |
 
-<Tabs syncKey="library">
-  <TabItem id="core" label="core">
-    <Tabs syncKey="package-manager">
-      <TabItem id="npm" label="npm">
-        <Code code={`npm run playground:core`} lang="sh"></Code>
-      </TabItem>
-      <TabItem id="pnpm" label="pnpm">
-        <Code code={`pnpm playground:core`} lang="sh"></Code>
-      </TabItem>
-      <TabItem id="yarn" label="yarn">
-        <Code code={`yarn playground:core`} lang="sh"></Code>
-      </TabItem>
-    </Tabs>
-  </TabItem>
-  <TabItem id="react" label="react">
-    <Tabs syncKey="package-manager">
-      <TabItem id="npm" label="npm">
-        <Code code={`npm run playground:react`} lang="sh"></Code>
-      </TabItem>
-      <TabItem id="pnpm" label="pnpm">
-        <Code code={`pnpm playground:react`} lang="sh"></Code>
-      </TabItem>
-      <TabItem id="yarn" label="yarn">
-        <Code code={`yarn playground:react`} lang="sh"></Code>
-      </TabItem>
-    </Tabs>
-  </TabItem>
-  <TabItem id="angular" label="angular">
-    <Tabs syncKey="package-manager">
-      <TabItem id="npm" label="npm">
-        <Code code={`not yet available...`} lang="sh"></Code>
-      </TabItem>
-      <TabItem id="pnpm" label="pnpm">
-        <Code code={`not yet available...`} lang="sh"></Code>
-      </TabItem>
-      <TabItem id="yarn" label="yarn">
-        <Code code={`not yet available...`} lang="sh"></Code>
-      </TabItem>
-    </Tabs>
-  </TabItem>
-</Tabs>
+Each style produces unique, deterministic avatars based on the seed you provide.

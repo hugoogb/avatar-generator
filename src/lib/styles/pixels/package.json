@@ -1,0 +1,30 @@
+{
+  "name": "@avatar-generator/style-pixels",
+  "version": "2.0.0",
+  "description": "Pixel art avatar style for @avatar-generator/core",
+  "main": "dist/index.js",
+  "types": "dist/types/index.d.ts",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@avatar-generator/core": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public",
+    "dependencies": {
+      "@avatar-generator/core": "^2.0.0"
+    }
+  },
+  "keywords": [
+    "avatar",
+    "pixel",
+    "8bit",
+    "retro",
+    "svg",
+    "generator"
+  ],
+  "license": "MIT"
+}

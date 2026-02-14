@@ -1,14 +1,22 @@
 {
   "name": "@avatar-generator/core",
-  "version": "1.1.1",
-  "description": "Core logic for avatar generation",
+  "version": "2.0.0",
+  "description": "Core logic for multi-style SVG avatar generation",
   "main": "dist/index.js",
   "types": "dist/types/index.d.ts",
+  "sideEffects": false,
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build"
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "keywords": [
+    "avatar",
+    "svg",
+    "generator",
+    "identicon"
+  ],
+  "license": "MIT"
 }
