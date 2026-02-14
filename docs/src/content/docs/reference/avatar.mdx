@@ -1,56 +1,167 @@
 ---
-title: Avatar Reference
-description: Detailed reference of all available props for the Avatar component in both React and Angular.
+title: API Reference
+description: Complete reference for all @avatar-generator options and types.
 ---
 
-This page provides detailed information about the props accepted by the `Avatar` component in both `@avatar-generator/react` and `@avatar-generator/angular`.
+import { Code } from "@astrojs/starlight/components";
 
-## Props
+## createAvatar
 
-The following props are common for both the React and Angular versions of the Avatar component.
+The main function for generating avatars.
 
-### `name` (required)
+<Code code={`
+import { createAvatar } from "@avatar-generator/core";
+import { initials } from "@avatar-generator/style-initials";
 
-- **Type**: `string`
-- **Description**: The name to display in the avatar. It is typically the user's first and last name or initials.
-- **Default**: `""` (empty string)
-- **Example**: `"John Doe"`
+const avatar = createAvatar(initials, { seed: "John Doe" });
+`} lang="ts"></Code>
 
-### `backgroundColor`
+### Parameters
 
-- **Type**: `string`
-- **Description**: The background color of the avatar.
-- **Default**: `"#ccc"`
-- **Example**: `"#4CAF50"`
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `style` | `Style<T>` | The avatar style to use |
+| `options` | `T extends AvatarOptions` | Style-specific options |
 
-### `textColor`
+### Returns
 
-- **Type**: `string`
-- **Description**: The color of the text (the initials) displayed inside the avatar.
-- **Default**: `"#fff"`
-- **Example**: `"#FFFFFF"`
+| Property | Type | Description |
+|----------|------|-------------|
+| `svg` | `string` | The generated SVG string |
+| `toDataUri()` | `() => string` | Returns a data URI for use in img src |
 
-### `fontSize`
+## Common Options
 
-- **Type**: `string`
-- **Description**: The font size for the text inside the avatar.
-- **Default**: `"40px"`
-- **Example**: `"48px"`
+All styles accept these base options:
 
-### `shape`
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `seed` | `string` | (required) | Seed for deterministic generation |
+| `size` | `number` | `64` | Avatar size in pixels |
+| `colors` | `string[]` | (style default) | Custom color palette |
+| `square` | `boolean` | `false` | Use square shape instead of circle |
+| `transparent` | `boolean` | `false` | Make background transparent |
+| `border` | `{ width: number, color: string }` | - | Border configuration |
+| `rotate` | `number` | `0` | Rotation in degrees |
+| `flip` | `boolean` | `false` | Horizontal flip |
+| `scale` | `number` | `1` | Scale factor |
 
-- **Type**: `"circle" | "square"`
-- **Description**: The shape of the avatar. It can either be a circle or a square.
-- **Default**: `"circle"`
-- **Example**: `"circle"`
+## Style-Specific Options
 
-## Summary
+### InitialsOptions
 
-The Avatar component for both React and Angular supports several customizable props to fit your design requirements.
-You can set properties such as `name`, `backgroundColor`, `textColor`, `fontSize`, and `shape` to customize the avatar's appearance.
+For `@avatar-generator/style-initials`:
 
-Refer to this guide for a comprehensive list of props and how to use them in your project, whether you're using React or Angular.
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `name` | `string` | `seed` | Name to extract initials from |
+| `fontFamily` | `string` | `"sans-serif"` | Font family |
+| `fontWeight` | `number` | `600` | Font weight |
+| `textColor` | `string` | `"#fff"` | Text color |
 
----
+### GeometricOptions
 
-This guide will help users understand and utilize all available configuration options for both the React and Angular versions of the `Avatar` component.
+For `@avatar-generator/style-geometric`:
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `gridSize` | `number` | `4` | Grid size for shapes |
+
+### PixelsOptions
+
+For `@avatar-generator/style-pixels`:
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `pixelSize` | `number` | `8` | Pixel grid size |
+| `mirror` | `boolean` | `true` | Mirror horizontally for symmetric look |
+
+### RingsOptions
+
+For `@avatar-generator/style-rings`:
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `ringCount` | `number` | `4` | Number of rings |
+| `ringGap` | `number` | `2` | Gap between rings |
+
+## Utilities
+
+### createRandom
+
+Creates a deterministic random number generator from a seed string.
+
+<Code code={`
+import { createRandom } from "@avatar-generator/core";
+
+const random = createRandom("my-seed");
+
+random.next();           // Float between 0 and 1
+random.int(0, 10);       // Integer between 0 and 9
+random.pick(["a", "b"]); // Random item from array
+random.bool(0.7);        // Boolean with 70% true probability
+random.shuffle([1,2,3]); // Shuffle array in place
+`} lang="ts"></Code>
+
+### DEFAULT_COLORS
+
+The default color palette used by styles:
+
+<Code code={`
+import { DEFAULT_COLORS } from "@avatar-generator/core";
+
+// ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7",
+//  "#DDA0DD", "#98D8C8", "#F7DC6F", "#BB8FCE", "#85C1E9"]
+`} lang="ts"></Code>
+
+### SVG Utilities
+
+Low-level SVG building functions:
+
+<Code code={`
+import {
+  escapeXml,
+  createSvgOpen,
+  createBackground,
+  createBorder,
+  buildSvg,
+} from "@avatar-generator/core";
+
+// escapeXml(text) - Escapes XML special characters
+// createSvgOpen(size) - Creates opening SVG tag
+// createBackground(size, color, transparent) - Creates background rect
+// createBorder(size, width, color, square) - Creates border
+// buildSvg(content, options, backgroundColor) - Builds complete SVG
+`} lang="ts"></Code>
+
+## Types
+
+### Style Interface
+
+<Code code={`
+interface Style<T extends AvatarOptions = AvatarOptions> {
+  name: string;
+  create(options: T): AvatarResult;
+}
+`} lang="ts"></Code>
+
+### AvatarResult
+
+<Code code={`
+interface AvatarResult {
+  svg: string;
+  toDataUri(): string;
+}
+`} lang="ts"></Code>
+
+### Random
+
+<Code code={`
+interface Random {
+  next(): number;
+  int(min: number, max: number): number;
+  pick<T>(array: T[]): T;
+  bool(probability?: number): boolean;
+  shuffle<T>(array: T[]): T[];
+}
+`} lang="ts"></Code>

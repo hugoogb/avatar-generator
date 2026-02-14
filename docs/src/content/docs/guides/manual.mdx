@@ -1,77 +1,164 @@
 ---
 title: Manual Usage
-description: Learn how to use @avatar-generator manually with the core package.
+description: Learn how to use @avatar-generator with the core package directly.
 ---
 
 import { Tabs, TabItem } from "@astrojs/starlight/components";
 import { Code } from "@astrojs/starlight/components";
 
-If you prefer to manually integrate the core package `@avatar-generator/core` into your project, you can use the following approach. This guide will walk you through creating an avatar using the core package directly.
+The core package provides a simple API to generate SVG avatars. Choose a style and pass options to create deterministic avatars.
 
-### Usage Example
-
-Here is an example of how to manually generate an avatar using the core package:
+## Basic Usage
 
 <Tabs syncKey="language">
-  <TabItem id="javascript" label="Javascript">
+  <TabItem id="typescript" label="TypeScript">
 <Code code={`
 import { createAvatar } from "@avatar-generator/core";
+import { initials } from "@avatar-generator/style-initials";
 
-const avatarOptions = {
-name: "John Doe",
-backgroundColor: "#4CAF50",
-textColor: "#FFFFFF",
-fontSize: "48px",
-shape: "circle",
-};
+const avatar = createAvatar(initials, {
+  seed: "John Doe",
+  size: 64,
+});
 
-const avatar = createAvatar(avatarOptions);
+// Get the SVG string
+console.log(avatar.svg);
 
-// Add the avatar to the DOM
-document.getElementById("avatar-container").appendChild(avatar);
-`} lang="js"></Code>
-
-  </TabItem>
-  <TabItem id="typescript" label="Typescript">
-  <Code code={`
-import { createAvatar, AvatarOptions } from "@avatar-generator/core";
-
-const avatarOptions: AvatarOptions = {
-name: "John Doe",
-backgroundColor: "#4CAF50",
-textColor: "#FFFFFF",
-fontSize: "48px",
-shape: "circle",
-};
-
-const avatar = createAvatar(avatarOptions);
-
-// Add the avatar to the DOM
-document.getElementById("avatar-container")?.appendChild(avatar);
+// Or use as an image src
+const img = document.createElement("img");
+img.src = avatar.toDataUri();
+document.body.appendChild(img);
 `} lang="ts"></Code>
+  </TabItem>
+  <TabItem id="javascript" label="JavaScript">
+<Code code={`
+import { createAvatar } from "@avatar-generator/core";
+import { initials } from "@avatar-generator/style-initials";
 
+const avatar = createAvatar(initials, {
+  seed: "John Doe",
+  size: 64,
+});
+
+// Get the SVG string
+console.log(avatar.svg);
+
+// Or use as an image src
+const img = document.createElement("img");
+img.src = avatar.toDataUri();
+document.body.appendChild(img);
+`} lang="js"></Code>
   </TabItem>
 </Tabs>
 
-#### HTML to display the avatar
+## Using Different Styles
 
-<Code
-  code={`
-<div id="avatar-container"></div>
-`}
-  lang="html"
-></Code>
+Each style creates a unique visual representation:
 
-### Summary
+<Code code={`
+import { createAvatar } from "@avatar-generator/core";
+import { initials } from "@avatar-generator/style-initials";
+import { geometric } from "@avatar-generator/style-geometric";
+import { pixels } from "@avatar-generator/style-pixels";
+import { rings } from "@avatar-generator/style-rings";
 
-In this guide, you learned how to manually integrate the `@avatar-generator/core` package to create customizable avatars in your project. The steps include:
+// Same seed generates consistent avatars across styles
+const seed = "user-123";
 
-1. Importing the `createAvatar` function from `@avatar-generator/core`.
-2. Defining options for the avatar, such as `name`, `backgroundColor`, `textColor`, `fontSize`, and `shape`.
-3. Adding the generated avatar to the DOM.
+const initialsAvatar = createAvatar(initials, { seed });
+const geometricAvatar = createAvatar(geometric, { seed });
+const pixelsAvatar = createAvatar(pixels, { seed });
+const ringsAvatar = createAvatar(rings, { seed });
+`} lang="ts"></Code>
 
-By following this approach, you can manually create avatars without using pre-built components, giving you full control over the avatar's appearance and usage in your project.
+## Customization Options
 
----
+All styles share common options:
 
-This guide demonstrates how to manually create and add an avatar to your page using the `@avatar-generator/core` package.
+<Code code={`
+import { createAvatar } from "@avatar-generator/core";
+import { geometric } from "@avatar-generator/style-geometric";
+
+const avatar = createAvatar(geometric, {
+  seed: "unique-id",
+  size: 128,                    // Avatar size in pixels
+  square: true,                 // Use square shape instead of circle
+  transparent: false,           // Transparent background
+  colors: ["#FF6B6B", "#4ECDC4", "#45B7D1"], // Custom color palette
+  border: {
+    width: 2,
+    color: "#333",
+  },
+  rotate: 45,                   // Rotation in degrees
+  flip: false,                  // Horizontal flip
+  scale: 0.9,                   // Scale factor
+});
+`} lang="ts"></Code>
+
+## Style-Specific Options
+
+### Initials Style
+
+<Code code={`
+import { createAvatar } from "@avatar-generator/core";
+import { initials } from "@avatar-generator/style-initials";
+
+const avatar = createAvatar(initials, {
+  seed: "john.doe@example.com",
+  name: "John Doe",           // Name to extract initials from (defaults to seed)
+  fontFamily: "Arial",        // Font family
+  fontWeight: 700,            // Font weight
+  textColor: "#ffffff",       // Text color
+});
+`} lang="ts"></Code>
+
+### Geometric Style
+
+<Code code={`
+import { createAvatar } from "@avatar-generator/core";
+import { geometric } from "@avatar-generator/style-geometric";
+
+const avatar = createAvatar(geometric, {
+  seed: "unique-id",
+  gridSize: 5,                // Grid size (default: 4)
+});
+`} lang="ts"></Code>
+
+### Pixels Style
+
+<Code code={`
+import { createAvatar } from "@avatar-generator/core";
+import { pixels } from "@avatar-generator/style-pixels";
+
+const avatar = createAvatar(pixels, {
+  seed: "unique-id",
+  pixelSize: 10,              // Pixel grid size (default: 8)
+  mirror: true,               // Mirror for symmetric look (default: true)
+});
+`} lang="ts"></Code>
+
+### Rings Style
+
+<Code code={`
+import { createAvatar } from "@avatar-generator/core";
+import { rings } from "@avatar-generator/style-rings";
+
+const avatar = createAvatar(rings, {
+  seed: "unique-id",
+  ringCount: 5,               // Number of rings (default: 4)
+  ringGap: 3,                 // Gap between rings (default: 2)
+});
+`} lang="ts"></Code>
+
+## Deterministic Generation
+
+Avatars are deterministic - the same seed and options always produce the same result:
+
+<Code code={`
+const avatar1 = createAvatar(initials, { seed: "user-123" });
+const avatar2 = createAvatar(initials, { seed: "user-123" });
+
+// avatar1.svg === avatar2.svg (always true)
+`} lang="ts"></Code>
+
+This makes avatars perfect for user profiles, as each user gets a unique but consistent avatar based on their ID.

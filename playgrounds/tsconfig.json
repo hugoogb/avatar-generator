@@ -1,10 +1,21 @@
 {
   "compilerOptions": {
-    "jsx": "react",
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
     "baseUrl": "./",
     "paths": {
       "@avatar-core/*": ["../src/lib/core/*"],
-      "@avatar-react/*": ["../src/packages/react/*"]
+      "@avatar-react/*": ["../src/packages/react/*"],
+      "@avatar-style-initials/*": ["../src/lib/styles/initials/*"],
+      "@avatar-style-geometric/*": ["../src/lib/styles/geometric/*"],
+      "@avatar-style-pixels/*": ["../src/lib/styles/pixels/*"],
+      "@avatar-style-rings/*": ["../src/lib/styles/rings/*"]
     }
-  }
+  },
+  "include": ["**/*.ts", "**/*.tsx", "vite.config.ts"]
 }

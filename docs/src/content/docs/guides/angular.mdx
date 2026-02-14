@@ -5,69 +5,137 @@ description: Learn how to use the @avatar-generator/angular package in your Angu
 
 import { Code } from "@astrojs/starlight/components";
 
-To use `@avatar-generator/angular` in your Angular application, follow these steps to create avatars with Angular components.
+The `@avatar-generator/angular` package provides an Angular component for rendering avatars with any style.
 
-### Import the Avatar Module
+## Import the Module
 
-After installing the package, import the `AvatarModule` in your Angular module (usually `app.module.ts`) to use the avatar component in your templates.
+After installing the package, import the `AvatarModule` in your Angular module:
 
-Here’s how you can do it:
-
-    <Code code={`
-
+<Code code={`
 import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { AppComponent } from "./app.component";
-import { AvatarModule } from "@avatar-generator/angular"; // Import the AvatarModule
+import { AvatarModule } from "@avatar-generator/angular";
 
 @NgModule({
-declarations: [AppComponent],
-imports: [
-BrowserModule,
-AvatarModule, // Add AvatarModule to the imports array
-],
-bootstrap: [AppComponent],
+  declarations: [AppComponent],
+  imports: [BrowserModule, AvatarModule],
+  bootstrap: [AppComponent],
 })
 export class AppModule {}
 `} lang="ts"></Code>
 
-### Usage Example
+## Basic Usage
 
-Once the module is imported, you can use the avatar component in your Angular templates. Here is an example of how to use the component:
-
-    <Code code={`
-
+<Code code={`
 import { Component } from "@angular/core";
+import { initials } from "@avatar-generator/style-initials";
 
 @Component({
-selector: "app-root",
-template: \`
-
-<h1>Avatar Example</h1>
-<avatar-generator
-[name]="'John Doe'"
-[backgroundColor]="'#4CAF50'"
-[textColor]="'#FFFFFF'"
-[fontSize]="'48px'"
-[shape]="'circle'">
-</avatar-generator>
-\`,
+  selector: "app-user-profile",
+  template: \`
+    <avatar-generator
+      [style]="initialsStyle"
+      [options]="{ seed: user.id, name: user.name, size: 48 }"
+      [alt]="user.name"
+    />
+  \`,
 })
-export class AppComponent {}
+export class UserProfileComponent {
+  initialsStyle = initials;
+  user = { id: "user-123", name: "John Doe" };
+}
 `} lang="ts"></Code>
 
-This will render the avatar with the specified options such as name, background color, text color, font size, and shape.
+## Using Different Styles
 
-### Summary
+<Code code={`
+import { Component } from "@angular/core";
+import { initials } from "@avatar-generator/style-initials";
+import { geometric } from "@avatar-generator/style-geometric";
+import { pixels } from "@avatar-generator/style-pixels";
+import { rings } from "@avatar-generator/style-rings";
 
-In this guide, you learned how to use the `@avatar-generator/angular` package in your Angular project. The steps include:
+@Component({
+  selector: "app-avatar-gallery",
+  template: \`
+    <div class="avatar-gallery">
+      <avatar-generator [style]="initialsStyle" [options]="options" alt="Initials" />
+      <avatar-generator [style]="geometricStyle" [options]="options" alt="Geometric" />
+      <avatar-generator [style]="pixelsStyle" [options]="options" alt="Pixels" />
+      <avatar-generator [style]="ringsStyle" [options]="options" alt="Rings" />
+    </div>
+  \`,
+})
+export class AvatarGalleryComponent {
+  initialsStyle = initials;
+  geometricStyle = geometric;
+  pixelsStyle = pixels;
+  ringsStyle = rings;
 
-1. Installing `@avatar-generator/angular`.
-2. Importing the `AvatarModule` into your Angular module.
-3. Using the `<avatar-generator>` component in your templates, passing in properties such as `name`, `backgroundColor`, `textColor`, `fontSize`, and `shape` to customize the avatar.
+  options = { seed: "user-123", size: 64 };
+}
+`} lang="ts"></Code>
 
-By following these steps, you can easily integrate customizable avatars into your Angular application.
+## With Custom Options
 
----
+<Code code={`
+import { Component } from "@angular/core";
+import { geometric } from "@avatar-generator/style-geometric";
 
-This guide demonstrates how to use the Angular component from `@avatar-generator/angular` to easily generate avatars in your Angular app.
+@Component({
+  selector: "app-custom-avatar",
+  template: \`
+    <avatar-generator
+      [style]="geometricStyle"
+      [options]="avatarOptions"
+      alt="User avatar"
+    />
+  \`,
+})
+export class CustomAvatarComponent {
+  geometricStyle = geometric;
+
+  avatarOptions = {
+    seed: "user-123",
+    size: 96,
+    square: true,
+    colors: ["#FF6B6B", "#4ECDC4", "#45B7D1"],
+    border: { width: 2, color: "#333" },
+  };
+}
+`} lang="ts"></Code>
+
+## Component Inputs
+
+| Input | Type | Description |
+|-------|------|-------------|
+| `style` | `Style<T>` | The avatar style to use (required) |
+| `options` | `T extends AvatarOptions` | Style-specific options (required) |
+| `alt` | `string` | Alt text for accessibility (default: "Avatar") |
+
+## Standalone Components
+
+If you're using standalone components (Angular 14+), you can import the component directly:
+
+<Code code={`
+import { Component } from "@angular/core";
+import { AvatarComponent } from "@avatar-generator/angular";
+import { initials } from "@avatar-generator/style-initials";
+
+@Component({
+  selector: "app-user-avatar",
+  standalone: true,
+  imports: [AvatarComponent],
+  template: \`
+    <avatar-generator
+      [style]="initialsStyle"
+      [options]="{ seed: userId, size: 48 }"
+    />
+  \`,
+})
+export class UserAvatarComponent {
+  initialsStyle = initials;
+  userId = "user-123";
+}
+`} lang="ts"></Code>

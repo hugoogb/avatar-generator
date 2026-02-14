@@ -2,7 +2,9 @@
   "name": "avatar-generator",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "lib/*",
+    "lib/styles/*"
   ],
   "scripts": {
     "build": "pnpm -r run build",

@@ -1,24 +1,40 @@
 ---
 title: Installation
-description: Learn how to install @avatar-generator using your preferred package manager.
+description: Learn how to install @avatar-generator packages for your project.
 ---
 
 import { Tabs, TabItem } from "@astrojs/starlight/components";
 import { Code } from "@astrojs/starlight/components";
 
-To start using `@avatar-generator` in your project, install the framework-specific package you need. Choose your preferred package manager for installation instructions.
+## Quick Start
+
+Install the core package and at least one style:
+
+<Tabs syncKey="package-manager">
+  <TabItem id="npm" label="npm">
+    <Code code={`npm install @avatar-generator/core @avatar-generator/style-initials`} lang="sh"></Code>
+  </TabItem>
+  <TabItem id="pnpm" label="pnpm">
+    <Code code={`pnpm add @avatar-generator/core @avatar-generator/style-initials`} lang="sh"></Code>
+  </TabItem>
+  <TabItem id="yarn" label="yarn">
+    <Code code={`yarn add @avatar-generator/core @avatar-generator/style-initials`} lang="sh"></Code>
+  </TabItem>
+</Tabs>
+
+## Framework Packages
 
 ### React
 
 <Tabs syncKey="package-manager">
   <TabItem id="npm" label="npm">
-    <Code code={`npm install @avatar-generator/react`} lang="sh"></Code>
+    <Code code={`npm install @avatar-generator/react @avatar-generator/style-initials`} lang="sh"></Code>
   </TabItem>
   <TabItem id="pnpm" label="pnpm">
-    <Code code={`pnpm add @avatar-generator/react`} lang="sh"></Code>
+    <Code code={`pnpm add @avatar-generator/react @avatar-generator/style-initials`} lang="sh"></Code>
   </TabItem>
   <TabItem id="yarn" label="yarn">
-    <Code code={`yarn add @avatar-generator/react`} lang="sh"></Code>
+    <Code code={`yarn add @avatar-generator/react @avatar-generator/style-initials`} lang="sh"></Code>
   </TabItem>
 </Tabs>
 
@@ -26,32 +42,43 @@ To start using `@avatar-generator` in your project, install the framework-specif
 
 <Tabs syncKey="package-manager">
   <TabItem id="npm" label="npm">
-    <Code code={`npm install @avatar-generator/angular`} lang="sh"></Code>
+    <Code code={`npm install @avatar-generator/angular @avatar-generator/style-initials`} lang="sh"></Code>
   </TabItem>
   <TabItem id="pnpm" label="pnpm">
-    <Code code={`pnpm add @avatar-generator/angular`} lang="sh"></Code>
+    <Code code={`pnpm add @avatar-generator/angular @avatar-generator/style-initials`} lang="sh"></Code>
   </TabItem>
   <TabItem id="yarn" label="yarn">
-    <Code code={`yarn add @avatar-generator/angular`} lang="sh"></Code>
+    <Code code={`yarn add @avatar-generator/angular @avatar-generator/style-initials`} lang="sh"></Code>
   </TabItem>
 </Tabs>
 
-### Core Package Installation
+## Available Styles
 
-If you prefer to use `@avatar-generator/core` directly for custom integration, install it using the commands below:
+Each style is a separate tree-shakeable package:
+
+| Package | Description |
+|---------|-------------|
+| `@avatar-generator/style-initials` | Letter initials on colored backgrounds |
+| `@avatar-generator/style-geometric` | Grid-based geometric shapes |
+| `@avatar-generator/style-pixels` | Retro pixel art style |
+| `@avatar-generator/style-rings` | Concentric colored rings |
+
+Install any styles you want to use:
 
 <Tabs syncKey="package-manager">
   <TabItem id="npm" label="npm">
-    <Code code={`npm install @avatar-generator/core`} lang="sh"></Code>
+    <Code code={`npm install @avatar-generator/style-geometric @avatar-generator/style-pixels @avatar-generator/style-rings`} lang="sh"></Code>
   </TabItem>
   <TabItem id="pnpm" label="pnpm">
-    <Code code={`pnpm add @avatar-generator/core`} lang="sh"></Code>
+    <Code code={`pnpm add @avatar-generator/style-geometric @avatar-generator/style-pixels @avatar-generator/style-rings`} lang="sh"></Code>
   </TabItem>
   <TabItem id="yarn" label="yarn">
-    <Code code={`yarn add @avatar-generator/core`} lang="sh"></Code>
+    <Code code={`yarn add @avatar-generator/style-geometric @avatar-generator/style-pixels @avatar-generator/style-rings`} lang="sh"></Code>
   </TabItem>
 </Tabs>
 
-### Further Steps
+## Next Steps
 
-Once the package is installed, check out the guides for [React](/guides/react) and [Angular](/guides/angular) to learn how to use the components in your project.
+- Check out the [Manual Usage](/guides/manual) guide for core package usage
+- See the [React](/guides/react) or [Angular](/guides/angular) guides for framework-specific usage
+- View the [API Reference](/reference/avatar) for all available options
