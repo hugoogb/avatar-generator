@@ -61,20 +61,24 @@ For `@avatar-generator/style-initials`:
 
 ### GeometricOptions
 
-For `@avatar-generator/style-geometric`:
+For `@avatar-generator/style-geometric` (Identicon):
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `gridSize` | `number` | `4` | Grid size for shapes |
+| `gridSize` | `number` | `5` | Grid size (odd recommended for symmetry) |
+| `padding` | `number` | `1` | Padding cells around the pattern |
+| `foregroundColor` | `string` | (from palette) | Override foreground color |
 
 ### PixelsOptions
 
-For `@avatar-generator/style-pixels`:
+For `@avatar-generator/style-pixels` (Pixel Faces):
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `pixelSize` | `number` | `8` | Pixel grid size |
-| `mirror` | `boolean` | `true` | Mirror horizontally for symmetric look |
+| `skinTones` | `string[]` | `SKIN_TONES` | Custom skin tone palette |
+| `accessories` | `boolean` | `true` | Enable accessories like glasses (15% chance) |
+| `featureColor` | `string` | `"#2C1810"` | Override eye/mouth color |
 
 ### RingsOptions
 
@@ -84,6 +88,42 @@ For `@avatar-generator/style-rings`:
 |--------|------|---------|-------------|
 | `ringCount` | `number` | `4` | Number of rings |
 | `ringGap` | `number` | `2` | Gap between rings |
+| `segmented` | `boolean` | `true` | Allow segmented pie-slice rings |
+| `dashed` | `boolean` | `true` | Allow dashed rings |
+| `centerStyle` | `string` | `"solid"` | Center decoration: `"solid"`, `"dot"`, `"ring"`, `"diamond"`, `"none"` |
+
+### FacesOptions
+
+For `@avatar-generator/style-faces`:
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `skinTones` | `string[]` | `SKIN_TONES` | Custom skin tone palette |
+| `featureColor` | `string` | `"#2C1810"` | Override feature color |
+| `eyebrows` | `boolean` | `true` | Enable eyebrows (50% chance) |
+| `ears` | `boolean` | `true` | Enable ears (40% chance) |
+| `nose` | `boolean` | `true` | Enable nose (30% chance) |
+| `mouthStyle` | `string` | (random) | Override mouth: `"smile"`, `"neutral"`, `"open"`, `"smirk"`, `"small"` |
+| `eyeStyle` | `string` | (random) | Override eyes: `"dots"`, `"circles"`, `"closed"`, `"happy"` |
+| `hairStyle` | `string` | (random) | Override hair: `"none"`, `"short"`, `"flat"`, `"parted"`, `"long"`, `"curly"`, `"mohawk"`, `"buzz"` |
+
+### IllustratedOptions
+
+For `@avatar-generator/style-illustrated`:
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `skinTones` | `string[]` | `SKIN_TONES` | Custom skin tone palette |
+| `eyeColors` | `string[]` | `EYE_COLORS` | Custom eye color palette |
+| `hairStyle` | `string` | (random) | Override hair (12 styles): `"bald"`, `"buzz"`, `"short"`, `"medium"`, `"long"`, `"curly"`, `"wavy"`, `"mohawk"`, `"afro"`, `"ponytail"`, `"bangs"`, `"sidepart"` |
+| `eyeStyle` | `string` | (random) | Override eyes (8 styles): `"round"`, `"almond"`, `"narrow"`, `"wide"`, `"sleepy"`, `"winking"`, `"looking"`, `"glasses"` |
+| `eyebrowStyle` | `string` | (random) | Override eyebrows (6 styles): `"natural"`, `"thick"`, `"thin"`, `"raised"`, `"furrowed"`, `"unibrow"` |
+| `noseStyle` | `string` | (random) | Override nose (5 styles): `"small"`, `"pointed"`, `"round"`, `"long"`, `"button"` |
+| `mouthStyle` | `string` | (random) | Override mouth (8 styles): `"smile"`, `"bigSmile"`, `"neutral"`, `"frown"`, `"open"`, `"smirk"`, `"tongue"`, `"teeth"` |
+| `glasses` | `boolean` | `true` | Enable glasses (20% chance, 3 types) |
+| `hat` | `boolean` | `true` | Enable hat (10% chance, 3 types) |
+| `earrings` | `boolean` | `true` | Enable earrings (8% chance) |
+| `facialHair` | `boolean` | `true` | Enable facial hair (15% chance, 3 types) |
 
 ## Utilities
 
@@ -112,6 +152,26 @@ import { DEFAULT_COLORS } from "@avatar-generator/core";
 
 // ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7",
 //  "#DDA0DD", "#98D8C8", "#F7DC6F", "#BB8FCE", "#85C1E9"]
+`} lang="ts"></Code>
+
+### SKIN_TONES
+
+Skin tone palette for face-based styles (Pixel Faces, Faces, Illustrated):
+
+<Code code={`
+import { SKIN_TONES } from "@avatar-generator/core";
+
+// ["#FFDBB4", "#EAC086", "#C68B59", "#A0674B", "#8D5524", "#613915"]
+`} lang="ts"></Code>
+
+### EYE_COLORS
+
+Eye color palette for the Illustrated style:
+
+<Code code={`
+import { EYE_COLORS } from "@avatar-generator/core";
+
+// ["#634E34", "#2E536F", "#3D6B45", "#89724B", "#3B3024"]
 `} lang="ts"></Code>
 
 ### SVG Utilities

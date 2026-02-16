@@ -1,6 +1,7 @@
 // Re-export types
 export type {
-  AvatarOptions, AvatarResult, GeometricOptions, InitialsOptions, LegacyAvatarOptions, PixelsOptions, Random, RingsOptions,
+  AvatarOptions, AvatarResult, FacesOptions, GeometricOptions, IllustratedOptions,
+  InitialsOptions, LegacyAvatarOptions, PixelsOptions, Random, RingsOptions,
   Style
 } from "./types";
 
@@ -10,7 +11,7 @@ export {
   buildSvg, buildTransform, createBackground,
   createBorder, createCircleClip,
   createSquareClip, createSvgOpen, DEFAULT_COLORS,
-  escapeXml, wrapWithTransform
+  escapeXml, EYE_COLORS, SKIN_TONES, wrapWithTransform
 } from "./svg";
 
 import type { AvatarOptions, AvatarResult, LegacyAvatarOptions, Style } from "./types";

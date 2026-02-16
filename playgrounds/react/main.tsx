@@ -3,6 +3,8 @@ import { geometric } from "@avatar-style-geometric/src";
 import { initials } from "@avatar-style-initials/src";
 import { pixels } from "@avatar-style-pixels/src";
 import { rings } from "@avatar-style-rings/src";
+import { faces } from "@avatar-style-faces/src";
+import { illustrated } from "@avatar-style-illustrated/src";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
 import {
@@ -10,6 +12,8 @@ import {
   INITIALS_OPTIONS,
   PIXELS_OPTIONS,
   RINGS_OPTIONS,
+  FACES_OPTIONS,
+  ILLUSTRATED_OPTIONS,
 } from "../consts";
 
 const StyleSection = ({
@@ -55,14 +59,26 @@ const App = () => {
       />
 
       <StyleSection
-        title="Geometric"
+        title="Geometric (Identicon)"
         style={geometric}
         options={GEOMETRIC_OPTIONS}
       />
 
-      <StyleSection title="Pixels" style={pixels} options={PIXELS_OPTIONS} />
+      <StyleSection
+        title="Pixels (Pixel Faces)"
+        style={pixels}
+        options={PIXELS_OPTIONS}
+      />
 
       <StyleSection title="Rings" style={rings} options={RINGS_OPTIONS} />
+
+      <StyleSection title="Faces" style={faces} options={FACES_OPTIONS} />
+
+      <StyleSection
+        title="Illustrated"
+        style={illustrated}
+        options={ILLUSTRATED_OPTIONS}
+      />
     </div>
   );
 };

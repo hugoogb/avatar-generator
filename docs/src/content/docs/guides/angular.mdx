@@ -55,15 +55,19 @@ import { initials } from "@avatar-generator/style-initials";
 import { geometric } from "@avatar-generator/style-geometric";
 import { pixels } from "@avatar-generator/style-pixels";
 import { rings } from "@avatar-generator/style-rings";
+import { faces } from "@avatar-generator/style-faces";
+import { illustrated } from "@avatar-generator/style-illustrated";
 
 @Component({
   selector: "app-avatar-gallery",
   template: \`
     <div class="avatar-gallery">
       <avatar-generator [style]="initialsStyle" [options]="options" alt="Initials" />
-      <avatar-generator [style]="geometricStyle" [options]="options" alt="Geometric" />
-      <avatar-generator [style]="pixelsStyle" [options]="options" alt="Pixels" />
+      <avatar-generator [style]="geometricStyle" [options]="options" alt="Identicon" />
+      <avatar-generator [style]="pixelsStyle" [options]="options" alt="Pixel Faces" />
       <avatar-generator [style]="ringsStyle" [options]="options" alt="Rings" />
+      <avatar-generator [style]="facesStyle" [options]="options" alt="Faces" />
+      <avatar-generator [style]="illustratedStyle" [options]="options" alt="Illustrated" />
     </div>
   \`,
 })
@@ -72,6 +76,8 @@ export class AvatarGalleryComponent {
   geometricStyle = geometric;
   pixelsStyle = pixels;
   ringsStyle = rings;
+  facesStyle = faces;
+  illustratedStyle = illustrated;
 
   options = { seed: "user-123", size: 64 };
 }

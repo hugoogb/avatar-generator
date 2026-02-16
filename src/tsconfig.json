@@ -14,7 +14,9 @@
       "@avatar-generator/style-initials": ["./lib/styles/initials/src"],
       "@avatar-generator/style-geometric": ["./lib/styles/geometric/src"],
       "@avatar-generator/style-pixels": ["./lib/styles/pixels/src"],
-      "@avatar-generator/style-rings": ["./lib/styles/rings/src"]
+      "@avatar-generator/style-rings": ["./lib/styles/rings/src"],
+      "@avatar-generator/style-faces": ["./lib/styles/faces/src"],
+      "@avatar-generator/style-illustrated": ["./lib/styles/illustrated/src"]
     }
   },
   "references": [
@@ -23,6 +25,8 @@
     { "path": "./lib/styles/geometric" },
     { "path": "./lib/styles/pixels" },
     { "path": "./lib/styles/rings" },
+    { "path": "./lib/styles/faces" },
+    { "path": "./lib/styles/illustrated" },
     { "path": "./packages/react" },
     { "path": "./packages/angular" }
   ],
