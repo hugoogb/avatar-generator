@@ -1,8 +1,8 @@
 // Re-export types
 export type {
-  AvatarOptions, AvatarResult, FacesOptions, GeometricOptions, IllustratedOptions,
-  InitialsOptions, LegacyAvatarOptions, PixelsOptions, Random, RingsOptions,
-  Style
+  AnimeOptions, AvatarOptions, AvatarResult, FacesOptions, GeometricOptions,
+  IllustratedOptions, InitialsOptions, LegacyAvatarOptions, PixelsOptions,
+  Random, RingsOptions, Style
 } from "./types";
 
 // Re-export utilities

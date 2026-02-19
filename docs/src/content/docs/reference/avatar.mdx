@@ -125,6 +125,24 @@ For `@avatar-generator/style-illustrated`:
 | `earrings` | `boolean` | `true` | Enable earrings (8% chance) |
 | `facialHair` | `boolean` | `true` | Enable facial hair (15% chance, 3 types) |
 
+### AnimeOptions
+
+For `@avatar-generator/style-anime`:
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `skinTones` | `string[]` | `SKIN_TONES` | Custom skin tone palette |
+| `eyeColors` | `string[]` | `EYE_COLORS` | Custom eye color palette |
+| `hairStyle` | `string` | (random) | Override hair (10 styles): `"short-spiky"`, `"medium-messy"`, `"long-straight"`, `"twin-tails"`, `"ponytail"`, `"side-swept"`, `"wild"`, `"bob"`, `"hime-cut"`, `"shaggy"` |
+| `eyeStyle` | `string` | (random) | Override eyes (8 styles): `"normal"`, `"sparkly"`, `"determined"`, `"gentle"`, `"cat"`, `"half-closed"`, `"closed-happy"`, `"surprised"` |
+| `mouthStyle` | `string` | (random) | Override mouth (6 styles): `"small-smile"`, `"open-small"`, `"cat-mouth"`, `"line"`, `"pout"`, `"grin"` |
+| `noseStyle` | `string` | (random) | Override nose (3 styles): `"dot"`, `"line"`, `"shadow"` |
+| `expression` | `string` | (random) | Override expression |
+| `bangs` | `boolean` | (random, 60%) | Enable bangs over forehead |
+| `ahoge` | `boolean` | (random, 40%) | Enable ahoge hair strand on top |
+| `blush` | `boolean` | (random, 35%) | Enable blush on cheeks |
+| `accessories` | `boolean` | `true` | Enable accessories (bandaid 5%, headband 8%) |
+
 ## Utilities
 
 ### createRandom
@@ -156,7 +174,7 @@ import { DEFAULT_COLORS } from "@avatar-generator/core";
 
 ### SKIN_TONES
 
-Skin tone palette for face-based styles (Pixel Faces, Faces, Illustrated):
+Skin tone palette for face-based styles (Pixel Faces, Faces, Illustrated, Anime):
 
 <Code code={`
 import { SKIN_TONES } from "@avatar-generator/core";
@@ -166,7 +184,7 @@ import { SKIN_TONES } from "@avatar-generator/core";
 
 ### EYE_COLORS
 
-Eye color palette for the Illustrated style:
+Eye color palette for the Illustrated and Anime styles:
 
 <Code code={`
 import { EYE_COLORS } from "@avatar-generator/core";

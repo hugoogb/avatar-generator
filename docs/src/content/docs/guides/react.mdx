@@ -34,6 +34,7 @@ import { pixels } from "@avatar-generator/style-pixels";
 import { rings } from "@avatar-generator/style-rings";
 import { faces } from "@avatar-generator/style-faces";
 import { illustrated } from "@avatar-generator/style-illustrated";
+import { anime } from "@avatar-generator/style-anime";
 
 function AvatarGallery({ userId }) {
   const commonOptions = { seed: userId, size: 64 };
@@ -46,6 +47,7 @@ function AvatarGallery({ userId }) {
       <Avatar style={rings} options={commonOptions} alt="Rings" />
       <Avatar style={faces} options={commonOptions} alt="Faces" />
       <Avatar style={illustrated} options={commonOptions} alt="Illustrated" />
+      <Avatar style={anime} options={commonOptions} alt="Anime" />
     </div>
   );
 }

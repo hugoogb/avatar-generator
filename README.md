@@ -4,7 +4,7 @@ Generate unique, deterministic SVG avatars with multiple styles.
 
 ## Features
 
-- **4 Unique Styles**: Initials, Geometric, Pixels, and Rings
+- **7 Unique Styles**: Initials, Geometric, Pixels, Rings, Faces, Illustrated, and Anime
 - **Deterministic**: Same seed = same avatar, always
 - **Tree-shakeable**: Only bundle the styles you use
 - **Framework Support**: React, Angular, or vanilla JS
@@ -37,6 +37,9 @@ img.src = avatar.toDataUri();
 | Geometric | `@avatar-generator/style-geometric` | Grid-based shapes |
 | Pixels | `@avatar-generator/style-pixels` | Retro pixel art |
 | Rings | `@avatar-generator/style-rings` | Concentric colored rings |
+| Faces | `@avatar-generator/style-faces` | Minimal flat geometric faces |
+| Illustrated | `@avatar-generator/style-illustrated` | Detailed cartoon faces with accessories |
+| Anime | `@avatar-generator/style-anime` | Anime/manga-inspired faces with expressive eyes |
 
 ## Framework Packages
 

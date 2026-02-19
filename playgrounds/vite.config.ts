@@ -22,6 +22,7 @@ export default defineConfig(({ mode }) => {
         "@avatar-style-rings": resolve(__dirname, "../src/lib/styles/rings"),
         "@avatar-style-faces": resolve(__dirname, "../src/lib/styles/faces"),
         "@avatar-style-illustrated": resolve(__dirname, "../src/lib/styles/illustrated"),
+        "@avatar-style-anime": resolve(__dirname, "../src/lib/styles/anime"),
         // Package name aliases for internal imports between packages
         "@avatar-generator/core": resolve(__dirname, "../src/lib/core/src"),
         "@avatar-generator/react": resolve(__dirname, "../src/packages/react/src"),
@@ -31,6 +32,7 @@ export default defineConfig(({ mode }) => {
         "@avatar-generator/style-rings": resolve(__dirname, "../src/lib/styles/rings/src"),
         "@avatar-generator/style-faces": resolve(__dirname, "../src/lib/styles/faces/src"),
         "@avatar-generator/style-illustrated": resolve(__dirname, "../src/lib/styles/illustrated/src"),
+        "@avatar-generator/style-anime": resolve(__dirname, "../src/lib/styles/anime/src"),
       },
     },
   };

@@ -5,6 +5,7 @@ import { pixels } from "@avatar-style-pixels/src";
 import { rings } from "@avatar-style-rings/src";
 import { faces } from "@avatar-style-faces/src";
 import { illustrated } from "@avatar-style-illustrated/src";
+import { anime } from "@avatar-style-anime/src";
 import {
     GEOMETRIC_OPTIONS,
     INITIALS_OPTIONS,
@@ -12,6 +13,7 @@ import {
     RINGS_OPTIONS,
     FACES_OPTIONS,
     ILLUSTRATED_OPTIONS,
+    ANIME_OPTIONS,
 } from "../consts";
 
 const app = document.getElementById("app");
@@ -25,6 +27,7 @@ if (app) {
         { name: "Rings", style: rings, options: RINGS_OPTIONS },
         { name: "Faces", style: faces, options: FACES_OPTIONS },
         { name: "Illustrated", style: illustrated, options: ILLUSTRATED_OPTIONS },
+        { name: "Anime", style: anime, options: ANIME_OPTIONS },
     ];
 
     styles.forEach(({ name, style, options }) => {

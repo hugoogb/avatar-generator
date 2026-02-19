@@ -63,6 +63,7 @@ import { pixels } from "@avatar-generator/style-pixels";
 import { rings } from "@avatar-generator/style-rings";
 import { faces } from "@avatar-generator/style-faces";
 import { illustrated } from "@avatar-generator/style-illustrated";
+import { anime } from "@avatar-generator/style-anime";
 
 // Same seed generates consistent avatars across styles
 const seed = "user-123";
@@ -73,6 +74,7 @@ const pixelsAvatar = createAvatar(pixels, { seed });
 const ringsAvatar = createAvatar(rings, { seed });
 const facesAvatar = createAvatar(faces, { seed });
 const illustratedAvatar = createAvatar(illustrated, { seed });
+const animeAvatar = createAvatar(anime, { seed });
 `} lang="ts"></Code>
 
 ## Customization Options
@@ -195,6 +197,25 @@ const avatar = createAvatar(illustrated, {
   hat: true,                  // Enable hat (default: true, 10% chance)
   earrings: true,             // Enable earrings (default: true, 8% chance)
   facialHair: true,           // Enable facial hair (default: true, 15% chance)
+});
+`} lang="ts"></Code>
+
+### Anime Style
+
+<Code code={`
+import { createAvatar } from "@avatar-generator/core";
+import { anime } from "@avatar-generator/style-anime";
+
+const avatar = createAvatar(anime, {
+  seed: "unique-id",
+  hairStyle: "twin-tails",       // Override hair (10 styles)
+  eyeStyle: "sparkly",           // Override eyes (8 styles)
+  mouthStyle: "cat-mouth",       // Override mouth (6 styles)
+  noseStyle: "dot",              // Override nose (3 styles)
+  bangs: true,                   // Enable bangs over forehead
+  ahoge: true,                   // Enable ahoge hair strand (default: 40% chance)
+  blush: true,                   // Enable blush on cheeks (default: 35% chance)
+  accessories: true,             // Enable accessories (bandaid, headband)
 });
 `} lang="ts"></Code>
 

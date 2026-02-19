@@ -142,6 +142,31 @@ export interface IllustratedOptions extends AvatarOptions {
   eyeColors?: string[];
 }
 
+export interface AnimeOptions extends AvatarOptions {
+  /** Custom skin tone palette */
+  skinTones?: string[];
+  /** Custom eye color palette */
+  eyeColors?: string[];
+  /** Override hair style */
+  hairStyle?: string;
+  /** Override eye style */
+  eyeStyle?: string;
+  /** Override mouth style */
+  mouthStyle?: string;
+  /** Override nose style */
+  noseStyle?: string;
+  /** Override expression */
+  expression?: string;
+  /** Enable bangs (default: random) */
+  bangs?: boolean;
+  /** Enable ahoge hair strand (default: random, 40% chance) */
+  ahoge?: boolean;
+  /** Enable blush (default: random, 35% chance) */
+  blush?: boolean;
+  /** Enable accessories (default: true) */
+  accessories?: boolean;
+}
+
 /**
  * Style definition interface - each style implements this
  */

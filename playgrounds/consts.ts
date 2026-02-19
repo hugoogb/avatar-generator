@@ -1,4 +1,4 @@
-import type { AvatarOptions, GeometricOptions, InitialsOptions, PixelsOptions, RingsOptions, FacesOptions, IllustratedOptions } from "@avatar-core/src";
+import type { AvatarOptions, GeometricOptions, InitialsOptions, PixelsOptions, RingsOptions, FacesOptions, IllustratedOptions, AnimeOptions } from "@avatar-core/src";
 
 // Test seeds for avatar generation
 export const TEST_SEEDS = [
@@ -80,6 +80,17 @@ export const ILLUSTRATED_OPTIONS: IllustratedOptions[] = [
     { seed: "illust-5", size: 80, glasses: true, hat: false },
     { seed: "illust-6", size: 80, facialHair: true },
     { seed: "illust-7", size: 80, hairStyle: "long", mouthStyle: "smile" },
+];
+
+// Anime style options
+export const ANIME_OPTIONS: AnimeOptions[] = [
+    { seed: "anime-1", size: 80 },
+    { seed: "anime-2", size: 80, hairStyle: "twin-tails", eyeStyle: "sparkly" },
+    { seed: "anime-3", size: 80, eyeStyle: "cat", mouthStyle: "cat-mouth" },
+    { seed: "anime-4", size: 100, square: true },
+    { seed: "anime-5", size: 80, blush: true, ahoge: true },
+    { seed: "anime-6", size: 80, hairStyle: "wild", eyeStyle: "determined" },
+    { seed: "anime-7", size: 80, hairStyle: "hime-cut", mouthStyle: "small-smile", bangs: true },
 ];
 
 // Legacy v1 options (for backwards compatibility testing)

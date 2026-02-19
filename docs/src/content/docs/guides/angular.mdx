@@ -57,6 +57,7 @@ import { pixels } from "@avatar-generator/style-pixels";
 import { rings } from "@avatar-generator/style-rings";
 import { faces } from "@avatar-generator/style-faces";
 import { illustrated } from "@avatar-generator/style-illustrated";
+import { anime } from "@avatar-generator/style-anime";
 
 @Component({
   selector: "app-avatar-gallery",
@@ -68,6 +69,7 @@ import { illustrated } from "@avatar-generator/style-illustrated";
       <avatar-generator [style]="ringsStyle" [options]="options" alt="Rings" />
       <avatar-generator [style]="facesStyle" [options]="options" alt="Faces" />
       <avatar-generator [style]="illustratedStyle" [options]="options" alt="Illustrated" />
+      <avatar-generator [style]="animeStyle" [options]="options" alt="Anime" />
     </div>
   \`,
 })
@@ -78,6 +80,7 @@ export class AvatarGalleryComponent {
   ringsStyle = rings;
   facesStyle = faces;
   illustratedStyle = illustrated;
+  animeStyle = anime;
 
   options = { seed: "user-123", size: 64 };
 }
