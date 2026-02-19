@@ -56,7 +56,7 @@ function createInitialsContent(options: InitialsOptions): string {
  * import { initials } from '@avatar-generator/style-initials';
  *
  * const avatar = createAvatar(initials, {
- *   seed: 'John Doe',
+ *   seed: 'Hugo GB',
  *   size: 64,
  *   colors: ['#FF6B6B', '#4ECDC4'],
  * });

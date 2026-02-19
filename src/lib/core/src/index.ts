@@ -1,7 +1,8 @@
 // Re-export types
 export type {
-  AvatarOptions, AvatarResult, GeometricOptions, InitialsOptions, LegacyAvatarOptions, PixelsOptions, Random, RingsOptions,
-  Style
+  AnimeOptions, AvatarOptions, AvatarResult, FacesOptions, GeometricOptions,
+  IllustratedOptions, InitialsOptions, LegacyAvatarOptions, PixelsOptions,
+  Random, RingsOptions, Style
 } from "./types";
 
 // Re-export utilities
@@ -10,7 +11,7 @@ export {
   buildSvg, buildTransform, createBackground,
   createBorder, createCircleClip,
   createSquareClip, createSvgOpen, DEFAULT_COLORS,
-  escapeXml, wrapWithTransform
+  escapeXml, EYE_COLORS, SKIN_TONES, wrapWithTransform
 } from "./svg";
 
 import type { AvatarOptions, AvatarResult, LegacyAvatarOptions, Style } from "./types";
@@ -23,7 +24,7 @@ import type { AvatarOptions, AvatarResult, LegacyAvatarOptions, Style } from "./
  * import { createAvatar } from '@avatar-generator/core';
  * import { initials } from '@avatar-generator/style-initials';
  *
- * const avatar = createAvatar(initials, { seed: 'John Doe' });
+ * const avatar = createAvatar(initials, { seed: 'Hugo GB' });
  * // Use avatar.svg for the SVG string
  * // Use avatar.toDataUri() for img src
  * ```
@@ -73,12 +74,12 @@ function getInitials(name: string): string {
  * ```ts
  * // Legacy usage (deprecated)
  * import { createAvatarElement } from '@avatar-generator/core';
- * const element = createAvatarElement({ name: 'John Doe' });
+ * const element = createAvatarElement({ name: 'Hugo GB' });
  *
  * // New usage (recommended)
  * import { createAvatar } from '@avatar-generator/core';
  * import { initials } from '@avatar-generator/style-initials';
- * const avatar = createAvatar(initials, { seed: 'John Doe' });
+ * const avatar = createAvatar(initials, { seed: 'Hugo GB' });
  * ```
  */
 export function createAvatarElement({

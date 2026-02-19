@@ -14,7 +14,10 @@
       "@avatar-style-initials/*": ["../src/lib/styles/initials/*"],
       "@avatar-style-geometric/*": ["../src/lib/styles/geometric/*"],
       "@avatar-style-pixels/*": ["../src/lib/styles/pixels/*"],
-      "@avatar-style-rings/*": ["../src/lib/styles/rings/*"]
+      "@avatar-style-rings/*": ["../src/lib/styles/rings/*"],
+      "@avatar-style-faces/*": ["../src/lib/styles/faces/*"],
+      "@avatar-style-illustrated/*": ["../src/lib/styles/illustrated/*"],
+      "@avatar-style-anime/*": ["../src/lib/styles/anime/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx", "vite.config.ts"]

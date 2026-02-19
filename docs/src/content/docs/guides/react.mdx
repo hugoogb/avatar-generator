@@ -32,6 +32,9 @@ import { initials } from "@avatar-generator/style-initials";
 import { geometric } from "@avatar-generator/style-geometric";
 import { pixels } from "@avatar-generator/style-pixels";
 import { rings } from "@avatar-generator/style-rings";
+import { faces } from "@avatar-generator/style-faces";
+import { illustrated } from "@avatar-generator/style-illustrated";
+import { anime } from "@avatar-generator/style-anime";
 
 function AvatarGallery({ userId }) {
   const commonOptions = { seed: userId, size: 64 };
@@ -39,9 +42,12 @@ function AvatarGallery({ userId }) {
   return (
     <div className="avatar-gallery">
       <Avatar style={initials} options={commonOptions} alt="Initials" />
-      <Avatar style={geometric} options={commonOptions} alt="Geometric" />
-      <Avatar style={pixels} options={commonOptions} alt="Pixels" />
+      <Avatar style={geometric} options={commonOptions} alt="Identicon" />
+      <Avatar style={pixels} options={commonOptions} alt="Pixel Faces" />
       <Avatar style={rings} options={commonOptions} alt="Rings" />
+      <Avatar style={faces} options={commonOptions} alt="Faces" />
+      <Avatar style={illustrated} options={commonOptions} alt="Illustrated" />
+      <Avatar style={anime} options={commonOptions} alt="Anime" />
     </div>
   );
 }

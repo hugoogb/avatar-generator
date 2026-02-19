@@ -1,6 +1,29 @@
 import type { AvatarOptions, AvatarResult } from "./types";
 
 /**
+ * Skin tone palette for face-based avatar styles
+ */
+export const SKIN_TONES = [
+  "#FFDBB4",
+  "#EAC086",
+  "#C68B59",
+  "#A0674B",
+  "#8D5524",
+  "#613915",
+];
+
+/**
+ * Eye color palette for illustrated avatar styles
+ */
+export const EYE_COLORS = [
+  "#634E34",
+  "#2E536F",
+  "#3D6B45",
+  "#89724B",
+  "#3B3024",
+];
+
+/**
  * Default color palettes for avatar generation
  */
 export const DEFAULT_COLORS = [

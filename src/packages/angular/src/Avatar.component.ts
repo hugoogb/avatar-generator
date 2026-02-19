@@ -1,9 +1,9 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   Input,
   OnChanges,
   SimpleChanges,
-  ChangeDetectionStrategy,
 } from "@angular/core";
 import {
   createAvatar,
@@ -18,7 +18,7 @@ import {
  * ```html
  * <avatar-generator
  *   [style]="initialsStyle"
- *   [options]="{ seed: 'John Doe', size: 64 }"
+ *   [options]="{ seed: 'Hugo GB', size: 64 }"
  *   alt="User avatar"
  * />
  * ```

@@ -3,11 +3,17 @@ import { geometric } from "@avatar-style-geometric/src";
 import { initials } from "@avatar-style-initials/src";
 import { pixels } from "@avatar-style-pixels/src";
 import { rings } from "@avatar-style-rings/src";
+import { faces } from "@avatar-style-faces/src";
+import { illustrated } from "@avatar-style-illustrated/src";
+import { anime } from "@avatar-style-anime/src";
 import {
     GEOMETRIC_OPTIONS,
     INITIALS_OPTIONS,
     PIXELS_OPTIONS,
     RINGS_OPTIONS,
+    FACES_OPTIONS,
+    ILLUSTRATED_OPTIONS,
+    ANIME_OPTIONS,
 } from "../consts";
 
 const app = document.getElementById("app");
@@ -16,9 +22,12 @@ if (app) {
     // Create style sections
     const styles = [
         { name: "Initials", style: initials, options: INITIALS_OPTIONS },
-        { name: "Geometric", style: geometric, options: GEOMETRIC_OPTIONS },
-        { name: "Pixels", style: pixels, options: PIXELS_OPTIONS },
+        { name: "Geometric (Identicon)", style: geometric, options: GEOMETRIC_OPTIONS },
+        { name: "Pixels (Pixel Faces)", style: pixels, options: PIXELS_OPTIONS },
         { name: "Rings", style: rings, options: RINGS_OPTIONS },
+        { name: "Faces", style: faces, options: FACES_OPTIONS },
+        { name: "Illustrated", style: illustrated, options: ILLUSTRATED_OPTIONS },
+        { name: "Anime", style: anime, options: ANIME_OPTIONS },
     ];
 
     styles.forEach(({ name, style, options }) => {

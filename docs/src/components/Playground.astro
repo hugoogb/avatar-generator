@@ -1,7 +1,7 @@
 ---
 /**
  * Interactive Playground Component for Avatar Generator
- * Shows all 4 avatar styles with live preview
+ * Shows all 6 avatar styles with live preview
  */
 ---
 
@@ -16,7 +16,7 @@
     <input
       type="text"
       id="seed-input"
-      value="John Doe"
+      value="Hugo GB"
       placeholder="Enter any string..."
     />
     <label for="size-input">Size:</label>
@@ -38,13 +38,13 @@
     </div>
 
     <div class="style-card">
-      <h4>Geometric</h4>
+      <h4>Identicon</h4>
       <div class="avatar-preview" id="preview-geometric"></div>
       <code>@avatar-generator/style-geometric</code>
     </div>
 
     <div class="style-card">
-      <h4>Pixels</h4>
+      <h4>Pixel Faces</h4>
       <div class="avatar-preview" id="preview-pixels"></div>
       <code>@avatar-generator/style-pixels</code>
     </div>
@@ -53,6 +53,18 @@
       <h4>Rings</h4>
       <div class="avatar-preview" id="preview-rings"></div>
       <code>@avatar-generator/style-rings</code>
+    </div>
+
+    <div class="style-card">
+      <h4>Faces</h4>
+      <div class="avatar-preview" id="preview-faces"></div>
+      <code>@avatar-generator/style-faces</code>
+    </div>
+
+    <div class="style-card">
+      <h4>Illustrated</h4>
+      <div class="avatar-preview" id="preview-illustrated"></div>
+      <code>@avatar-generator/style-illustrated</code>
     </div>
   </div>
 
@@ -189,6 +201,8 @@
     '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9'
   ];
 
+  const SKIN_TONES = ['#FFDBB4', '#EAC086', '#C68B59', '#A0674B', '#8D5524', '#613915'];
+
   function hashSeed(seed: string): number {
     let h1 = 0xdeadbeef;
     let h2 = 0x41c6ce57;
@@ -204,21 +218,28 @@
 
   function createRandom(seed: string) {
     let s = hashSeed(seed);
-    return {
-      next: () => {
-        let t = s += 0x6d2b79f5;
-        t = Math.imul(t ^ (t >>> 15), t | 1);
-        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-      },
-      pick: <T,>(arr: T[]): T => {
-        let t = s += 0x6d2b79f5;
-        t = Math.imul(t ^ (t >>> 15), t | 1);
-        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-        const r = ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-        return arr[Math.floor(r * arr.length)];
-      }
+    const next = () => {
+      let t = s += 0x6d2b79f5;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
+    return {
+      next,
+      pick: <T,>(arr: T[]): T => arr[Math.floor(next() * arr.length)],
+      bool: (p = 0.5) => next() < p,
+    };
+  }
+
+  type GenFn = (seed: string, size: number, square: boolean, transparent: boolean) => string;
+
+  function svgWrap(size: number, square: boolean, transparent: boolean, bg: string, content: string): string {
+    const r = size / 2;
+    const clip = square
+      ? `<clipPath id="c"><rect x="0" y="0" width="${size}" height="${size}"/></clipPath>`
+      : `<clipPath id="c"><circle cx="${r}" cy="${r}" r="${r}"/></clipPath>`;
+    const bgRect = transparent ? '' : `<rect x="0" y="0" width="${size}" height="${size}" fill="${bg}"/>`;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}"><defs>${clip}</defs><g clip-path="url(#c)">${bgRect}${content}</g></svg>`;
   }
 
   function getInitials(name: string): string {
@@ -226,110 +247,92 @@
     return name.split(' ').filter(Boolean).slice(0, 2).map(p => p[0].toUpperCase()).join('');
   }
 
-  function generateInitials(seed: string, size: number, square: boolean, transparent: boolean): string {
+  const generateInitials: GenFn = (seed, size, square, transparent) => {
     const rng = createRandom(seed);
     const bg = rng.pick(DEFAULT_COLORS);
     const initials = getInitials(seed);
     const fontSize = size * (initials.length === 1 ? 0.5 : 0.4);
     const r = size / 2;
-    const clip = square
-      ? `<clipPath id="c"><rect x="0" y="0" width="${size}" height="${size}"/></clipPath>`
-      : `<clipPath id="c"><circle cx="${r}" cy="${r}" r="${r}"/></clipPath>`;
-    const bgRect = transparent ? '' : `<rect x="0" y="0" width="${size}" height="${size}" fill="${bg}"/>`;
+    const content = `<text x="${r}" y="${r}" font-family="sans-serif" font-size="${fontSize}" font-weight="600" fill="#fff" text-anchor="middle" dominant-baseline="central">${initials}</text>`;
+    return svgWrap(size, square, transparent, bg, content);
+  };
 
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">
-      <defs>${clip}</defs>
-      <g clip-path="url(#c)">${bgRect}
-        <text x="${r}" y="${r}" font-family="sans-serif" font-size="${fontSize}" font-weight="600" fill="#fff" text-anchor="middle" dominant-baseline="central">${initials}</text>
-      </g>
-    </svg>`;
-  }
-
-  function generateGeometric(seed: string, size: number, square: boolean, transparent: boolean): string {
+  const generateGeometric: GenFn = (seed, size, square, transparent) => {
     const rng = createRandom(seed);
     const bg = rng.pick(DEFAULT_COLORS);
-    const gridSize = 4;
-    const cellSize = size / gridSize;
-    const shapes = ['circle', 'square', 'triangle', 'diamond'];
-    const r = size / 2;
-    const clip = square
-      ? `<clipPath id="c"><rect x="0" y="0" width="${size}" height="${size}"/></clipPath>`
-      : `<clipPath id="c"><circle cx="${r}" cy="${r}" r="${r}"/></clipPath>`;
-    const bgRect = transparent ? '' : `<rect x="0" y="0" width="${size}" height="${size}" fill="${bg}"/>`;
+    const fg = rng.pick(DEFAULT_COLORS);
+    const gridSize = 5;
+    const padding = 1;
+    const cellSize = size / (gridSize + padding * 2);
+    const offset = padding * cellSize;
+    const halfCols = Math.ceil(gridSize / 2);
+
+    const grid: boolean[][] = [];
+    let filled = 0;
+    for (let row = 0; row < gridSize; row++) {
+      grid[row] = [];
+      for (let col = 0; col < halfCols; col++) {
+        const f = rng.bool(0.5);
+        grid[row][col] = f;
+        if (f) filled += (gridSize % 2 === 1 && col === halfCols - 1) ? 1 : 2;
+      }
+    }
+    if (filled < 3) {
+      for (let row = 0; row < gridSize && filled < 3; row++) {
+        if (!grid[row][halfCols - 1]) { grid[row][halfCols - 1] = true; filled++; }
+      }
+    }
 
     let content = '';
     for (let row = 0; row < gridSize; row++) {
       for (let col = 0; col < gridSize; col++) {
-        if (rng.next() < 0.7) {
-          const shape = rng.pick(shapes);
-          const color = rng.pick(DEFAULT_COLORS);
-          const x = col * cellSize;
-          const y = row * cellSize;
-          const cx = x + cellSize / 2;
-          const cy = y + cellSize / 2;
-          const sr = cellSize * 0.4;
-
-          if (shape === 'circle') {
-            content += `<circle cx="${cx}" cy="${cy}" r="${sr}" fill="${color}"/>`;
-          } else if (shape === 'square') {
-            const off = cellSize * 0.1;
-            const sz = cellSize * 0.8;
-            content += `<rect x="${x + off}" y="${y + off}" width="${sz}" height="${sz}" fill="${color}"/>`;
-          } else if (shape === 'triangle') {
-            content += `<polygon points="${cx},${cy - sr} ${cx - sr},${cy + sr * 0.7} ${cx + sr},${cy + sr * 0.7}" fill="${color}"/>`;
-          } else {
-            content += `<polygon points="${cx},${cy - sr} ${cx + sr},${cy} ${cx},${cy + sr} ${cx - sr},${cy}" fill="${color}"/>`;
-          }
+        const src = col < halfCols ? col : gridSize - 1 - col;
+        if (grid[row][src]) {
+          content += `<rect x="${offset + col * cellSize}" y="${offset + row * cellSize}" width="${cellSize}" height="${cellSize}" fill="${fg}"/>`;
         }
       }
     }
+    return svgWrap(size, square, transparent, bg, content);
+  };
 
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">
-      <defs>${clip}</defs>
-      <g clip-path="url(#c)">${bgRect}${content}</g>
-    </svg>`;
-  }
-
-  function generatePixels(seed: string, size: number, square: boolean, transparent: boolean): string {
+  const generatePixels: GenFn = (seed, size, square, transparent) => {
     const rng = createRandom(seed);
     const bg = rng.pick(DEFAULT_COLORS);
-    const pixelSize = 8;
-    const cellSize = size / pixelSize;
-    const colsToGen = Math.ceil(pixelSize / 2);
-    const r = size / 2;
-    const clip = square
-      ? `<clipPath id="c"><rect x="0" y="0" width="${size}" height="${size}"/></clipPath>`
-      : `<clipPath id="c"><circle cx="${r}" cy="${r}" r="${r}"/></clipPath>`;
-    const bgRect = transparent ? '' : `<rect x="0" y="0" width="${size}" height="${size}" fill="${bg}"/>`;
+    const skinColor = rng.pick(SKIN_TONES);
+    const hairColor = rng.pick(DEFAULT_COLORS);
+    const feat = '#2C1810';
+    const cellSize = size / 8;
+    const pixels = new Map<string, string>();
 
-    const grid: (string | null)[][] = [];
-    for (let row = 0; row < pixelSize; row++) {
-      grid[row] = [];
-      for (let col = 0; col < colsToGen; col++) {
-        const dist = Math.abs(col - colsToGen / 2) / colsToGen;
-        const prob = 0.5 + (1 - dist) * 0.3;
-        grid[row][col] = rng.next() < prob ? rng.pick(DEFAULT_COLORS) : null;
+    // Head
+    for (let row = 1; row <= 6; row++)
+      for (let col = 1; col <= 6; col++) {
+        if ((row === 1 || row === 6) && (col === 1 || col === 6)) continue;
+        pixels.set(`${row},${col}`, skinColor);
       }
-    }
+
+    // Hair (random simple style)
+    const hairPixels: [number, number][] = rng.bool()
+      ? [[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[1,1],[1,6]]
+      : [[0,1],[0,3],[0,5],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6]];
+    for (const [r, c] of hairPixels) pixels.set(`${r},${c}`, hairColor);
+
+    // Eyes
+    pixels.set('3,2', feat); pixels.set('3,5', feat);
+
+    // Mouth
+    if (rng.bool()) { pixels.set('5,2', feat); pixels.set('5,5', feat); pixels.set('6,3', feat); pixels.set('6,4', feat); }
+    else { pixels.set('5,3', feat); pixels.set('5,4', feat); }
 
     let content = '';
-    for (let row = 0; row < pixelSize; row++) {
-      for (let col = 0; col < pixelSize; col++) {
-        const srcCol = col >= colsToGen ? pixelSize - 1 - col : col;
-        const color = grid[row][srcCol];
-        if (color) {
-          content += `<rect x="${col * cellSize}" y="${row * cellSize}" width="${cellSize}" height="${cellSize}" fill="${color}"/>`;
-        }
-      }
+    for (const [key, color] of pixels) {
+      const [r, c] = key.split(',').map(Number);
+      content += `<rect x="${c * cellSize}" y="${r * cellSize}" width="${cellSize}" height="${cellSize}" fill="${color}"/>`;
     }
+    return svgWrap(size, square, transparent, bg, content);
+  };
 
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">
-      <defs>${clip}</defs>
-      <g clip-path="url(#c)">${bgRect}${content}</g>
-    </svg>`;
-  }
-
-  function generateRings(seed: string, size: number, square: boolean, transparent: boolean): string {
+  const generateRings: GenFn = (seed, size, square, transparent) => {
     const rng = createRandom(seed);
     const bg = rng.pick(DEFAULT_COLORS);
     const ringCount = 4;
@@ -339,30 +342,97 @@
     const maxR = size / 2;
     const totalGap = ringGap * (ringCount - 1);
     const ringWidth = (maxR - totalGap) / ringCount;
-    const r = size / 2;
-    const clip = square
-      ? `<clipPath id="c"><rect x="0" y="0" width="${size}" height="${size}"/></clipPath>`
-      : `<clipPath id="c"><circle cx="${r}" cy="${r}" r="${r}"/></clipPath>`;
-    const bgRect = transparent ? '' : `<rect x="0" y="0" width="${size}" height="${size}" fill="${bg}"/>`;
 
     let content = '';
     for (let i = ringCount - 1; i >= 0; i--) {
       const color = rng.pick(DEFAULT_COLORS);
       const outerR = maxR - i * (ringWidth + ringGap);
       const innerR = outerR - ringWidth;
-
       if (innerR > 0) {
         content += `<path d="M ${cx} ${cy - outerR} A ${outerR} ${outerR} 0 1 1 ${cx} ${cy + outerR} A ${outerR} ${outerR} 0 1 1 ${cx} ${cy - outerR} M ${cx} ${cy - innerR} A ${innerR} ${innerR} 0 1 0 ${cx} ${cy + innerR} A ${innerR} ${innerR} 0 1 0 ${cx} ${cy - innerR}" fill="${color}" fill-rule="evenodd"/>`;
       } else {
         content += `<circle cx="${cx}" cy="${cy}" r="${outerR}" fill="${color}"/>`;
       }
     }
+    return svgWrap(size, square, transparent, bg, content);
+  };
 
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">
-      <defs>${clip}</defs>
-      <g clip-path="url(#c)">${bgRect}${content}</g>
-    </svg>`;
-  }
+  const generateFaces: GenFn = (seed, size, square, transparent) => {
+    const rng = createRandom(seed);
+    const bg = rng.pick(DEFAULT_COLORS);
+    const skinColor = rng.pick(SKIN_TONES);
+    const hairColor = rng.pick(DEFAULT_COLORS);
+    const feat = '#2C1810';
+    const cx = size / 2;
+    const cy = size / 2;
+    const headW = size * 0.55;
+    const headH = size * 0.65;
+    const eyeY = cy - headH * 0.08;
+    const eyeSpacing = headW * 0.22;
+    const mouthY = cy + headH * 0.18;
+    const top = cy - headH / 2;
+
+    let content = '';
+    // Hair behind
+    if (rng.bool(0.7)) {
+      content += `<ellipse cx="${cx}" cy="${top}" rx="${headW / 2 + 4}" ry="${headH * 0.22}" fill="${hairColor}"/>`;
+    }
+    // Head
+    content += `<ellipse cx="${cx}" cy="${cy}" rx="${headW / 2}" ry="${headH / 2}" fill="${skinColor}"/>`;
+    // Eyes
+    const lx = cx - eyeSpacing;
+    const rx = cx + eyeSpacing;
+    content += `<circle cx="${lx}" cy="${eyeY}" r="2" fill="${feat}"/><circle cx="${rx}" cy="${eyeY}" r="2" fill="${feat}"/>`;
+    // Mouth
+    content += `<path d="M ${cx - 5} ${mouthY} Q ${cx} ${mouthY + 6} ${cx + 5} ${mouthY}" fill="none" stroke="${feat}" stroke-width="1.5" stroke-linecap="round"/>`;
+
+    return svgWrap(size, square, transparent, bg, content);
+  };
+
+  const generateIllustrated: GenFn = (seed, size, square, transparent) => {
+    const rng = createRandom(seed);
+    const bg = rng.pick(DEFAULT_COLORS);
+    const skinColor = rng.pick(SKIN_TONES);
+    const hairColor = rng.pick(DEFAULT_COLORS);
+    const eyeColor = rng.pick(['#634E34', '#2E536F', '#3D6B45']);
+    const feat = '#2C1810';
+    const cx = size * 0.5;
+    const cy = size * 0.48;
+    const headW = size * 0.6;
+    const headH = size * 0.7;
+    const eyeY = cy - headH * 0.04;
+    const eyeSpacing = headW * 0.2;
+    const mouthY = cy + headH * 0.22;
+    const top = cy - headH / 2;
+    const left = cx - headW / 2;
+    const right = cx + headW / 2;
+
+    let content = '';
+    // Hair behind
+    content += `<path d="M ${left - 3} ${cy - 2} Q ${left - 4} ${top - 8} ${cx} ${top - 10} Q ${right + 4} ${top - 8} ${right + 3} ${cy - 2}" fill="${hairColor}"/>`;
+    // Ears
+    const earR = size * 0.055;
+    content += `<ellipse cx="${cx - headW / 2 - earR * 0.5}" cy="${eyeY + 2}" rx="${earR}" ry="${earR * 1.2}" fill="${skinColor}"/>`;
+    content += `<ellipse cx="${cx + headW / 2 + earR * 0.5}" cy="${eyeY + 2}" rx="${earR}" ry="${earR * 1.2}" fill="${skinColor}"/>`;
+    // Head
+    content += `<ellipse cx="${cx}" cy="${cy}" rx="${headW / 2}" ry="${headH / 2}" fill="${skinColor}"/>`;
+    // Eyebrows
+    const browY = cy - headH * 0.12;
+    const lx = cx - eyeSpacing;
+    const rx = cx + eyeSpacing;
+    content += `<path d="M ${lx - 4} ${browY + 1} Q ${lx} ${browY - 2} ${lx + 4} ${browY + 1}" fill="none" stroke="${feat}" stroke-width="1.5" stroke-linecap="round"/>`;
+    content += `<path d="M ${rx - 4} ${browY + 1} Q ${rx} ${browY - 2} ${rx + 4} ${browY + 1}" fill="none" stroke="${feat}" stroke-width="1.5" stroke-linecap="round"/>`;
+    // Eyes
+    content += `<circle cx="${lx}" cy="${eyeY}" r="3.5" fill="white"/><circle cx="${lx}" cy="${eyeY}" r="2" fill="${eyeColor}"/>`;
+    content += `<circle cx="${rx}" cy="${eyeY}" r="3.5" fill="white"/><circle cx="${rx}" cy="${eyeY}" r="2" fill="${eyeColor}"/>`;
+    // Nose
+    const noseY = cy + headH * 0.08;
+    content += `<circle cx="${cx}" cy="${noseY}" r="1.5" fill="${feat}"/>`;
+    // Mouth
+    content += `<path d="M ${cx - 6} ${mouthY} Q ${cx} ${mouthY + 7} ${cx + 6} ${mouthY}" fill="none" stroke="${feat}" stroke-width="1.5" stroke-linecap="round"/>`;
+
+    return svgWrap(size, square, transparent, bg, content);
+  };
 
   function updatePreviews() {
     const seedInput = document.getElementById('seed-input') as HTMLInputElement;
@@ -371,18 +441,20 @@
     const transparentToggle = document.getElementById('transparent-toggle') as HTMLInputElement;
     const sizeValue = document.getElementById('size-value');
 
-    const seed = seedInput?.value || 'John Doe';
+    const seed = seedInput?.value || 'Hugo GB';
     const size = parseInt(sizeInput?.value || '64');
     const square = squareToggle?.checked || false;
     const transparent = transparentToggle?.checked || false;
 
     if (sizeValue) sizeValue.textContent = `${size}px`;
 
-    const previews = {
+    const previews: Record<string, GenFn> = {
       'preview-initials': generateInitials,
       'preview-geometric': generateGeometric,
       'preview-pixels': generatePixels,
       'preview-rings': generateRings,
+      'preview-faces': generateFaces,
+      'preview-illustrated': generateIllustrated,
     };
 
     for (const [id, generator] of Object.entries(previews)) {
