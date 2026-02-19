@@ -24,7 +24,7 @@ import type { AvatarOptions, AvatarResult, LegacyAvatarOptions, Style } from "./
  * import { createAvatar } from '@avatar-generator/core';
  * import { initials } from '@avatar-generator/style-initials';
  *
- * const avatar = createAvatar(initials, { seed: 'John Doe' });
+ * const avatar = createAvatar(initials, { seed: 'Hugo GB' });
  * // Use avatar.svg for the SVG string
  * // Use avatar.toDataUri() for img src
  * ```
@@ -74,12 +74,12 @@ function getInitials(name: string): string {
  * ```ts
  * // Legacy usage (deprecated)
  * import { createAvatarElement } from '@avatar-generator/core';
- * const element = createAvatarElement({ name: 'John Doe' });
+ * const element = createAvatarElement({ name: 'Hugo GB' });
  *
  * // New usage (recommended)
  * import { createAvatar } from '@avatar-generator/core';
  * import { initials } from '@avatar-generator/style-initials';
- * const avatar = createAvatar(initials, { seed: 'John Doe' });
+ * const avatar = createAvatar(initials, { seed: 'Hugo GB' });
  * ```
  */
 export function createAvatarElement({

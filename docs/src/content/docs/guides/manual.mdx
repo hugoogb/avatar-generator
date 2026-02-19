@@ -17,8 +17,8 @@ import { createAvatar } from "@avatar-generator/core";
 import { initials } from "@avatar-generator/style-initials";
 
 const avatar = createAvatar(initials, {
-  seed: "John Doe",
-  size: 64,
+seed: "Hugo GB",
+size: 64,
 });
 
 // Get the SVG string
@@ -29,6 +29,7 @@ const img = document.createElement("img");
 img.src = avatar.toDataUri();
 document.body.appendChild(img);
 `} lang="ts"></Code>
+
   </TabItem>
   <TabItem id="javascript" label="JavaScript">
 <Code code={`
@@ -36,8 +37,8 @@ import { createAvatar } from "@avatar-generator/core";
 import { initials } from "@avatar-generator/style-initials";
 
 const avatar = createAvatar(initials, {
-  seed: "John Doe",
-  size: 64,
+seed: "Hugo GB",
+size: 64,
 });
 
 // Get the SVG string
@@ -48,6 +49,7 @@ const img = document.createElement("img");
 img.src = avatar.toDataUri();
 document.body.appendChild(img);
 `} lang="js"></Code>
+
   </TabItem>
 </Tabs>
 
@@ -86,18 +88,18 @@ import { createAvatar } from "@avatar-generator/core";
 import { geometric } from "@avatar-generator/style-geometric";
 
 const avatar = createAvatar(geometric, {
-  seed: "unique-id",
-  size: 128,                    // Avatar size in pixels
-  square: true,                 // Use square shape instead of circle
-  transparent: false,           // Transparent background
-  colors: ["#FF6B6B", "#4ECDC4", "#45B7D1"], // Custom color palette
-  border: {
-    width: 2,
-    color: "#333",
-  },
-  rotate: 45,                   // Rotation in degrees
-  flip: false,                  // Horizontal flip
-  scale: 0.9,                   // Scale factor
+seed: "unique-id",
+size: 128, // Avatar size in pixels
+square: true, // Use square shape instead of circle
+transparent: false, // Transparent background
+colors: ["#FF6B6B", "#4ECDC4", "#45B7D1"], // Custom color palette
+border: {
+width: 2,
+color: "#333",
+},
+rotate: 45, // Rotation in degrees
+flip: false, // Horizontal flip
+scale: 0.9, // Scale factor
 });
 `} lang="ts"></Code>
 
@@ -110,11 +112,11 @@ import { createAvatar } from "@avatar-generator/core";
 import { initials } from "@avatar-generator/style-initials";
 
 const avatar = createAvatar(initials, {
-  seed: "john.doe@example.com",
-  name: "John Doe",           // Name to extract initials from (defaults to seed)
-  fontFamily: "Arial",        // Font family
-  fontWeight: 700,            // Font weight
-  textColor: "#ffffff",       // Text color
+seed: "john.doe@example.com",
+name: "Hugo GB", // Name to extract initials from (defaults to seed)
+fontFamily: "Arial", // Font family
+fontWeight: 700, // Font weight
+textColor: "#ffffff", // Text color
 });
 `} lang="ts"></Code>
 
@@ -125,10 +127,10 @@ import { createAvatar } from "@avatar-generator/core";
 import { geometric } from "@avatar-generator/style-geometric";
 
 const avatar = createAvatar(geometric, {
-  seed: "unique-id",
-  gridSize: 5,                // Grid size (default: 5, odd recommended)
-  padding: 1,                 // Padding cells around pattern (default: 1)
-  foregroundColor: "#2C3E50", // Override foreground color
+seed: "unique-id",
+gridSize: 5, // Grid size (default: 5, odd recommended)
+padding: 1, // Padding cells around pattern (default: 1)
+foregroundColor: "#2C3E50", // Override foreground color
 });
 `} lang="ts"></Code>
 
@@ -139,10 +141,10 @@ import { createAvatar } from "@avatar-generator/core";
 import { pixels } from "@avatar-generator/style-pixels";
 
 const avatar = createAvatar(pixels, {
-  seed: "unique-id",
-  pixelSize: 8,               // Pixel grid size (default: 8)
-  accessories: true,          // Enable glasses (default: true, 15% chance)
-  featureColor: "#2C1810",    // Override eye/mouth color
+seed: "unique-id",
+pixelSize: 8, // Pixel grid size (default: 8)
+accessories: true, // Enable glasses (default: true, 15% chance)
+featureColor: "#2C1810", // Override eye/mouth color
 });
 `} lang="ts"></Code>
 
@@ -153,12 +155,12 @@ import { createAvatar } from "@avatar-generator/core";
 import { rings } from "@avatar-generator/style-rings";
 
 const avatar = createAvatar(rings, {
-  seed: "unique-id",
-  ringCount: 5,               // Number of rings (default: 4)
-  ringGap: 3,                 // Gap between rings (default: 2)
-  segmented: true,            // Allow segmented pie-slice rings (default: true)
-  dashed: true,               // Allow dashed rings (default: true)
-  centerStyle: "diamond",     // Center decoration: solid, dot, ring, diamond, none
+seed: "unique-id",
+ringCount: 5, // Number of rings (default: 4)
+ringGap: 3, // Gap between rings (default: 2)
+segmented: true, // Allow segmented pie-slice rings (default: true)
+dashed: true, // Allow dashed rings (default: true)
+centerStyle: "diamond", // Center decoration: solid, dot, ring, diamond, none
 });
 `} lang="ts"></Code>
 
@@ -169,14 +171,14 @@ import { createAvatar } from "@avatar-generator/core";
 import { faces } from "@avatar-generator/style-faces";
 
 const avatar = createAvatar(faces, {
-  seed: "unique-id",
-  featureColor: "#2C1810",    // Override feature color
-  eyebrows: true,             // Enable eyebrows (default: true, 50% chance)
-  ears: true,                 // Enable ears (default: true, 40% chance)
-  nose: true,                 // Enable nose (default: true, 30% chance)
-  hairStyle: "curly",         // Override hair style
-  eyeStyle: "happy",          // Override eye style
-  mouthStyle: "smile",        // Override mouth style
+seed: "unique-id",
+featureColor: "#2C1810", // Override feature color
+eyebrows: true, // Enable eyebrows (default: true, 50% chance)
+ears: true, // Enable ears (default: true, 40% chance)
+nose: true, // Enable nose (default: true, 30% chance)
+hairStyle: "curly", // Override hair style
+eyeStyle: "happy", // Override eye style
+mouthStyle: "smile", // Override mouth style
 });
 `} lang="ts"></Code>
 
@@ -187,16 +189,16 @@ import { createAvatar } from "@avatar-generator/core";
 import { illustrated } from "@avatar-generator/style-illustrated";
 
 const avatar = createAvatar(illustrated, {
-  seed: "unique-id",
-  hairStyle: "afro",          // Override hair (12 styles)
-  eyeStyle: "round",          // Override eyes (8 styles)
-  eyebrowStyle: "natural",    // Override eyebrows (6 styles)
-  noseStyle: "button",        // Override nose (5 styles)
-  mouthStyle: "bigSmile",     // Override mouth (8 styles)
-  glasses: true,              // Enable glasses (default: true, 20% chance)
-  hat: true,                  // Enable hat (default: true, 10% chance)
-  earrings: true,             // Enable earrings (default: true, 8% chance)
-  facialHair: true,           // Enable facial hair (default: true, 15% chance)
+seed: "unique-id",
+hairStyle: "afro", // Override hair (12 styles)
+eyeStyle: "round", // Override eyes (8 styles)
+eyebrowStyle: "natural", // Override eyebrows (6 styles)
+noseStyle: "button", // Override nose (5 styles)
+mouthStyle: "bigSmile", // Override mouth (8 styles)
+glasses: true, // Enable glasses (default: true, 20% chance)
+hat: true, // Enable hat (default: true, 10% chance)
+earrings: true, // Enable earrings (default: true, 8% chance)
+facialHair: true, // Enable facial hair (default: true, 15% chance)
 });
 `} lang="ts"></Code>
 
@@ -207,15 +209,15 @@ import { createAvatar } from "@avatar-generator/core";
 import { anime } from "@avatar-generator/style-anime";
 
 const avatar = createAvatar(anime, {
-  seed: "unique-id",
-  hairStyle: "twin-tails",       // Override hair (10 styles)
-  eyeStyle: "sparkly",           // Override eyes (8 styles)
-  mouthStyle: "cat-mouth",       // Override mouth (6 styles)
-  noseStyle: "dot",              // Override nose (3 styles)
-  bangs: true,                   // Enable bangs over forehead
-  ahoge: true,                   // Enable ahoge hair strand (default: 40% chance)
-  blush: true,                   // Enable blush on cheeks (default: 35% chance)
-  accessories: true,             // Enable accessories (bandaid, headband)
+seed: "unique-id",
+hairStyle: "twin-tails", // Override hair (10 styles)
+eyeStyle: "sparkly", // Override eyes (8 styles)
+mouthStyle: "cat-mouth", // Override mouth (6 styles)
+noseStyle: "dot", // Override nose (3 styles)
+bangs: true, // Enable bangs over forehead
+ahoge: true, // Enable ahoge hair strand (default: 40% chance)
+blush: true, // Enable blush on cheeks (default: 35% chance)
+accessories: true, // Enable accessories (bandaid, headband)
 });
 `} lang="ts"></Code>
 

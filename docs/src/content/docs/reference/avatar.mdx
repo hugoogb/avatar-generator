@@ -13,38 +13,38 @@ The main function for generating avatars.
 import { createAvatar } from "@avatar-generator/core";
 import { initials } from "@avatar-generator/style-initials";
 
-const avatar = createAvatar(initials, { seed: "John Doe" });
+const avatar = createAvatar(initials, { seed: "Hugo GB" });
 `} lang="ts"></Code>
 
 ### Parameters
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `style` | `Style<T>` | The avatar style to use |
-| `options` | `T extends AvatarOptions` | Style-specific options |
+| Parameter | Type                      | Description             |
+| --------- | ------------------------- | ----------------------- |
+| `style`   | `Style<T>`                | The avatar style to use |
+| `options` | `T extends AvatarOptions` | Style-specific options  |
 
 ### Returns
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `svg` | `string` | The generated SVG string |
+| Property      | Type           | Description                           |
+| ------------- | -------------- | ------------------------------------- |
+| `svg`         | `string`       | The generated SVG string              |
 | `toDataUri()` | `() => string` | Returns a data URI for use in img src |
 
 ## Common Options
 
 All styles accept these base options:
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `seed` | `string` | (required) | Seed for deterministic generation |
-| `size` | `number` | `64` | Avatar size in pixels |
-| `colors` | `string[]` | (style default) | Custom color palette |
-| `square` | `boolean` | `false` | Use square shape instead of circle |
-| `transparent` | `boolean` | `false` | Make background transparent |
-| `border` | `{ width: number, color: string }` | - | Border configuration |
-| `rotate` | `number` | `0` | Rotation in degrees |
-| `flip` | `boolean` | `false` | Horizontal flip |
-| `scale` | `number` | `1` | Scale factor |
+| Option        | Type                               | Default         | Description                        |
+| ------------- | ---------------------------------- | --------------- | ---------------------------------- |
+| `seed`        | `string`                           | (required)      | Seed for deterministic generation  |
+| `size`        | `number`                           | `64`            | Avatar size in pixels              |
+| `colors`      | `string[]`                         | (style default) | Custom color palette               |
+| `square`      | `boolean`                          | `false`         | Use square shape instead of circle |
+| `transparent` | `boolean`                          | `false`         | Make background transparent        |
+| `border`      | `{ width: number, color: string }` | -               | Border configuration               |
+| `rotate`      | `number`                           | `0`             | Rotation in degrees                |
+| `flip`        | `boolean`                          | `false`         | Horizontal flip                    |
+| `scale`       | `number`                           | `1`             | Scale factor                       |
 
 ## Style-Specific Options
 
@@ -52,96 +52,96 @@ All styles accept these base options:
 
 For `@avatar-generator/style-initials`:
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `name` | `string` | `seed` | Name to extract initials from |
-| `fontFamily` | `string` | `"sans-serif"` | Font family |
-| `fontWeight` | `number` | `600` | Font weight |
-| `textColor` | `string` | `"#fff"` | Text color |
+| Option       | Type     | Default        | Description                   |
+| ------------ | -------- | -------------- | ----------------------------- |
+| `name`       | `string` | `seed`         | Name to extract initials from |
+| `fontFamily` | `string` | `"sans-serif"` | Font family                   |
+| `fontWeight` | `number` | `600`          | Font weight                   |
+| `textColor`  | `string` | `"#fff"`       | Text color                    |
 
 ### GeometricOptions
 
 For `@avatar-generator/style-geometric` (Identicon):
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `gridSize` | `number` | `5` | Grid size (odd recommended for symmetry) |
-| `padding` | `number` | `1` | Padding cells around the pattern |
-| `foregroundColor` | `string` | (from palette) | Override foreground color |
+| Option            | Type     | Default        | Description                              |
+| ----------------- | -------- | -------------- | ---------------------------------------- |
+| `gridSize`        | `number` | `5`            | Grid size (odd recommended for symmetry) |
+| `padding`         | `number` | `1`            | Padding cells around the pattern         |
+| `foregroundColor` | `string` | (from palette) | Override foreground color                |
 
 ### PixelsOptions
 
 For `@avatar-generator/style-pixels` (Pixel Faces):
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `pixelSize` | `number` | `8` | Pixel grid size |
-| `skinTones` | `string[]` | `SKIN_TONES` | Custom skin tone palette |
-| `accessories` | `boolean` | `true` | Enable accessories like glasses (15% chance) |
-| `featureColor` | `string` | `"#2C1810"` | Override eye/mouth color |
+| Option         | Type       | Default      | Description                                  |
+| -------------- | ---------- | ------------ | -------------------------------------------- |
+| `pixelSize`    | `number`   | `8`          | Pixel grid size                              |
+| `skinTones`    | `string[]` | `SKIN_TONES` | Custom skin tone palette                     |
+| `accessories`  | `boolean`  | `true`       | Enable accessories like glasses (15% chance) |
+| `featureColor` | `string`   | `"#2C1810"`  | Override eye/mouth color                     |
 
 ### RingsOptions
 
 For `@avatar-generator/style-rings`:
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `ringCount` | `number` | `4` | Number of rings |
-| `ringGap` | `number` | `2` | Gap between rings |
-| `segmented` | `boolean` | `true` | Allow segmented pie-slice rings |
-| `dashed` | `boolean` | `true` | Allow dashed rings |
-| `centerStyle` | `string` | `"solid"` | Center decoration: `"solid"`, `"dot"`, `"ring"`, `"diamond"`, `"none"` |
+| Option        | Type      | Default   | Description                                                            |
+| ------------- | --------- | --------- | ---------------------------------------------------------------------- |
+| `ringCount`   | `number`  | `4`       | Number of rings                                                        |
+| `ringGap`     | `number`  | `2`       | Gap between rings                                                      |
+| `segmented`   | `boolean` | `true`    | Allow segmented pie-slice rings                                        |
+| `dashed`      | `boolean` | `true`    | Allow dashed rings                                                     |
+| `centerStyle` | `string`  | `"solid"` | Center decoration: `"solid"`, `"dot"`, `"ring"`, `"diamond"`, `"none"` |
 
 ### FacesOptions
 
 For `@avatar-generator/style-faces`:
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `skinTones` | `string[]` | `SKIN_TONES` | Custom skin tone palette |
-| `featureColor` | `string` | `"#2C1810"` | Override feature color |
-| `eyebrows` | `boolean` | `true` | Enable eyebrows (50% chance) |
-| `ears` | `boolean` | `true` | Enable ears (40% chance) |
-| `nose` | `boolean` | `true` | Enable nose (30% chance) |
-| `mouthStyle` | `string` | (random) | Override mouth: `"smile"`, `"neutral"`, `"open"`, `"smirk"`, `"small"` |
-| `eyeStyle` | `string` | (random) | Override eyes: `"dots"`, `"circles"`, `"closed"`, `"happy"` |
-| `hairStyle` | `string` | (random) | Override hair: `"none"`, `"short"`, `"flat"`, `"parted"`, `"long"`, `"curly"`, `"mohawk"`, `"buzz"` |
+| Option         | Type       | Default      | Description                                                                                         |
+| -------------- | ---------- | ------------ | --------------------------------------------------------------------------------------------------- |
+| `skinTones`    | `string[]` | `SKIN_TONES` | Custom skin tone palette                                                                            |
+| `featureColor` | `string`   | `"#2C1810"`  | Override feature color                                                                              |
+| `eyebrows`     | `boolean`  | `true`       | Enable eyebrows (50% chance)                                                                        |
+| `ears`         | `boolean`  | `true`       | Enable ears (40% chance)                                                                            |
+| `nose`         | `boolean`  | `true`       | Enable nose (30% chance)                                                                            |
+| `mouthStyle`   | `string`   | (random)     | Override mouth: `"smile"`, `"neutral"`, `"open"`, `"smirk"`, `"small"`                              |
+| `eyeStyle`     | `string`   | (random)     | Override eyes: `"dots"`, `"circles"`, `"closed"`, `"happy"`                                         |
+| `hairStyle`    | `string`   | (random)     | Override hair: `"none"`, `"short"`, `"flat"`, `"parted"`, `"long"`, `"curly"`, `"mohawk"`, `"buzz"` |
 
 ### IllustratedOptions
 
 For `@avatar-generator/style-illustrated`:
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `skinTones` | `string[]` | `SKIN_TONES` | Custom skin tone palette |
-| `eyeColors` | `string[]` | `EYE_COLORS` | Custom eye color palette |
-| `hairStyle` | `string` | (random) | Override hair (12 styles): `"bald"`, `"buzz"`, `"short"`, `"medium"`, `"long"`, `"curly"`, `"wavy"`, `"mohawk"`, `"afro"`, `"ponytail"`, `"bangs"`, `"sidepart"` |
-| `eyeStyle` | `string` | (random) | Override eyes (8 styles): `"round"`, `"almond"`, `"narrow"`, `"wide"`, `"sleepy"`, `"winking"`, `"looking"`, `"glasses"` |
-| `eyebrowStyle` | `string` | (random) | Override eyebrows (6 styles): `"natural"`, `"thick"`, `"thin"`, `"raised"`, `"furrowed"`, `"unibrow"` |
-| `noseStyle` | `string` | (random) | Override nose (5 styles): `"small"`, `"pointed"`, `"round"`, `"long"`, `"button"` |
-| `mouthStyle` | `string` | (random) | Override mouth (8 styles): `"smile"`, `"bigSmile"`, `"neutral"`, `"frown"`, `"open"`, `"smirk"`, `"tongue"`, `"teeth"` |
-| `glasses` | `boolean` | `true` | Enable glasses (20% chance, 3 types) |
-| `hat` | `boolean` | `true` | Enable hat (10% chance, 3 types) |
-| `earrings` | `boolean` | `true` | Enable earrings (8% chance) |
-| `facialHair` | `boolean` | `true` | Enable facial hair (15% chance, 3 types) |
+| Option         | Type       | Default      | Description                                                                                                                                                      |
+| -------------- | ---------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `skinTones`    | `string[]` | `SKIN_TONES` | Custom skin tone palette                                                                                                                                         |
+| `eyeColors`    | `string[]` | `EYE_COLORS` | Custom eye color palette                                                                                                                                         |
+| `hairStyle`    | `string`   | (random)     | Override hair (12 styles): `"bald"`, `"buzz"`, `"short"`, `"medium"`, `"long"`, `"curly"`, `"wavy"`, `"mohawk"`, `"afro"`, `"ponytail"`, `"bangs"`, `"sidepart"` |
+| `eyeStyle`     | `string`   | (random)     | Override eyes (8 styles): `"round"`, `"almond"`, `"narrow"`, `"wide"`, `"sleepy"`, `"winking"`, `"looking"`, `"glasses"`                                         |
+| `eyebrowStyle` | `string`   | (random)     | Override eyebrows (6 styles): `"natural"`, `"thick"`, `"thin"`, `"raised"`, `"furrowed"`, `"unibrow"`                                                            |
+| `noseStyle`    | `string`   | (random)     | Override nose (5 styles): `"small"`, `"pointed"`, `"round"`, `"long"`, `"button"`                                                                                |
+| `mouthStyle`   | `string`   | (random)     | Override mouth (8 styles): `"smile"`, `"bigSmile"`, `"neutral"`, `"frown"`, `"open"`, `"smirk"`, `"tongue"`, `"teeth"`                                           |
+| `glasses`      | `boolean`  | `true`       | Enable glasses (20% chance, 3 types)                                                                                                                             |
+| `hat`          | `boolean`  | `true`       | Enable hat (10% chance, 3 types)                                                                                                                                 |
+| `earrings`     | `boolean`  | `true`       | Enable earrings (8% chance)                                                                                                                                      |
+| `facialHair`   | `boolean`  | `true`       | Enable facial hair (15% chance, 3 types)                                                                                                                         |
 
 ### AnimeOptions
 
 For `@avatar-generator/style-anime`:
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `skinTones` | `string[]` | `SKIN_TONES` | Custom skin tone palette |
-| `eyeColors` | `string[]` | `EYE_COLORS` | Custom eye color palette |
-| `hairStyle` | `string` | (random) | Override hair (10 styles): `"short-spiky"`, `"medium-messy"`, `"long-straight"`, `"twin-tails"`, `"ponytail"`, `"side-swept"`, `"wild"`, `"bob"`, `"hime-cut"`, `"shaggy"` |
-| `eyeStyle` | `string` | (random) | Override eyes (8 styles): `"normal"`, `"sparkly"`, `"determined"`, `"gentle"`, `"cat"`, `"half-closed"`, `"closed-happy"`, `"surprised"` |
-| `mouthStyle` | `string` | (random) | Override mouth (6 styles): `"small-smile"`, `"open-small"`, `"cat-mouth"`, `"line"`, `"pout"`, `"grin"` |
-| `noseStyle` | `string` | (random) | Override nose (3 styles): `"dot"`, `"line"`, `"shadow"` |
-| `expression` | `string` | (random) | Override expression |
-| `bangs` | `boolean` | (random, 60%) | Enable bangs over forehead |
-| `ahoge` | `boolean` | (random, 40%) | Enable ahoge hair strand on top |
-| `blush` | `boolean` | (random, 35%) | Enable blush on cheeks |
-| `accessories` | `boolean` | `true` | Enable accessories (bandaid 5%, headband 8%) |
+| Option        | Type       | Default       | Description                                                                                                                                                                |
+| ------------- | ---------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `skinTones`   | `string[]` | `SKIN_TONES`  | Custom skin tone palette                                                                                                                                                   |
+| `eyeColors`   | `string[]` | `EYE_COLORS`  | Custom eye color palette                                                                                                                                                   |
+| `hairStyle`   | `string`   | (random)      | Override hair (10 styles): `"short-spiky"`, `"medium-messy"`, `"long-straight"`, `"twin-tails"`, `"ponytail"`, `"side-swept"`, `"wild"`, `"bob"`, `"hime-cut"`, `"shaggy"` |
+| `eyeStyle`    | `string`   | (random)      | Override eyes (8 styles): `"normal"`, `"sparkly"`, `"determined"`, `"gentle"`, `"cat"`, `"half-closed"`, `"closed-happy"`, `"surprised"`                                   |
+| `mouthStyle`  | `string`   | (random)      | Override mouth (6 styles): `"small-smile"`, `"open-small"`, `"cat-mouth"`, `"line"`, `"pout"`, `"grin"`                                                                    |
+| `noseStyle`   | `string`   | (random)      | Override nose (3 styles): `"dot"`, `"line"`, `"shadow"`                                                                                                                    |
+| `expression`  | `string`   | (random)      | Override expression                                                                                                                                                        |
+| `bangs`       | `boolean`  | (random, 60%) | Enable bangs over forehead                                                                                                                                                 |
+| `ahoge`       | `boolean`  | (random, 40%) | Enable ahoge hair strand on top                                                                                                                                            |
+| `blush`       | `boolean`  | (random, 35%) | Enable blush on cheeks                                                                                                                                                     |
+| `accessories` | `boolean`  | `true`        | Enable accessories (bandaid 5%, headband 8%)                                                                                                                               |
 
 ## Utilities
 
@@ -154,10 +154,10 @@ import { createRandom } from "@avatar-generator/core";
 
 const random = createRandom("my-seed");
 
-random.next();           // Float between 0 and 1
-random.int(0, 10);       // Integer between 0 and 9
+random.next(); // Float between 0 and 1
+random.int(0, 10); // Integer between 0 and 9
 random.pick(["a", "b"]); // Random item from array
-random.bool(0.7);        // Boolean with 70% true probability
+random.bool(0.7); // Boolean with 70% true probability
 random.shuffle([1,2,3]); // Shuffle array in place
 `} lang="ts"></Code>
 
@@ -169,7 +169,7 @@ The default color palette used by styles:
 import { DEFAULT_COLORS } from "@avatar-generator/core";
 
 // ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7",
-//  "#DDA0DD", "#98D8C8", "#F7DC6F", "#BB8FCE", "#85C1E9"]
+// "#DDA0DD", "#98D8C8", "#F7DC6F", "#BB8FCE", "#85C1E9"]
 `} lang="ts"></Code>
 
 ### SKIN_TONES
@@ -216,25 +216,32 @@ import {
 
 ### Style Interface
 
-<Code code={`
+<Code
+  code={`
 interface Style<T extends AvatarOptions = AvatarOptions> {
   name: string;
   create(options: T): AvatarResult;
 }
-`} lang="ts"></Code>
+`}
+  lang="ts"
+></Code>
 
 ### AvatarResult
 
-<Code code={`
+<Code
+  code={`
 interface AvatarResult {
   svg: string;
   toDataUri(): string;
 }
-`} lang="ts"></Code>
+`}
+  lang="ts"
+></Code>
 
 ### Random
 
-<Code code={`
+<Code
+  code={`
 interface Random {
   next(): number;
   int(min: number, max: number): number;
@@ -242,4 +249,6 @@ interface Random {
   bool(probability?: number): boolean;
   shuffle<T>(array: T[]): T[];
 }
-`} lang="ts"></Code>
+`}
+  lang="ts"
+></Code>

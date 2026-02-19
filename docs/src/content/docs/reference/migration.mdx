@@ -9,47 +9,54 @@ Version 2.0 introduces a new style-based architecture with SVG output. This guid
 
 ## Key Changes
 
-| v1 | v2 |
-|----|-----|
-| HTML element output | SVG string output |
-| Single initials style | 7 pluggable styles |
-| `name` prop | `seed` prop |
+| v1                     | v2                      |
+| ---------------------- | ----------------------- |
+| HTML element output    | SVG string output       |
+| Single initials style  | 7 pluggable styles      |
+| `name` prop            | `seed` prop             |
 | Styles bundled in core | Separate style packages |
 
 ## Installation Changes
 
 **v1:**
+
 <Code code={`npm install @avatar-generator/react`} lang="sh"></Code>
 
 **v2:**
-<Code code={`npm install @avatar-generator/react @avatar-generator/style-initials`} lang="sh"></Code>
+
+<Code
+  code={`npm install @avatar-generator/react @avatar-generator/style-initials`}
+  lang="sh"
+></Code>
 
 ## Core Package
 
 **v1:**
+
 <Code code={`
 import { createAvatar } from "@avatar-generator/core";
 
 const element = createAvatar({
-  name: "John Doe",
-  backgroundColor: "#4CAF50",
-  textColor: "#fff",
-  fontSize: "48px",
-  shape: "circle",
+name: "Hugo GB",
+backgroundColor: "#4CAF50",
+textColor: "#fff",
+fontSize: "48px",
+shape: "circle",
 });
 
 document.body.appendChild(element);
 `} lang="ts"></Code>
 
 **v2:**
+
 <Code code={`
 import { createAvatar } from "@avatar-generator/core";
 import { initials } from "@avatar-generator/style-initials";
 
 const avatar = createAvatar(initials, {
-  seed: "John Doe",
-  size: 100,
-  textColor: "#fff",
+seed: "Hugo GB",
+size: 100,
+textColor: "#fff",
 });
 
 // SVG output - use as image src
@@ -66,11 +73,12 @@ document.body.appendChild(div);
 ## React
 
 **v1:**
+
 <Code code={`
 import { Avatar } from "@avatar-generator/react";
 
 <Avatar
-  name="John Doe"
+  name="Hugo GB"
   backgroundColor="#4CAF50"
   textColor="#fff"
   shape="circle"
@@ -78,6 +86,7 @@ import { Avatar } from "@avatar-generator/react";
 `} lang="tsx"></Code>
 
 **v2:**
+
 <Code code={`
 import { Avatar } from "@avatar-generator/react";
 import { initials } from "@avatar-generator/style-initials";
@@ -85,27 +94,32 @@ import { initials } from "@avatar-generator/style-initials";
 <Avatar
   style={initials}
   options={{
-    seed: "John Doe",
+    seed: "Hugo GB",
     size: 64,
     textColor: "#fff",
   }}
-  alt="John Doe"
+  alt="Hugo GB"
 />
 `} lang="tsx"></Code>
 
 ## Angular
 
 **v1:**
-<Code code={`
+
+<Code
+  code={`
 <avatar-generator
-  [name]="'John Doe'"
+  [name]="'Hugo GB'"
   [backgroundColor]="'#4CAF50'"
   [textColor]="'#fff'"
   [shape]="'circle'"
 />
-`} lang="html"></Code>
+`}
+  lang="html"
+></Code>
 
 **v2:**
+
 <Code code={`
 // In component:
 import { initials } from "@avatar-generator/style-initials";
@@ -113,24 +127,24 @@ initialsStyle = initials;
 
 // In template:
 <avatar-generator
-  [style]="initialsStyle"
-  [options]="{ seed: 'John Doe', size: 64 }"
-  alt="John Doe"
+[style]="initialsStyle"
+[options]="{ seed: 'Hugo GB', size: 64 }"
+alt="Hugo GB"
 />
 `} lang="ts"></Code>
 
 ## Option Mapping
 
-| v1 Option | v2 Option | Notes |
-|-----------|-----------|-------|
-| `name` | `seed` | Used for generation |
-| `name` | `options.name` | For initials display (initials style only) |
-| `backgroundColor` | `colors` | Now an array for palette |
-| `textColor` | `options.textColor` | Initials style only |
-| `fontSize` | - | Calculated from `size` |
-| `shape: "circle"` | `square: false` | Default is circle |
-| `shape: "square"` | `square: true` | |
-| `width`/`height` | `size` | Single dimension (square) |
+| v1 Option         | v2 Option           | Notes                                      |
+| ----------------- | ------------------- | ------------------------------------------ |
+| `name`            | `seed`              | Used for generation                        |
+| `name`            | `options.name`      | For initials display (initials style only) |
+| `backgroundColor` | `colors`            | Now an array for palette                   |
+| `textColor`       | `options.textColor` | Initials style only                        |
+| `fontSize`        | -                   | Calculated from `size`                     |
+| `shape: "circle"` | `square: false`     | Default is circle                          |
+| `shape: "square"` | `square: true`      |                                            |
+| `width`/`height`  | `size`              | Single dimension (square)                  |
 
 ## Legacy Support
 
@@ -141,8 +155,8 @@ import { createAvatarElement } from "@avatar-generator/core";
 
 // Still works, but deprecated
 const element = createAvatarElement({
-  name: "John Doe",
-  backgroundColor: "#4CAF50",
+name: "Hugo GB",
+backgroundColor: "#4CAF50",
 });
 `} lang="ts"></Code>
 

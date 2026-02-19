@@ -18,9 +18,9 @@ import { AppComponent } from "./app.component";
 import { AvatarModule } from "@avatar-generator/angular";
 
 @NgModule({
-  declarations: [AppComponent],
-  imports: [BrowserModule, AvatarModule],
-  bootstrap: [AppComponent],
+declarations: [AppComponent],
+imports: [BrowserModule, AvatarModule],
+bootstrap: [AppComponent],
 })
 export class AppModule {}
 `} lang="ts"></Code>
@@ -32,18 +32,18 @@ import { Component } from "@angular/core";
 import { initials } from "@avatar-generator/style-initials";
 
 @Component({
-  selector: "app-user-profile",
-  template: \`
-    <avatar-generator
-      [style]="initialsStyle"
-      [options]="{ seed: user.id, name: user.name, size: 48 }"
-      [alt]="user.name"
-    />
-  \`,
+selector: "app-user-profile",
+template: \`
+<avatar-generator
+[style]="initialsStyle"
+[options]="{ seed: user.id, name: user.name, size: 48 }"
+[alt]="user.name"
+/>
+\`,
 })
 export class UserProfileComponent {
-  initialsStyle = initials;
-  user = { id: "user-123", name: "John Doe" };
+initialsStyle = initials;
+user = { id: "user-123", name: "Hugo GB" };
 }
 `} lang="ts"></Code>
 
@@ -60,29 +60,29 @@ import { illustrated } from "@avatar-generator/style-illustrated";
 import { anime } from "@avatar-generator/style-anime";
 
 @Component({
-  selector: "app-avatar-gallery",
-  template: \`
-    <div class="avatar-gallery">
-      <avatar-generator [style]="initialsStyle" [options]="options" alt="Initials" />
-      <avatar-generator [style]="geometricStyle" [options]="options" alt="Identicon" />
-      <avatar-generator [style]="pixelsStyle" [options]="options" alt="Pixel Faces" />
-      <avatar-generator [style]="ringsStyle" [options]="options" alt="Rings" />
-      <avatar-generator [style]="facesStyle" [options]="options" alt="Faces" />
-      <avatar-generator [style]="illustratedStyle" [options]="options" alt="Illustrated" />
-      <avatar-generator [style]="animeStyle" [options]="options" alt="Anime" />
-    </div>
-  \`,
+selector: "app-avatar-gallery",
+template: \`
+<div class="avatar-gallery">
+<avatar-generator [style]="initialsStyle" [options]="options" alt="Initials" />
+<avatar-generator [style]="geometricStyle" [options]="options" alt="Identicon" />
+<avatar-generator [style]="pixelsStyle" [options]="options" alt="Pixel Faces" />
+<avatar-generator [style]="ringsStyle" [options]="options" alt="Rings" />
+<avatar-generator [style]="facesStyle" [options]="options" alt="Faces" />
+<avatar-generator [style]="illustratedStyle" [options]="options" alt="Illustrated" />
+<avatar-generator [style]="animeStyle" [options]="options" alt="Anime" />
+</div>
+\`,
 })
 export class AvatarGalleryComponent {
-  initialsStyle = initials;
-  geometricStyle = geometric;
-  pixelsStyle = pixels;
-  ringsStyle = rings;
-  facesStyle = faces;
-  illustratedStyle = illustrated;
-  animeStyle = anime;
+initialsStyle = initials;
+geometricStyle = geometric;
+pixelsStyle = pixels;
+ringsStyle = rings;
+facesStyle = faces;
+illustratedStyle = illustrated;
+animeStyle = anime;
 
-  options = { seed: "user-123", size: 64 };
+options = { seed: "user-123", size: 64 };
 }
 `} lang="ts"></Code>
 
@@ -93,35 +93,35 @@ import { Component } from "@angular/core";
 import { geometric } from "@avatar-generator/style-geometric";
 
 @Component({
-  selector: "app-custom-avatar",
-  template: \`
-    <avatar-generator
-      [style]="geometricStyle"
-      [options]="avatarOptions"
-      alt="User avatar"
-    />
-  \`,
+selector: "app-custom-avatar",
+template: \`
+<avatar-generator
+[style]="geometricStyle"
+[options]="avatarOptions"
+alt="User avatar"
+/>
+\`,
 })
 export class CustomAvatarComponent {
-  geometricStyle = geometric;
+geometricStyle = geometric;
 
-  avatarOptions = {
-    seed: "user-123",
-    size: 96,
-    square: true,
-    colors: ["#FF6B6B", "#4ECDC4", "#45B7D1"],
-    border: { width: 2, color: "#333" },
-  };
+avatarOptions = {
+seed: "user-123",
+size: 96,
+square: true,
+colors: ["#FF6B6B", "#4ECDC4", "#45B7D1"],
+border: { width: 2, color: "#333" },
+};
 }
 `} lang="ts"></Code>
 
 ## Component Inputs
 
-| Input | Type | Description |
-|-------|------|-------------|
-| `style` | `Style<T>` | The avatar style to use (required) |
-| `options` | `T extends AvatarOptions` | Style-specific options (required) |
-| `alt` | `string` | Alt text for accessibility (default: "Avatar") |
+| Input     | Type                      | Description                                    |
+| --------- | ------------------------- | ---------------------------------------------- |
+| `style`   | `Style<T>`                | The avatar style to use (required)             |
+| `options` | `T extends AvatarOptions` | Style-specific options (required)              |
+| `alt`     | `string`                  | Alt text for accessibility (default: "Avatar") |
 
 ## Standalone Components
 
@@ -133,18 +133,18 @@ import { AvatarComponent } from "@avatar-generator/angular";
 import { initials } from "@avatar-generator/style-initials";
 
 @Component({
-  selector: "app-user-avatar",
-  standalone: true,
-  imports: [AvatarComponent],
-  template: \`
-    <avatar-generator
-      [style]="initialsStyle"
-      [options]="{ seed: userId, size: 48 }"
-    />
-  \`,
+selector: "app-user-avatar",
+standalone: true,
+imports: [AvatarComponent],
+template: \`
+<avatar-generator
+[style]="initialsStyle"
+[options]="{ seed: userId, size: 48 }"
+/>
+\`,
 })
 export class UserAvatarComponent {
-  initialsStyle = initials;
-  userId = "user-123";
+initialsStyle = initials;
+userId = "user-123";
 }
 `} lang="ts"></Code>

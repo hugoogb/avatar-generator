@@ -1,8 +1,8 @@
-import type { AvatarOptions, GeometricOptions, InitialsOptions, PixelsOptions, RingsOptions, FacesOptions, IllustratedOptions, AnimeOptions } from "@avatar-core/src";
+import type { AnimeOptions, AvatarOptions, FacesOptions, GeometricOptions, IllustratedOptions, InitialsOptions, PixelsOptions, RingsOptions } from "@avatar-core/src";
 
 // Test seeds for avatar generation
 export const TEST_SEEDS = [
-    "John Doe",
+    "Hugo GB
     "Jane Smith",
     "Josh Stanley",
     "Chris Evans",
@@ -20,7 +20,7 @@ export const BASE_OPTIONS: AvatarOptions = {
 
 // Initials style options
 export const INITIALS_OPTIONS: InitialsOptions[] = [
-    { seed: "John Doe", size: 80 },
+    { seed: "Hugo GB", size: 80 },
     { seed: "jane.smith@example.com", name: "Jane Smith", size: 64 },
     { seed: "user-123", name: "JS", size: 64, fontWeight: 700 },
     { seed: "Chris Evans", size: 100, square: true },
@@ -96,7 +96,7 @@ export const ANIME_OPTIONS: AnimeOptions[] = [
 // Legacy v1 options (for backwards compatibility testing)
 export const LEGACY_OPTIONS = [
     {
-        name: "John Doe",
+        name: "Hugo GB",
         backgroundColor: "#4CAF50",
         shape: "circle" as const,
         textColor: "#000",
