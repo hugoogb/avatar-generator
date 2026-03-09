@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com).
 
 ## [Unreleased]
 
+### v2.1.0 — Developer Experience Foundations
+
+#### Added
+
+- ESLint flat config with typescript-eslint for all TypeScript files
+- Prettier config matching existing code style
+- EditorConfig for consistent formatting across editors
+- Husky + lint-staged pre-commit hook (auto-lint and format staged files)
+- Root `package.json` with `lint`, `format`, and `check` scripts
+- `CONTRIBUTING.md` with setup, workflow, and code quality guide
+
+### v2.0.1 — Polish
+
+#### Changed
+
+- Replaced generic Starlight template `docs/README.md` with project-specific content
+
+#### Removed
+
+- Legacy v1 test data (`LEGACY_OPTIONS`) from `playgrounds/consts.ts`
+
 ## [2.0.0] - 2026-02-19
 
 ### Added

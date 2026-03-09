@@ -1,4 +1,4 @@
 packages:
-  - "packages/*"
-  - "lib/*"
-  - "lib/styles/*"
+    - "packages/*"
+    - "lib/*"
+    - "lib/styles/*"

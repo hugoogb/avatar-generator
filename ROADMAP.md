@@ -14,8 +14,8 @@ Fix synchronization issues between source, playgrounds, and documentation.
 
 ### Polish
 
-- [ ] Replace generic Starlight README in `docs/README.md`
-- [ ] Clean up legacy v1 test data in `playgrounds/consts.ts`
+- [x] Replace generic Starlight README in `docs/README.md`
+- [x] Clean up legacy v1 test data in `playgrounds/consts.ts`
 
 ---
 
@@ -25,19 +25,19 @@ Fix synchronization issues between source, playgrounds, and documentation.
 
 ### Code Quality
 
-- [ ] ESLint setup with shared config across all packages
-- [ ] Prettier setup with shared config
-- [ ] EditorConfig for consistent formatting across editors
+- [x] ESLint setup with shared config across all packages
+- [x] Prettier setup with shared config
+- [x] EditorConfig for consistent formatting across editors
 
 ### Git Hooks
 
-- [ ] Husky for git hook management
-- [ ] lint-staged for pre-commit linting and formatting
+- [x] Husky for git hook management
+- [x] lint-staged for pre-commit linting and formatting
 
 ### Contributing
 
-- [ ] CONTRIBUTING.md guide (setup, development workflow, PR process)
-- [ ] pnpm scripts: `lint`, `format`, `check` at root level
+- [x] CONTRIBUTING.md guide (setup, development workflow, PR process)
+- [x] pnpm scripts: `lint`, `format`, `check` at root level
 
 ---
 

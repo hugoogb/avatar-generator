@@ -1,17 +1,34 @@
 // Re-export types
 export type {
-  AnimeOptions, AvatarOptions, AvatarResult, FacesOptions, GeometricOptions,
-  IllustratedOptions, InitialsOptions, LegacyAvatarOptions, PixelsOptions,
-  Random, RingsOptions, Style
+    AnimeOptions,
+    AvatarOptions,
+    AvatarResult,
+    FacesOptions,
+    GeometricOptions,
+    IllustratedOptions,
+    InitialsOptions,
+    LegacyAvatarOptions,
+    PixelsOptions,
+    Random,
+    RingsOptions,
+    Style,
 } from "./types";
 
 // Re-export utilities
 export { createRandom } from "./random";
 export {
-  buildSvg, buildTransform, createBackground,
-  createBorder, createCircleClip,
-  createSquareClip, createSvgOpen, DEFAULT_COLORS,
-  escapeXml, EYE_COLORS, SKIN_TONES, wrapWithTransform
+    buildSvg,
+    buildTransform,
+    createBackground,
+    createBorder,
+    createCircleClip,
+    createSquareClip,
+    createSvgOpen,
+    DEFAULT_COLORS,
+    escapeXml,
+    EYE_COLORS,
+    SKIN_TONES,
+    wrapWithTransform,
 } from "./svg";
 
 import type { AvatarOptions, AvatarResult, LegacyAvatarOptions, Style } from "./types";
@@ -29,22 +46,19 @@ import type { AvatarOptions, AvatarResult, LegacyAvatarOptions, Style } from "./
  * // Use avatar.toDataUri() for img src
  * ```
  */
-export function createAvatar<T extends AvatarOptions>(
-  style: Style<T>,
-  options: T
-): AvatarResult {
-  // Apply defaults
-  const opts = {
-    size: 64,
-    square: false,
-    transparent: false,
-    rotate: 0,
-    flip: false,
-    scale: 1,
-    ...options,
-  } as T;
+export function createAvatar<T extends AvatarOptions>(style: Style<T>, options: T): AvatarResult {
+    // Apply defaults
+    const opts = {
+        size: 64,
+        square: false,
+        transparent: false,
+        rotate: 0,
+        flip: false,
+        scale: 1,
+        ...options,
+    } as T;
 
-  return style.create(opts);
+    return style.create(opts);
 }
 
 // ============================================================================
@@ -55,14 +69,14 @@ export function createAvatar<T extends AvatarOptions>(
  * @deprecated Use createAvatar with a Style instead
  */
 function getInitials(name: string): string {
-  if (!name.trim()) return "?";
+    if (!name.trim()) return "?";
 
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0].toUpperCase())
-    .join("");
+    return name
+        .split(" ")
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part[0].toUpperCase())
+        .join("");
 }
 
 /**
@@ -83,46 +97,45 @@ function getInitials(name: string): string {
  * ```
  */
 export function createAvatarElement({
-  name,
-  backgroundColor = "#ccc",
-  gradientDirection = "vertical",
-  textColor = "#fff",
-  fontSize = "40px",
-  shape = "circle",
-  width = "100px",
-  height = "100px",
-  tooltip = false,
-  additionalClasses = "",
+    name,
+    backgroundColor = "#ccc",
+    gradientDirection = "vertical",
+    textColor = "#fff",
+    fontSize = "40px",
+    shape = "circle",
+    width = "100px",
+    height = "100px",
+    tooltip = false,
+    additionalClasses = "",
 }: LegacyAvatarOptions): HTMLElement {
-  const initials = getInitials(name);
+    const initials = getInitials(name);
 
-  const avatar = document.createElement("div");
-  avatar.style.width = width;
-  avatar.style.height = height;
+    const avatar = document.createElement("div");
+    avatar.style.width = width;
+    avatar.style.height = height;
 
-  if (Array.isArray(backgroundColor)) {
-    const direction =
-      gradientDirection === "vertical" ? "to bottom" : "to right";
-    avatar.style.background = `linear-gradient(${direction}, ${backgroundColor.join(", ")})`;
-  } else {
-    avatar.style.backgroundColor = backgroundColor;
-  }
+    if (Array.isArray(backgroundColor)) {
+        const direction = gradientDirection === "vertical" ? "to bottom" : "to right";
+        avatar.style.background = `linear-gradient(${direction}, ${backgroundColor.join(", ")})`;
+    } else {
+        avatar.style.backgroundColor = backgroundColor;
+    }
 
-  avatar.style.color = textColor;
-  avatar.style.display = "flex";
-  avatar.style.justifyContent = "center";
-  avatar.style.alignItems = "center";
-  avatar.style.fontSize = fontSize;
-  avatar.style.borderRadius = shape === "circle" ? "50%" : "0";
-  avatar.textContent = initials;
+    avatar.style.color = textColor;
+    avatar.style.display = "flex";
+    avatar.style.justifyContent = "center";
+    avatar.style.alignItems = "center";
+    avatar.style.fontSize = fontSize;
+    avatar.style.borderRadius = shape === "circle" ? "50%" : "0";
+    avatar.textContent = initials;
 
-  if (tooltip) {
-    avatar.title = name;
-  }
+    if (tooltip) {
+        avatar.title = name;
+    }
 
-  if (additionalClasses) {
-    avatar.className = additionalClasses;
-  }
+    if (additionalClasses) {
+        avatar.className = additionalClasses;
+    }
 
-  return avatar;
+    return avatar;
 }

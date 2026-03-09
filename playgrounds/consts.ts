@@ -1,4 +1,13 @@
-import type { AnimeOptions, AvatarOptions, FacesOptions, GeometricOptions, IllustratedOptions, InitialsOptions, PixelsOptions, RingsOptions } from "@avatar-core/src";
+import type {
+    AnimeOptions,
+    AvatarOptions,
+    FacesOptions,
+    GeometricOptions,
+    IllustratedOptions,
+    InitialsOptions,
+    PixelsOptions,
+    RingsOptions,
+} from "@avatar-core/src";
 
 // Test seeds for avatar generation
 export const TEST_SEEDS = [
@@ -91,26 +100,4 @@ export const ANIME_OPTIONS: AnimeOptions[] = [
     { seed: "anime-5", size: 80, blush: true, ahoge: true },
     { seed: "anime-6", size: 80, hairStyle: "wild", eyeStyle: "determined" },
     { seed: "anime-7", size: 80, hairStyle: "hime-cut", mouthStyle: "small-smile", bangs: true },
-];
-
-// Legacy v1 options (for backwards compatibility testing)
-export const LEGACY_OPTIONS = [
-    {
-        name: "Hugo GB",
-        backgroundColor: "#4CAF50",
-        shape: "circle" as const,
-        textColor: "#000",
-        fontSize: "30px",
-        width: "120px",
-        height: "120px",
-        tooltip: true,
-    },
-    {
-        name: "Jane Smith",
-        backgroundColor: ["#2196F3", "#21CBF3"],
-        textColor: "#fff",
-        fontSize: "40px",
-        width: "100px",
-        height: "100px",
-    },
 ];

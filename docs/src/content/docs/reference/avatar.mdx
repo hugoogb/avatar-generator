@@ -96,15 +96,15 @@ For `@avatar-generator/style-rings`:
 
 For `@avatar-generator/style-faces`:
 
-| Option         | Type       | Default      | Description                                                                                         |
-| -------------- | ---------- | ------------ | --------------------------------------------------------------------------------------------------- |
-| `skinTones`    | `string[]` | `SKIN_TONES` | Custom skin tone palette                                                                            |
-| `featureColor` | `string`   | `"#2C1810"`  | Override feature color                                                                              |
-| `eyebrows`     | `boolean`  | `true`       | Enable eyebrows (50% chance)                                                                        |
-| `ears`         | `boolean`  | `true`       | Enable ears (40% chance)                                                                            |
-| `nose`         | `boolean`  | `true`       | Enable nose (30% chance)                                                                            |
-| `mouthStyle`   | `string`   | (random)     | Override mouth: `"line"`, `"rect-smile"`, `"open-rect"`, `"zigzag"`, `"dot"`                                        |
-| `eyeStyle`     | `string`   | (random)     | Override eyes: `"dots"`, `"rectangles"`, `"lines"`, `"round"`                                                       |
+| Option         | Type       | Default      | Description                                                                                                      |
+| -------------- | ---------- | ------------ | ---------------------------------------------------------------------------------------------------------------- |
+| `skinTones`    | `string[]` | `SKIN_TONES` | Custom skin tone palette                                                                                         |
+| `featureColor` | `string`   | `"#2C1810"`  | Override feature color                                                                                           |
+| `eyebrows`     | `boolean`  | `true`       | Enable eyebrows (50% chance)                                                                                     |
+| `ears`         | `boolean`  | `true`       | Enable ears (40% chance)                                                                                         |
+| `nose`         | `boolean`  | `true`       | Enable nose (30% chance)                                                                                         |
+| `mouthStyle`   | `string`   | (random)     | Override mouth: `"line"`, `"rect-smile"`, `"open-rect"`, `"zigzag"`, `"dot"`                                     |
+| `eyeStyle`     | `string`   | (random)     | Override eyes: `"dots"`, `"rectangles"`, `"lines"`, `"round"`                                                    |
 | `hairStyle`    | `string`   | (random)     | Override hair: `"none"`, `"flat-top"`, `"cap"`, `"side-swept"`, `"spiky"`, `"round-top"`, `"mohawk"`, `"beanie"` |
 
 ### IllustratedOptions
@@ -217,31 +217,31 @@ import {
 ### Style Interface
 
 <Code
-  code={`
+    code={`
 interface Style<T extends AvatarOptions = AvatarOptions> {
   name: string;
   create(options: T): AvatarResult;
 }
 `}
-  lang="ts"
+    lang="ts"
 ></Code>
 
 ### AvatarResult
 
 <Code
-  code={`
+    code={`
 interface AvatarResult {
   svg: string;
   toDataUri(): string;
 }
 `}
-  lang="ts"
+    lang="ts"
 ></Code>
 
 ### Random
 
 <Code
-  code={`
+    code={`
 interface Random {
   next(): number;
   int(min: number, max: number): number;
@@ -250,5 +250,5 @@ interface Random {
   shuffle<T>(array: T[]): T[];
 }
 `}
-  lang="ts"
+    lang="ts"
 ></Code>

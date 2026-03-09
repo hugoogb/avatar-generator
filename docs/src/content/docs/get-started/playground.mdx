@@ -20,25 +20,22 @@ You can also run the playground locally with the full package:
 
 1. Clone the project
 
-   <Code
-     code={`git clone https://github.com/hugoogb/avatar-generator.git`}
-     lang="sh"
-   ></Code>
+    <Code code={`git clone https://github.com/hugoogb/avatar-generator.git`} lang="sh"></Code>
 
 2. Install dependencies
 
-   <Code code={`cd avatar-generator && pnpm install`} lang="sh"></Code>
+    <Code code={`cd avatar-generator && pnpm install`} lang="sh"></Code>
 
 3. Run the playground
 
-   <Tabs syncKey="library">
-     <TabItem id="core" label="core">
-       <Code code={`pnpm playground:core`} lang="sh"></Code>
-     </TabItem>
-     <TabItem id="react" label="react">
-       <Code code={`pnpm playground:react`} lang="sh"></Code>
-     </TabItem>
-   </Tabs>
+    <Tabs syncKey="library">
+        <TabItem id="core" label="core">
+            <Code code={`pnpm playground:core`} lang="sh"></Code>
+        </TabItem>
+        <TabItem id="react" label="react">
+            <Code code={`pnpm playground:react`} lang="sh"></Code>
+        </TabItem>
+    </Tabs>
 
 4. Open your browser to the URL shown in the terminal
 
@@ -46,14 +43,14 @@ You can also run the playground locally with the full package:
 
 ## Available Styles
 
-| Style | Package | Description |
-|-------|---------|-------------|
-| Initials | `@avatar-generator/style-initials` | Letter initials on colored backgrounds |
-| Identicon | `@avatar-generator/style-geometric` | GitHub-style symmetrical 5x5 grid patterns |
-| Pixel Faces | `@avatar-generator/style-pixels` | 8-bit retro faces with eyes, mouth, and hair |
-| Rings | `@avatar-generator/style-rings` | Concentric rings with segmented/dashed variants |
-| Faces | `@avatar-generator/style-faces` | Minimal flat geometric faces |
-| Illustrated | `@avatar-generator/style-illustrated` | Detailed cartoon faces with accessories |
-| Anime | `@avatar-generator/style-anime` | Anime/manga-inspired faces with expressive eyes |
+| Style       | Package                               | Description                                     |
+| ----------- | ------------------------------------- | ----------------------------------------------- |
+| Initials    | `@avatar-generator/style-initials`    | Letter initials on colored backgrounds          |
+| Identicon   | `@avatar-generator/style-geometric`   | GitHub-style symmetrical 5x5 grid patterns      |
+| Pixel Faces | `@avatar-generator/style-pixels`      | 8-bit retro faces with eyes, mouth, and hair    |
+| Rings       | `@avatar-generator/style-rings`       | Concentric rings with segmented/dashed variants |
+| Faces       | `@avatar-generator/style-faces`       | Minimal flat geometric faces                    |
+| Illustrated | `@avatar-generator/style-illustrated` | Detailed cartoon faces with accessories         |
+| Anime       | `@avatar-generator/style-anime`       | Anime/manga-inspired faces with expressive eyes |
 
 Each style produces unique, deterministic avatars based on the seed you provide.

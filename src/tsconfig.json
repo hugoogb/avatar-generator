@@ -1,36 +1,36 @@
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "esModuleInterop": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "baseUrl": ".",
-    "paths": {
-      "@avatar-generator/core": ["./lib/core/src"],
-      "@avatar-generator/react": ["./packages/react/src"],
-      "@avatar-generator/angular": ["./packages/angular/src"],
-      "@avatar-generator/style-initials": ["./lib/styles/initials/src"],
-      "@avatar-generator/style-geometric": ["./lib/styles/geometric/src"],
-      "@avatar-generator/style-pixels": ["./lib/styles/pixels/src"],
-      "@avatar-generator/style-rings": ["./lib/styles/rings/src"],
-      "@avatar-generator/style-faces": ["./lib/styles/faces/src"],
-      "@avatar-generator/style-illustrated": ["./lib/styles/illustrated/src"],
-      "@avatar-generator/style-anime": ["./lib/styles/anime/src"]
-    }
-  },
-  "references": [
-    { "path": "./lib/core" },
-    { "path": "./lib/styles/initials" },
-    { "path": "./lib/styles/geometric" },
-    { "path": "./lib/styles/pixels" },
-    { "path": "./lib/styles/rings" },
-    { "path": "./lib/styles/faces" },
-    { "path": "./lib/styles/illustrated" },
-    { "path": "./lib/styles/anime" },
-    { "path": "./packages/react" },
-    { "path": "./packages/angular" }
-  ],
-  "files": []
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "esModuleInterop": true,
+        "strict": true,
+        "skipLibCheck": true,
+        "baseUrl": ".",
+        "paths": {
+            "@avatar-generator/core": ["./lib/core/src"],
+            "@avatar-generator/react": ["./packages/react/src"],
+            "@avatar-generator/angular": ["./packages/angular/src"],
+            "@avatar-generator/style-initials": ["./lib/styles/initials/src"],
+            "@avatar-generator/style-geometric": ["./lib/styles/geometric/src"],
+            "@avatar-generator/style-pixels": ["./lib/styles/pixels/src"],
+            "@avatar-generator/style-rings": ["./lib/styles/rings/src"],
+            "@avatar-generator/style-faces": ["./lib/styles/faces/src"],
+            "@avatar-generator/style-illustrated": ["./lib/styles/illustrated/src"],
+            "@avatar-generator/style-anime": ["./lib/styles/anime/src"]
+        }
+    },
+    "references": [
+        { "path": "./lib/core" },
+        { "path": "./lib/styles/initials" },
+        { "path": "./lib/styles/geometric" },
+        { "path": "./lib/styles/pixels" },
+        { "path": "./lib/styles/rings" },
+        { "path": "./lib/styles/faces" },
+        { "path": "./lib/styles/illustrated" },
+        { "path": "./lib/styles/anime" },
+        { "path": "./packages/react" },
+        { "path": "./packages/angular" }
+    ],
+    "files": []
 }

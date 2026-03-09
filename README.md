@@ -21,8 +21,8 @@ import { createAvatar } from "@avatar-generator/core";
 import { initials } from "@avatar-generator/style-initials";
 
 const avatar = createAvatar(initials, {
-  seed: "john.doe@example.com",
-  size: 64,
+    seed: "john.doe@example.com",
+    size: 64,
 });
 
 // Use the SVG
@@ -31,15 +31,15 @@ img.src = avatar.toDataUri();
 
 ## Available Styles
 
-| Style | Package | Description |
-|-------|---------|-------------|
-| Initials | `@avatar-generator/style-initials` | Letter initials on colored backgrounds |
-| Geometric | `@avatar-generator/style-geometric` | Grid-based shapes |
-| Pixels | `@avatar-generator/style-pixels` | Retro pixel art |
-| Rings | `@avatar-generator/style-rings` | Concentric colored rings |
-| Faces | `@avatar-generator/style-faces` | Minimal flat geometric faces |
-| Illustrated | `@avatar-generator/style-illustrated` | Detailed cartoon faces with accessories |
-| Anime | `@avatar-generator/style-anime` | Anime/manga-inspired faces with expressive eyes |
+| Style       | Package                               | Description                                     |
+| ----------- | ------------------------------------- | ----------------------------------------------- |
+| Initials    | `@avatar-generator/style-initials`    | Letter initials on colored backgrounds          |
+| Geometric   | `@avatar-generator/style-geometric`   | Grid-based shapes                               |
+| Pixels      | `@avatar-generator/style-pixels`      | Retro pixel art                                 |
+| Rings       | `@avatar-generator/style-rings`       | Concentric colored rings                        |
+| Faces       | `@avatar-generator/style-faces`       | Minimal flat geometric faces                    |
+| Illustrated | `@avatar-generator/style-illustrated` | Detailed cartoon faces with accessories         |
+| Anime       | `@avatar-generator/style-anime`       | Anime/manga-inspired faces with expressive eyes |
 
 ## Framework Packages
 
@@ -60,10 +60,10 @@ cd avatar-generator/playgrounds
 pnpm install
 ```
 
-| Package | Command |
-|---------|---------|
-| Core | `pnpm playground:core` |
-| React | `pnpm playground:react` |
+| Package | Command                 |
+| ------- | ----------------------- |
+| Core    | `pnpm playground:core`  |
+| React   | `pnpm playground:react` |
 
 ## License
 

@@ -1,26 +1,31 @@
 {
-  "name": "@avatar-generator/react",
-  "version": "2.0.0",
-  "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/types/index.d.ts",
-  "sideEffects": false,
-  "scripts": {
-    "build": "tsc",
-    "prepublishOnly": "npm run build"
-  },
-  "peerDependencies": {
-    "@avatar-generator/core": "^2.0.0",
-    "react": "^18.0.0 || ^19.0.0"
-  },
-  "devDependencies": {
-    "@avatar-generator/core": "workspace:*",
-    "@types/react": "^19.0.2",
-    "react": "^19.0.0"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "keywords": ["avatar", "react", "svg", "component"],
-  "license": "MIT"
+    "name": "@avatar-generator/react",
+    "version": "2.0.0",
+    "type": "module",
+    "main": "dist/index.js",
+    "types": "dist/types/index.d.ts",
+    "sideEffects": false,
+    "scripts": {
+        "build": "tsc",
+        "prepublishOnly": "npm run build"
+    },
+    "peerDependencies": {
+        "@avatar-generator/core": "^2.0.0",
+        "react": "^18.0.0 || ^19.0.0"
+    },
+    "devDependencies": {
+        "@avatar-generator/core": "workspace:*",
+        "@types/react": "^19.0.2",
+        "react": "^19.0.0"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "keywords": [
+        "avatar",
+        "react",
+        "svg",
+        "component"
+    ],
+    "license": "MIT"
 }
