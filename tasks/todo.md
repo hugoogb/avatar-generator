@@ -4,19 +4,19 @@
 
 ### 1. React playground missing Anime style
 - **File**: `playgrounds/react/main.tsx`
-- **Status**: [ ] Fixed
+- **Status**: [x] Fixed
 - **Problem**: Core playground has all 7 styles (including anime), but React playground only imports and renders 6 styles
 - **Fix**: Add `anime` import from `@avatar-style-anime/src`, import `ANIME_OPTIONS` from consts, add `<StyleSection>` for Anime
 
 ### 2. Docs interactive Playground missing Anime
 - **File**: `docs/src/components/Playground.astro`
-- **Status**: [ ] Fixed
+- **Status**: [x] Fixed
 - **Problem**: Comment says "Shows all 6 avatar styles" (should be 7). Only 6 style cards rendered — no Anime card, no `generateAnime` function, no `preview-anime` in the `previews` map
 - **Fix**: Update comment to 7, add Anime style card HTML, add `generateAnime` function, add `preview-anime` to previews map
 
 ### 3. Docs FacesOptions lists WRONG style values
 - **File**: `docs/src/content/docs/reference/avatar.mdx` (lines 106-108)
-- **Status**: [ ] Fixed
+- **Status**: [x] Fixed
 - **Problem**: Documentation lists incorrect option values for Faces style that don't match the actual implementation
   - `hairStyle` docs: `"none"`, `"short"`, `"flat"`, `"parted"`, `"long"`, `"curly"`, `"mohawk"`, `"buzz"`
   - `hairStyle` actual: `"none"`, `"flat-top"`, `"cap"`, `"side-swept"`, `"spiky"`, `"round-top"`, `"mohawk"`, `"beanie"`
@@ -28,7 +28,7 @@
 
 ### 4. Playground consts use wrong Faces values
 - **File**: `playgrounds/consts.ts` (lines 66-67)
-- **Status**: [ ] Fixed
+- **Status**: [x] Fixed
 - **Problem**: Test data uses values from the Illustrated style instead of valid Faces values
   - `hairStyle: "curly"` — not a valid Faces hair style
   - `eyeStyle: "happy"` — not a valid Faces eye style
@@ -40,7 +40,7 @@
 
 ### 5. Syntax issue in consts.ts
 - **File**: `playgrounds/consts.ts` (line 5)
-- **Status**: [ ] Fixed
+- **Status**: [x] Fixed
 - **Problem**: `"Hugo GB` is missing closing `",`
 - **Fix**: Change to `"Hugo GB",`
 
