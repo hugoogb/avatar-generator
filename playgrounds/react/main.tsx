@@ -5,6 +5,7 @@ import { pixels } from "@avatar-style-pixels/src";
 import { rings } from "@avatar-style-rings/src";
 import { faces } from "@avatar-style-faces/src";
 import { illustrated } from "@avatar-style-illustrated/src";
+import { anime } from "@avatar-style-anime/src";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
 import {
@@ -14,6 +15,7 @@ import {
   RINGS_OPTIONS,
   FACES_OPTIONS,
   ILLUSTRATED_OPTIONS,
+  ANIME_OPTIONS,
 } from "../consts";
 
 const StyleSection = ({
@@ -79,6 +81,8 @@ const App = () => {
         style={illustrated}
         options={ILLUSTRATED_OPTIONS}
       />
+
+      <StyleSection title="Anime" style={anime} options={ANIME_OPTIONS} />
     </div>
   );
 };

@@ -1,7 +1,7 @@
 ---
 /**
  * Interactive Playground Component for Avatar Generator
- * Shows all 6 avatar styles with live preview
+ * Shows all 7 avatar styles with live preview
  */
 ---
 
@@ -65,6 +65,12 @@
       <h4>Illustrated</h4>
       <div class="avatar-preview" id="preview-illustrated"></div>
       <code>@avatar-generator/style-illustrated</code>
+    </div>
+
+    <div class="style-card">
+      <h4>Anime</h4>
+      <div class="avatar-preview" id="preview-anime"></div>
+      <code>@avatar-generator/style-anime</code>
     </div>
   </div>
 
@@ -434,6 +440,58 @@
     return svgWrap(size, square, transparent, bg, content);
   };
 
+  const ANIME_HAIR_COLORS = [
+    '#1a1a2e', '#2d1b36', '#4a1942', '#c23616', '#e17055',
+    '#0984e3', '#6c5ce7', '#fd79a8', '#ffeaa7', '#dfe6e9',
+  ];
+
+  const generateAnime: GenFn = (seed, size, square, transparent) => {
+    const rng = createRandom(seed);
+    const bg = rng.pick(DEFAULT_COLORS);
+    const skinColor = rng.pick(SKIN_TONES);
+    const hairColor = rng.pick(ANIME_HAIR_COLORS);
+    const eyeColor = rng.pick(['#634E34', '#2E536F', '#3D6B45', '#0984e3', '#6c5ce7']);
+    const feat = '#2C1810';
+    const cx = size * 0.5;
+    const cy = size * 0.5;
+    const headW = size * 0.58;
+    const headH = size * 0.68;
+    const eyeY = cy - headH * 0.02;
+    const eyeSpacing = headW * 0.2;
+    const mouthY = cy + headH * 0.25;
+    const top = cy - headH / 2;
+
+    let content = '';
+    // Hair behind
+    const hairW = headW * 0.7;
+    content += `<path d="M ${cx - hairW} ${cy} Q ${cx - hairW - 2} ${top - 14} ${cx} ${top - 12} Q ${cx + hairW + 2} ${top - 14} ${cx + hairW} ${cy}" fill="${hairColor}"/>`;
+    // Head (slightly pointed chin for anime look)
+    content += `<ellipse cx="${cx}" cy="${cy - headH * 0.05}" rx="${headW / 2}" ry="${headH / 2}" fill="${skinColor}"/>`;
+    // Big anime eyes
+    const lx = cx - eyeSpacing;
+    const rx = cx + eyeSpacing;
+    const eyeRx = size * 0.06;
+    const eyeRy = size * 0.08;
+    content += `<ellipse cx="${lx}" cy="${eyeY}" rx="${eyeRx}" ry="${eyeRy}" fill="white"/>`;
+    content += `<ellipse cx="${lx}" cy="${eyeY + 1}" rx="${eyeRx * 0.65}" ry="${eyeRy * 0.7}" fill="${eyeColor}"/>`;
+    content += `<ellipse cx="${lx - 1}" cy="${eyeY - 1}" rx="1.5" ry="1.5" fill="white"/>`;
+    content += `<ellipse cx="${rx}" cy="${eyeY}" rx="${eyeRx}" ry="${eyeRy}" fill="white"/>`;
+    content += `<ellipse cx="${rx}" cy="${eyeY + 1}" rx="${eyeRx * 0.65}" ry="${eyeRy * 0.7}" fill="${eyeColor}"/>`;
+    content += `<ellipse cx="${rx - 1}" cy="${eyeY - 1}" rx="1.5" ry="1.5" fill="white"/>`;
+    // Small mouth
+    content += `<path d="M ${cx - 3} ${mouthY} Q ${cx} ${mouthY + 3} ${cx + 3} ${mouthY}" fill="none" stroke="${feat}" stroke-width="1" stroke-linecap="round"/>`;
+    // Blush
+    if (rng.bool(0.5)) {
+      const blushY = cy + headH * 0.12;
+      content += `<ellipse cx="${lx - 2}" cy="${blushY}" rx="4" ry="2.5" fill="#FF6B6B" opacity="0.25"/>`;
+      content += `<ellipse cx="${rx + 2}" cy="${blushY}" rx="4" ry="2.5" fill="#FF6B6B" opacity="0.25"/>`;
+    }
+    // Hair bangs on top
+    content += `<path d="M ${cx - headW / 2 - 2} ${top + headH * 0.15} Q ${cx - headW * 0.25} ${top - 6} ${cx} ${top - 8} Q ${cx + headW * 0.25} ${top - 6} ${cx + headW / 2 + 2} ${top + headH * 0.15}" fill="${hairColor}"/>`;
+
+    return svgWrap(size, square, transparent, bg, content);
+  };
+
   function updatePreviews() {
     const seedInput = document.getElementById('seed-input') as HTMLInputElement;
     const sizeInput = document.getElementById('size-input') as HTMLInputElement;
@@ -455,6 +513,7 @@
       'preview-rings': generateRings,
       'preview-faces': generateFaces,
       'preview-illustrated': generateIllustrated,
+      'preview-anime': generateAnime,
     };
 
     for (const [id, generator] of Object.entries(previews)) {

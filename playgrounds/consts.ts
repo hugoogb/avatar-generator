@@ -2,7 +2,7 @@ import type { AnimeOptions, AvatarOptions, FacesOptions, GeometricOptions, Illus
 
 // Test seeds for avatar generation
 export const TEST_SEEDS = [
-    "Hugo GB
+    "Hugo GB",
     "Jane Smith",
     "Josh Stanley",
     "Chris Evans",
@@ -63,8 +63,8 @@ export const RINGS_OPTIONS: RingsOptions[] = [
 // Faces style options
 export const FACES_OPTIONS: FacesOptions[] = [
     { seed: "face-1", size: 80 },
-    { seed: "face-2", size: 64, hairStyle: "curly" },
-    { seed: "face-3", size: 80, eyeStyle: "happy", mouthStyle: "smile" },
+    { seed: "face-2", size: 64, hairStyle: "side-swept" },
+    { seed: "face-3", size: 80, eyeStyle: "round", mouthStyle: "rect-smile" },
     { seed: "face-4", size: 100, square: true },
     { seed: "face-5", size: 64, eyebrows: false, ears: false },
     { seed: "face-6", size: 80, featureColor: "#1a1a2e" },
