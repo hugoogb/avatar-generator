@@ -48,16 +48,35 @@ export {
 import type { AvatarOptions, AvatarResult, LegacyAvatarOptions, Style } from "./types";
 
 /**
- * Creates an avatar using the specified style
+ * Generates a deterministic SVG avatar using a style implementation.
  *
- * @example
+ * The output is determined entirely by `options.seed`: the same seed and the
+ * same style always produce byte-identical SVG. Default visual options
+ * (size=64, circular shape, opaque background, no transform) are merged in
+ * automatically; caller-supplied values in `options` take precedence.
+ *
+ * @typeParam T - The style-specific options shape, extending {@link AvatarOptions}
+ * @param style - A {@link Style} implementation (e.g. `initials`, `faces`, `anime`)
+ * @param options - Seed and style-specific settings
+ * @returns An {@link AvatarResult} containing the SVG string and a `toDataUri` helper
+ *
+ * @example Basic usage with the initials style
  * ```ts
  * import { createAvatar } from '@avatar-generator/core';
  * import { initials } from '@avatar-generator/style-initials';
  *
  * const avatar = createAvatar(initials, { seed: 'Hugo GB' });
- * // Use avatar.svg for the SVG string
- * // Use avatar.toDataUri() for img src
+ * img.src = avatar.toDataUri();
+ * ```
+ *
+ * @example Custom size, palette, and border
+ * ```ts
+ * createAvatar(faces, {
+ *   seed: 'user-42',
+ *   size: 128,
+ *   colors: ['#FF6B6B', '#4ECDC4'],
+ *   border: { width: 2, color: '#000' },
+ * });
  * ```
  */
 export function createAvatar<T extends AvatarOptions>(style: Style<T>, options: T): AvatarResult {

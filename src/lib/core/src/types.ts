@@ -1,26 +1,44 @@
 /**
- * Seeded random number generator interface
+ * Seeded random number generator used by every avatar style.
+ *
+ * All methods advance the sequence: calling the same method twice yields
+ * different values. Two generators created from the same seed emit
+ * identical sequences, which is the foundation of deterministic output.
+ *
+ * @see createRandom
  */
 export interface Random {
-    /** Returns a random float between 0 (inclusive) and 1 (exclusive) */
+    /** Returns the next random float in `[0, 1)`. */
     next(): number;
-    /** Returns a random integer between min (inclusive) and max (exclusive) */
+    /** Returns a random integer in `[min, max)`. */
     int(min: number, max: number): number;
-    /** Returns a random item from an array */
+    /**
+     * Returns a random element from `array`.
+     * @throws If `array` is empty.
+     */
     pick<T>(array: T[]): T;
-    /** Returns a random boolean with optional probability (default 0.5) */
+    /**
+     * Returns `true` with the given probability, `false` otherwise.
+     * @param probability - A number in `[0, 1]`. Defaults to `0.5`.
+     */
     bool(probability?: number): boolean;
-    /** Shuffles an array in place and returns it */
+    /**
+     * Shuffles `array` in place (Fisher-Yates) and returns it.
+     * @remarks Mutates the input array.
+     */
     shuffle<T>(array: T[]): T[];
 }
 
 /**
- * Avatar result containing the generated SVG
+ * The output of {@link createAvatar}: a raw SVG string plus a data URI helper.
  */
 export interface AvatarResult {
-    /** The generated SVG string */
+    /** The complete SVG markup, ready to insert into the DOM. */
     svg: string;
-    /** Convert to data URI for use in img src */
+    /**
+     * Returns the SVG as a `data:image/svg+xml;base64,…` URI suitable for
+     * assigning directly to an `<img>` element's `src` attribute.
+     */
     toDataUri(): string;
 }
 
@@ -230,12 +248,18 @@ export interface AnimeOptions extends AvatarOptions {
 }
 
 /**
- * Style definition interface - each style implements this
+ * Contract implemented by every avatar style package.
+ *
+ * Consumers typically never construct a `Style` directly; they import one of
+ * the bundled implementations (`initials`, `faces`, `anime`, etc.) and pass it
+ * to {@link createAvatar}. Authors of custom styles implement this interface.
+ *
+ * @typeParam T - The style's options shape, extending {@link AvatarOptions}
  */
 export interface Style<T extends AvatarOptions = AvatarOptions> {
-    /** Unique style identifier */
+    /** Unique, human-readable style identifier (e.g. `"initials"`). */
     name: string;
-    /** Generate an avatar with the given options */
+    /** Produces an {@link AvatarResult} from the given options. */
     create(options: T): AvatarResult;
 }
 

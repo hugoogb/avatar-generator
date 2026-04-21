@@ -118,7 +118,17 @@ export function wrapWithTransform(content: string, options: AvatarOptions): stri
 }
 
 /**
- * Creates a complete SVG avatar from content
+ * Wraps style-generated content into a complete SVG document with the right
+ * viewBox, clip path (circle or square), background, transform group, and
+ * optional border.
+ *
+ * Intended for style authors: call this at the end of your `create(options)`
+ * implementation after building the inner content string.
+ *
+ * @param content - Raw SVG children produced by the style (no outer `<svg>`)
+ * @param options - Base avatar options (seed, size, shape, transforms, border)
+ * @param backgroundColor - Fill color for the background rectangle
+ * @returns An {@link AvatarResult} with the assembled SVG string
  */
 export function buildSvg(content: string, options: AvatarOptions, backgroundColor: string): AvatarResult {
     const size = options.size ?? 64;

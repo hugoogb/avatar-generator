@@ -36,8 +36,22 @@ function mulberry32(seed: number): () => number {
 }
 
 /**
- * Creates a deterministic random number generator from a string seed
- * Same seed always produces the same sequence of numbers
+ * Creates a deterministic random number generator from a string seed.
+ *
+ * The seed is hashed (cyrb53) into a 53-bit integer and fed into a
+ * Mulberry32 PRNG. The returned {@link Random} is stateful: each call to
+ * `next`, `int`, `pick`, `bool`, or `shuffle` advances the sequence. Two
+ * generators created with the same seed emit identical sequences, which is
+ * what makes every avatar style reproducible from its seed.
+ *
+ * @param seed - Any string; typically a user ID, email, or username
+ * @returns A seeded {@link Random} generator
+ *
+ * @example
+ * ```ts
+ * const rng = createRandom('Hugo GB');
+ * rng.pick(['red', 'green', 'blue']); // always the same color for 'Hugo GB'
+ * ```
  */
 export function createRandom(seed: string): Random {
     const numericSeed = hashSeed(seed);
