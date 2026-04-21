@@ -20,6 +20,7 @@ import {
 import { CENTER_STYLES } from "@avatar-generator/style-rings";
 import { COMPOSITIONS as ABSTRACT_COMPOSITIONS } from "@avatar-generator/style-abstract";
 import { EXPRESSIONS as EMOJI_EXPRESSIONS } from "@avatar-generator/style-emoji";
+import { ANIMALS } from "@avatar-generator/style-animals";
 
 describe("exported style constants", () => {
     const suites: Array<[string, unknown[], number]> = [
@@ -38,6 +39,7 @@ describe("exported style constants", () => {
         ["rings CENTER_STYLES", CENTER_STYLES, 5],
         ["abstract COMPOSITIONS", ABSTRACT_COMPOSITIONS, 3],
         ["emoji EXPRESSIONS", EMOJI_EXPRESSIONS, 10],
+        ["animals ANIMALS", ANIMALS, 8],
     ];
 
     it.each(suites)("%s has the expected number of entries", (_name, arr, count) => {

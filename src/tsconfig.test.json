@@ -19,7 +19,8 @@
             "@avatar-generator/style-illustrated": ["./lib/styles/illustrated/src/index.ts"],
             "@avatar-generator/style-anime": ["./lib/styles/anime/src/index.ts"],
             "@avatar-generator/style-abstract": ["./lib/styles/abstract/src/index.ts"],
-            "@avatar-generator/style-emoji": ["./lib/styles/emoji/src/index.ts"]
+            "@avatar-generator/style-emoji": ["./lib/styles/emoji/src/index.ts"],
+            "@avatar-generator/style-animals": ["./lib/styles/animals/src/index.ts"]
         }
     },
     "include": ["lib/**/test/**/*.test.ts", "packages/**/test/**/*.test.ts", "vitest.config.mts"]
