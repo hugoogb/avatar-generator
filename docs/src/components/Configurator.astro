@@ -1,0 +1,393 @@
+---
+/**
+ * Interactive single-style configurator: pick a style, adjust its options via
+ * form controls, see the generated SVG update live, and copy the exact
+ * createAvatar() call for the current configuration.
+ */
+---
+
+<div class="cfg">
+    <div class="cfg-controls">
+        <div class="cfg-row">
+            <label>Style
+                <select id="cfg-style">
+                    <option value="initials">Initials</option>
+                    <option value="geometric">Geometric</option>
+                    <option value="pixels">Pixels</option>
+                    <option value="rings">Rings</option>
+                    <option value="faces">Faces</option>
+                    <option value="illustrated">Illustrated</option>
+                    <option value="anime">Anime</option>
+                    <option value="abstract">Abstract</option>
+                    <option value="emoji">Emoji</option>
+                    <option value="animals">Animals</option>
+                    <option value="gradient">Gradient</option>
+                </select>
+            </label>
+
+            <label>Seed
+                <input id="cfg-seed" type="text" value="Hugo GB"/>
+            </label>
+
+            <label>Size
+                <input id="cfg-size" type="range" min="32" max="200" value="96"/>
+                <span id="cfg-size-value">96</span>
+            </label>
+        </div>
+
+        <div class="cfg-row cfg-base-options">
+            <label><input id="cfg-square" type="checkbox"/> Square</label>
+            <label><input id="cfg-transparent" type="checkbox"/> Transparent</label>
+        </div>
+
+        <div class="cfg-row cfg-style-options" id="cfg-style-options"></div>
+    </div>
+
+    <div class="cfg-preview">
+        <div id="cfg-preview"></div>
+        <pre class="cfg-code"><code id="cfg-code"></code></pre>
+    </div>
+</div>
+
+<style>
+    .cfg {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+        background: var(--sl-color-gray-6);
+        padding: 1.25rem;
+        border-radius: 0.5rem;
+    }
+    @media (max-width: 720px) { .cfg { grid-template-columns: 1fr; } }
+    .cfg-row { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin-bottom: 0.75rem; }
+    .cfg-row label { display: flex; flex-direction: column; font-size: 0.85rem; gap: 0.3rem; }
+    .cfg-base-options label { flex-direction: row; align-items: center; gap: 0.4rem; }
+    .cfg select, .cfg input[type="text"] {
+        padding: 0.35rem 0.55rem;
+        border-radius: 0.25rem;
+        border: 1px solid var(--sl-color-gray-4);
+        background: var(--sl-color-gray-7);
+        color: var(--sl-color-text);
+        font-size: 0.85rem;
+    }
+    .cfg input[type="range"] { width: 120px; }
+    .cfg-preview { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
+    .cfg-preview img { border-radius: 50%; }
+    .cfg-code {
+        width: 100%;
+        font-size: 0.72rem;
+        padding: 0.6rem;
+        background: var(--sl-color-gray-7);
+        border-radius: 0.35rem;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+        margin: 0;
+    }
+    #cfg-size-value { min-width: 30px; font-size: 0.8rem; color: var(--sl-color-gray-2); }
+</style>
+
+<script>
+    // ---- Option choices (mirrors the style packages' exported arrays) ----
+    const CHOICES: Record<string, Record<string, readonly string[]>> = {
+        faces: {
+            hairStyle: ["", "none", "flat-top", "cap", "side-swept", "spiky", "round-top", "mohawk", "beanie"],
+            eyeStyle: ["", "dots", "rectangles", "lines", "round"],
+            mouthStyle: ["", "line", "rect-smile", "open-rect", "zigzag", "dot"],
+        },
+        illustrated: {
+            hairStyle: ["", "bald", "buzz", "short", "medium", "long", "curly", "wavy", "mohawk", "afro", "ponytail", "bangs", "sidepart"],
+            eyeStyle: ["", "round", "almond", "narrow", "wide", "sleepy", "winking", "looking", "glasses"],
+            mouthStyle: ["", "smile", "bigSmile", "neutral", "frown", "open", "smirk", "tongue", "teeth"],
+        },
+        anime: {
+            hairStyle: ["", "short-spiky", "medium-messy", "long-straight", "twin-tails", "ponytail", "side-swept", "wild", "bob", "hime-cut", "shaggy"],
+            eyeStyle: ["", "normal", "sparkly", "determined", "gentle", "cat", "half-closed", "closed-happy", "surprised"],
+            mouthStyle: ["", "small-smile", "open-small", "cat-mouth", "line", "pout", "grin"],
+        },
+        abstract: {
+            composition: ["", "mondrian", "kandinsky", "bauhaus"],
+        },
+        emoji: {
+            expression: ["", "happy", "laughing", "cool", "wink", "love", "sad", "angry", "surprised", "sleepy", "neutral"],
+        },
+        animals: {
+            animal: ["", "cat", "dog", "bear", "fox", "panda", "bunny", "frog", "monkey"],
+        },
+        gradient: {
+            direction: ["", "linear", "radial", "diagonal"],
+            pattern: ["", "none", "dots", "stripes", "waves", "grid"],
+        },
+        rings: {
+            centerStyle: ["", "solid", "dot", "ring", "diamond", "none"],
+        },
+    };
+
+    // ---- Deterministic RNG + shared helpers (inlined mirror of core) -----
+    const DEFAULT_COLORS = ["#FF6B6B","#4ECDC4","#45B7D1","#96CEB4","#FFEAA7","#DDA0DD","#98D8C8","#F7DC6F","#BB8FCE","#85C1E9"];
+    const SKIN_TONES = ["#FFDBB4","#EAC086","#C68B59","#A0674B","#8D5524"];
+    const ANIME_HAIR = ["#1a1a2e","#c23616","#0984e3","#6c5ce7","#fd79a8"];
+
+    function hashSeed(seed: string): number {
+        let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+        for (let i = 0; i < seed.length; i++) {
+            const ch = seed.charCodeAt(i);
+            h1 = Math.imul(h1 ^ ch, 2654435761);
+            h2 = Math.imul(h2 ^ ch, 1597334677);
+        }
+        h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
+        h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+        return h1 >>> 0;
+    }
+
+    function rng(seed: string) {
+        let s = hashSeed(seed);
+        const next = () => {
+            let t = (s += 0x6d2b79f5);
+            t = Math.imul(t ^ (t >>> 15), t | 1);
+            t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+        return {
+            next,
+            pick: <T,>(arr: readonly T[]): T => arr[Math.floor(next() * arr.length)],
+            bool: (p = 0.5) => next() < p,
+        };
+    }
+
+    function wrap(size: number, square: boolean, transparent: boolean, bg: string, content: string): string {
+        const r = size / 2;
+        const clip = square
+            ? `<clipPath id="c"><rect x="0" y="0" width="${size}" height="${size}"/></clipPath>`
+            : `<clipPath id="c"><circle cx="${r}" cy="${r}" r="${r}"/></clipPath>`;
+        const bgRect = transparent ? "" : `<rect x="0" y="0" width="${size}" height="${size}" fill="${bg}"/>`;
+        return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}"><defs>${clip}</defs><g clip-path="url(#c)">${bgRect}${content}</g></svg>`;
+    }
+
+    // ---- Per-style renderers (simplified previews) ----
+    type Options = Record<string, unknown>;
+    type Renderer = (size: number, square: boolean, transparent: boolean, opts: Options) => string;
+
+    const renderers: Record<string, Renderer> = {
+        initials: (size, square, transparent, opts) => {
+            const r = rng(String(opts.seed ?? ""));
+            const bg = r.pick(DEFAULT_COLORS);
+            const seed = String(opts.seed ?? "");
+            const letters = seed.split(" ").filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join("") || "?";
+            const fontSize = size * (letters.length === 1 ? 0.5 : 0.4);
+            const content = `<text x="${size/2}" y="${size/2}" font-family="sans-serif" font-size="${fontSize}" font-weight="600" fill="#fff" text-anchor="middle" dominant-baseline="central">${letters}</text>`;
+            return wrap(size, square, transparent, bg, content);
+        },
+        geometric: (size, square, transparent, opts) => {
+            const r = rng(String(opts.seed ?? ""));
+            const bg = r.pick(DEFAULT_COLORS);
+            const fg = r.pick(DEFAULT_COLORS.filter(c => c !== bg));
+            const grid = 5, cell = size / (grid + 2);
+            let tiles = "";
+            for (let row = 0; row < grid; row++) {
+                for (let col = 0; col < Math.ceil(grid / 2); col++) {
+                    if (r.bool()) {
+                        const y = (1 + row) * cell;
+                        tiles += `<rect x="${(1 + col) * cell}" y="${y}" width="${cell}" height="${cell}" fill="${fg}"/>`;
+                        if (col !== grid - 1 - col) tiles += `<rect x="${(1 + grid - 1 - col) * cell}" y="${y}" width="${cell}" height="${cell}" fill="${fg}"/>`;
+                    }
+                }
+            }
+            return wrap(size, square, transparent, bg, tiles);
+        },
+        pixels: (size, square, transparent, opts) => {
+            const r = rng(String(opts.seed ?? ""));
+            const bg = r.pick(DEFAULT_COLORS);
+            const skin = r.pick(SKIN_TONES);
+            const cell = size / 8;
+            let body = "";
+            for (let row = 1; row <= 6; row++) for (let col = 1; col <= 6; col++) {
+                if ((row === 1 || row === 6) && (col === 1 || col === 6)) continue;
+                body += `<rect x="${col*cell}" y="${row*cell}" width="${cell}" height="${cell}" fill="${skin}"/>`;
+            }
+            body += `<rect x="${2*cell}" y="${3*cell}" width="${cell}" height="${cell}" fill="#2C1810"/><rect x="${5*cell}" y="${3*cell}" width="${cell}" height="${cell}" fill="#2C1810"/><rect x="${3*cell}" y="${5*cell}" width="${cell*2}" height="${cell}" fill="#2C1810"/>`;
+            return wrap(size, square, transparent, bg, body);
+        },
+        rings: (size, square, transparent, opts) => {
+            const r = rng(String(opts.seed ?? ""));
+            const bg = r.pick(DEFAULT_COLORS);
+            const center = String(opts.centerStyle || r.pick(["solid","dot","ring","diamond","none"] as const));
+            const cx = size / 2, cy = size / 2;
+            let body = "";
+            for (let i = 3; i >= 1; i--) body += `<circle cx="${cx}" cy="${cy}" r="${((i + 1) / 4) * (size / 2)}" fill="${r.pick(DEFAULT_COLORS)}"/>`;
+            const cr = size * 0.1;
+            if (center === "dot") body += `<circle cx="${cx}" cy="${cy}" r="${cr * 0.6}" fill="${r.pick(DEFAULT_COLORS)}"/>`;
+            else if (center === "ring") body += `<circle cx="${cx}" cy="${cy}" r="${cr}" fill="${r.pick(DEFAULT_COLORS)}"/><circle cx="${cx}" cy="${cy}" r="${cr*0.55}" fill="${bg}"/>`;
+            else if (center === "diamond") body += `<polygon points="${cx},${cy-cr} ${cx+cr},${cy} ${cx},${cy+cr} ${cx-cr},${cy}" fill="${r.pick(DEFAULT_COLORS)}"/>`;
+            else if (center === "solid") body += `<circle cx="${cx}" cy="${cy}" r="${cr}" fill="${r.pick(DEFAULT_COLORS)}"/>`;
+            return wrap(size, square, transparent, bg, body);
+        },
+        faces: (size, square, transparent, opts) => {
+            const r = rng(String(opts.seed ?? ""));
+            const bg = r.pick(DEFAULT_COLORS);
+            const skin = r.pick(SKIN_TONES);
+            const hair = r.pick(DEFAULT_COLORS);
+            const cx = size / 2, cy = size / 2;
+            const hw = size * 0.3, hh = size * 0.3;
+            const hairStyle = String(opts.hairStyle || r.pick(["flat-top","cap","side-swept","spiky","mohawk","beanie"] as const));
+            const hairSvg = hairStyle === "none" ? "" : `<ellipse cx="${cx}" cy="${cy - hh*0.5}" rx="${hw*1.1}" ry="${hh*0.4}" fill="${hair}"/>`;
+            return wrap(size, square, transparent, bg,
+                `${hairSvg}<ellipse cx="${cx}" cy="${cy}" rx="${hw}" ry="${hh}" fill="${skin}"/><circle cx="${cx-hw*0.35}" cy="${cy-hh*0.1}" r="2" fill="#2C1810"/><circle cx="${cx+hw*0.35}" cy="${cy-hh*0.1}" r="2" fill="#2C1810"/><path d="M ${cx-5} ${cy+hh*0.3} Q ${cx} ${cy+hh*0.5} ${cx+5} ${cy+hh*0.3}" fill="none" stroke="#2C1810" stroke-width="1.5"/>`);
+        },
+        illustrated: (size, square, transparent, opts) => renderers.faces(size, square, transparent, { ...opts, seed: String(opts.seed ?? "") + "-illust" }),
+        anime: (size, square, transparent, opts) => {
+            const r = rng(String(opts.seed ?? ""));
+            const bg = r.pick(DEFAULT_COLORS);
+            const skin = r.pick(SKIN_TONES);
+            const hair = r.pick(ANIME_HAIR);
+            const cx = size/2, cy = size/2, hw = size * 0.29;
+            return wrap(size, square, transparent, bg,
+                `<ellipse cx="${cx}" cy="${cy-hw*0.7}" rx="${hw*1.2}" ry="${hw*0.5}" fill="${hair}"/><ellipse cx="${cx}" cy="${cy}" rx="${hw}" ry="${hw*1.1}" fill="${skin}"/><ellipse cx="${cx-8}" cy="${cy}" rx="4" ry="5" fill="#fff"/><ellipse cx="${cx-8}" cy="${cy+1}" rx="2.5" ry="3.5" fill="#6c5ce7"/><ellipse cx="${cx+8}" cy="${cy}" rx="4" ry="5" fill="#fff"/><ellipse cx="${cx+8}" cy="${cy+1}" rx="2.5" ry="3.5" fill="#6c5ce7"/>`);
+        },
+        abstract: (size, square, transparent, opts) => {
+            const r = rng(String(opts.seed ?? ""));
+            const comp = String(opts.composition || r.pick(["mondrian","kandinsky","bauhaus"] as const));
+            const primary = ["#D40000","#FFDE00","#0051BA","#FFFFFF"];
+            const bold = ["#E63946","#F1C40F","#2A9D8F","#264653","#F4A261"];
+            let content = "";
+            if (comp === "mondrian") {
+                const vx = Math.floor(size * 0.45), hy = Math.floor(size * 0.5);
+                content = `<rect x="0" y="0" width="${vx}" height="${hy}" fill="${r.pick(primary)}"/><rect x="${vx}" y="0" width="${size-vx}" height="${hy}" fill="${r.pick(primary)}"/><rect x="0" y="${hy}" width="${vx}" height="${size-hy}" fill="${r.pick(primary)}"/><rect x="${vx}" y="${hy}" width="${size-vx}" height="${size-hy}" fill="${r.pick(primary)}"/><rect x="${vx-1.5}" y="0" width="3" height="${size}" fill="#111"/><rect x="0" y="${hy-1.5}" width="${size}" height="3" fill="#111"/>`;
+            } else if (comp === "kandinsky") {
+                content = `<rect width="${size}" height="${size}" fill="${r.pick(bold)}"/><circle cx="${size/2}" cy="${size/2}" r="${size*0.25}" fill="${r.pick(bold)}"/><circle cx="${size/2}" cy="${size/2}" r="${size*0.12}" fill="${r.pick(bold)}"/><polygon points="${size*0.2},${size*0.2} ${size*0.3},${size*0.1} ${size*0.4},${size*0.25}" fill="${r.pick(bold)}"/>`;
+            } else {
+                content = `<rect x="0" y="0" width="${size/2}" height="${size/2}" fill="${r.pick(bold)}"/><rect x="${size/2}" y="0" width="${size/2}" height="${size/2}" fill="${r.pick(bold)}"/><rect x="0" y="${size/2}" width="${size/2}" height="${size/2}" fill="${r.pick(bold)}"/><rect x="${size/2}" y="${size/2}" width="${size/2}" height="${size/2}" fill="${r.pick(bold)}"/><circle cx="${size*0.25}" cy="${size*0.75}" r="${size*0.15}" fill="${r.pick(bold)}"/>`;
+            }
+            return wrap(size, square, transparent, r.pick(bold), content);
+        },
+        emoji: (size, square, transparent, opts) => {
+            const r = rng(String(opts.seed ?? ""));
+            const expr = String(opts.expression || r.pick(["happy","laughing","cool","wink","love","sad","sleepy"] as const));
+            const bg = r.pick(["#FFF8E7","#FFEAA7"]);
+            const face = "#FFD93D", stroke = "#2C2C2C";
+            const cx = size/2, cy = size/2, rR = size*0.42;
+            let body = `<circle cx="${cx}" cy="${cy}" r="${rR}" fill="${face}" stroke="${stroke}" stroke-width="1.5"/>`;
+            const lx = cx - rR*0.35, rx = cx + rR*0.35, eyeY = cy - rR*0.18;
+            if (expr === "laughing") body += `<path d="M ${lx-4} ${eyeY+1} Q ${lx} ${eyeY-4} ${lx+4} ${eyeY+1}" fill="none" stroke="${stroke}" stroke-width="2"/><path d="M ${rx-4} ${eyeY+1} Q ${rx} ${eyeY-4} ${rx+4} ${eyeY+1}" fill="none" stroke="${stroke}" stroke-width="2"/>`;
+            else if (expr === "cool") body += `<rect x="${lx-5}" y="${eyeY-3}" width="10" height="6" fill="${stroke}"/><rect x="${rx-5}" y="${eyeY-3}" width="10" height="6" fill="${stroke}"/>`;
+            else if (expr === "love") body += `<text x="${lx}" y="${eyeY+4}" font-size="10" fill="#E74C3C" text-anchor="middle">♥</text><text x="${rx}" y="${eyeY+4}" font-size="10" fill="#E74C3C" text-anchor="middle">♥</text>`;
+            else if (expr === "sleepy") body += `<line x1="${lx-4}" y1="${eyeY}" x2="${lx+4}" y2="${eyeY}" stroke="${stroke}" stroke-width="2"/><line x1="${rx-4}" y1="${eyeY}" x2="${rx+4}" y2="${eyeY}" stroke="${stroke}" stroke-width="2"/>`;
+            else body += `<circle cx="${lx}" cy="${eyeY}" r="3" fill="${stroke}"/><circle cx="${rx}" cy="${eyeY}" r="3" fill="${stroke}"/>`;
+            const mY = cy + rR*0.3;
+            if (expr === "sad") body += `<path d="M ${cx-6} ${mY+3} Q ${cx} ${mY-2} ${cx+6} ${mY+3}" fill="none" stroke="${stroke}" stroke-width="2"/>`;
+            else body += `<path d="M ${cx-6} ${mY} Q ${cx} ${mY+4} ${cx+6} ${mY}" fill="none" stroke="${stroke}" stroke-width="2"/>`;
+            return wrap(size, square, transparent, bg, body);
+        },
+        animals: (size, square, transparent, opts) => {
+            const r = rng(String(opts.seed ?? ""));
+            const bg = r.pick(DEFAULT_COLORS);
+            const animal = String(opts.animal || r.pick(["cat","fox","panda","bunny","frog"] as const));
+            const fur = r.pick(["#D4A574","#A67B5B","#E8C89C"]);
+            const cx = size/2, cy = size/2, hw = size*0.3, hh = size*0.29;
+            let body = "";
+            if (animal === "panda") body += `<circle cx="${cx-hw*0.85}" cy="${cy-hh*0.8}" r="${hw*0.25}" fill="#1A1A1A"/><circle cx="${cx+hw*0.85}" cy="${cy-hh*0.8}" r="${hw*0.25}" fill="#1A1A1A"/><ellipse cx="${cx}" cy="${cy}" rx="${hw}" ry="${hh}" fill="#fff"/><ellipse cx="${cx-hw*0.32}" cy="${cy-hh*0.05}" rx="${hw*0.2}" ry="${hh*0.22}" fill="#1A1A1A"/><ellipse cx="${cx+hw*0.32}" cy="${cy-hh*0.05}" rx="${hw*0.2}" ry="${hh*0.22}" fill="#1A1A1A"/>`;
+            else if (animal === "frog") body += `<circle cx="${cx-hw*0.45}" cy="${cy-hh*0.55}" r="${hw*0.3}" fill="#6FB368"/><circle cx="${cx+hw*0.45}" cy="${cy-hh*0.55}" r="${hw*0.3}" fill="#6FB368"/><ellipse cx="${cx}" cy="${cy+hh*0.1}" rx="${hw*1.05}" ry="${hh*0.85}" fill="#6FB368"/><circle cx="${cx-hw*0.45}" cy="${cy-hh*0.5}" r="${hw*0.1}" fill="#1A1A1A"/><circle cx="${cx+hw*0.45}" cy="${cy-hh*0.5}" r="${hw*0.1}" fill="#1A1A1A"/>`;
+            else if (animal === "bunny") body += `<ellipse cx="${cx-hw*0.35}" cy="${cy-hh*0.8}" rx="${hw*0.2}" ry="${hh*0.9}" fill="${fur}"/><ellipse cx="${cx+hw*0.35}" cy="${cy-hh*0.8}" rx="${hw*0.2}" ry="${hh*0.9}" fill="${fur}"/><ellipse cx="${cx}" cy="${cy}" rx="${hw}" ry="${hh*0.9}" fill="${fur}"/><circle cx="${cx-hw*0.28}" cy="${cy-hh*0.05}" r="2" fill="#2C1810"/><circle cx="${cx+hw*0.28}" cy="${cy-hh*0.05}" r="2" fill="#2C1810"/>`;
+            else {
+                const color = animal === "fox" ? "#D96E2E" : fur;
+                body += `<polygon points="${cx-hw+2},${cy-hh*0.4} ${cx-hw*0.5},${cy-hh-hw*0.3} ${cx-hw*0.2},${cy-hh*0.2}" fill="${color}"/><polygon points="${cx+hw-2},${cy-hh*0.4} ${cx+hw*0.5},${cy-hh-hw*0.3} ${cx+hw*0.2},${cy-hh*0.2}" fill="${color}"/><ellipse cx="${cx}" cy="${cy}" rx="${hw}" ry="${hh}" fill="${color}"/><circle cx="${cx-hw*0.35}" cy="${cy-hh*0.05}" r="2" fill="#2C1810"/><circle cx="${cx+hw*0.35}" cy="${cy-hh*0.05}" r="2" fill="#2C1810"/>`;
+            }
+            return wrap(size, square, transparent, bg, body);
+        },
+        gradient: (size, square, transparent, opts) => {
+            const r = rng(String(opts.seed ?? ""));
+            const palette = ["#FF6B9D","#C644FC","#5A17EE","#2196F3","#00BCD4","#00E676","#FFD600","#E91E63"];
+            const direction = String(opts.direction || r.pick(["linear","radial","diagonal"] as const));
+            const pattern = String(opts.pattern || r.pick(["none","dots","stripes","waves","grid"] as const));
+            const stops = [r.pick(palette), r.pick(palette)];
+            const gid = `g-${String(opts.seed ?? "").replace(/\W/g,"")}-${direction}`;
+            let defs = "";
+            if (direction === "linear") defs = `<linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${stops[0]}"/><stop offset="100%" stop-color="${stops[1]}"/></linearGradient>`;
+            else if (direction === "diagonal") defs = `<linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${stops[0]}"/><stop offset="100%" stop-color="${stops[1]}"/></linearGradient>`;
+            else defs = `<radialGradient id="${gid}" cx="50%" cy="50%" r="70%"><stop offset="0%" stop-color="${stops[0]}"/><stop offset="100%" stop-color="${stops[1]}"/></radialGradient>`;
+            let overlay = "";
+            if (pattern === "dots") { const step = size/6; for (let y = step/2; y < size; y += step) for (let x = step/2; x < size; x += step) overlay += `<circle cx="${x}" cy="${y}" r="${step*0.15}" fill="rgba(255,255,255,0.18)"/>`; }
+            else if (pattern === "stripes") for (let i = 0; i < size; i += size/10) overlay += `<line x1="${i}" y1="0" x2="${i}" y2="${size}" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>`;
+            else if (pattern === "grid") for (let i = size/6; i < size; i += size/6) { overlay += `<line x1="${i}" y1="0" x2="${i}" y2="${size}" stroke="rgba(255,255,255,0.25)" stroke-width="0.8"/>`; overlay += `<line x1="0" y1="${i}" x2="${size}" y2="${i}" stroke="rgba(255,255,255,0.25)" stroke-width="0.8"/>`; }
+            else if (pattern === "waves") for (let i = 1; i < 4; i++) { const y = (size/4)*i; overlay += `<path d="M 0 ${y} Q ${size/4} ${y-size*0.05} ${size/2} ${y} T ${size} ${y}" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>`; }
+            const r2 = size / 2;
+            const clip = square
+                ? `<clipPath id="c"><rect x="0" y="0" width="${size}" height="${size}"/></clipPath>`
+                : `<clipPath id="c"><circle cx="${r2}" cy="${r2}" r="${r2}"/></clipPath>`;
+            const fill = transparent ? "" : `<rect width="${size}" height="${size}" fill="url(#${gid})"/>`;
+            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}"><defs>${clip}${defs}</defs><g clip-path="url(#c)">${fill}${overlay}</g></svg>`;
+        },
+    };
+
+    // ---- DOM wiring ----
+    const styleSel = document.getElementById("cfg-style") as HTMLSelectElement;
+    const seedInput = document.getElementById("cfg-seed") as HTMLInputElement;
+    const sizeInput = document.getElementById("cfg-size") as HTMLInputElement;
+    const sizeValue = document.getElementById("cfg-size-value")!;
+    const squareInput = document.getElementById("cfg-square") as HTMLInputElement;
+    const transparentInput = document.getElementById("cfg-transparent") as HTMLInputElement;
+    const styleOptionsRow = document.getElementById("cfg-style-options")!;
+    const preview = document.getElementById("cfg-preview")!;
+    const codeOutput = document.getElementById("cfg-code")!;
+
+    function renderStyleOptions() {
+        const choices = CHOICES[styleSel.value] ?? {};
+        styleOptionsRow.replaceChildren();
+        for (const [key, values] of Object.entries(choices)) {
+            const label = document.createElement("label");
+            label.textContent = key;
+            const select = document.createElement("select");
+            select.dataset.optKey = key;
+            for (const v of values) {
+                const opt = document.createElement("option");
+                opt.value = v;
+                opt.textContent = v === "" ? "(random)" : v;
+                select.appendChild(opt);
+            }
+            select.addEventListener("change", update);
+            label.appendChild(select);
+            styleOptionsRow.appendChild(label);
+        }
+    }
+
+    function collectStyleOptions(): Options {
+        const opts: Options = {};
+        for (const sel of styleOptionsRow.querySelectorAll<HTMLSelectElement>("select[data-opt-key]")) {
+            if (sel.value !== "") opts[sel.dataset.optKey!] = sel.value;
+        }
+        return opts;
+    }
+
+    function update() {
+        const style = styleSel.value;
+        const size = parseInt(sizeInput.value, 10);
+        const square = squareInput.checked;
+        const transparent = transparentInput.checked;
+        const seed = seedInput.value;
+        sizeValue.textContent = String(size);
+
+        const extra = collectStyleOptions();
+        const opts: Options = { seed, size, ...(square && { square: true }), ...(transparent && { transparent: true }), ...extra };
+
+        const svg = renderers[style](size, square, transparent, opts);
+        const img = document.createElement("img");
+        img.src = "data:image/svg+xml;base64," + btoa(svg);
+        img.width = size;
+        img.height = size;
+        img.alt = style + " — " + seed;
+        preview.replaceChildren(img);
+
+        // Code snippet
+        const formatted = JSON.stringify(opts, null, 2).replace(/\n/g, "\n    ");
+        codeOutput.textContent =
+            `import { createAvatar } from "@avatar-generator/core";\n` +
+            `import { ${style} } from "@avatar-generator/style-${style}";\n\n` +
+            `const avatar = createAvatar(${style}, ${formatted});`;
+    }
+
+    styleSel.addEventListener("change", () => { renderStyleOptions(); update(); });
+    [seedInput, sizeInput, squareInput, transparentInput].forEach(el => el.addEventListener("input", update));
+    renderStyleOptions();
+    update();
+</script>
