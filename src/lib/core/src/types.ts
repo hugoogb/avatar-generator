@@ -247,6 +247,63 @@ export interface AnimeOptions extends AvatarOptions {
     accessories?: boolean;
 }
 
+// ─── Abstract style option unions ─────────────────────────────────────────
+
+export type AbstractComposition = "mondrian" | "kandinsky" | "bauhaus";
+
+export interface AbstractOptions extends AvatarOptions {
+    /** Override the composition style */
+    composition?: AbstractComposition;
+    /** Number of accent shapes drawn on top of the base blocks (default: 3) */
+    shapeCount?: number;
+}
+
+// ─── Emoji style option unions ────────────────────────────────────────────
+
+export type EmojiExpression =
+    | "happy"
+    | "laughing"
+    | "cool"
+    | "wink"
+    | "love"
+    | "sad"
+    | "angry"
+    | "surprised"
+    | "sleepy"
+    | "neutral";
+
+export interface EmojiOptions extends AvatarOptions {
+    /** Override the facial expression */
+    expression?: EmojiExpression;
+    /** Override the face fill color (default: yellow emoji palette) */
+    faceColor?: string;
+}
+
+// ─── Animals style option unions ──────────────────────────────────────────
+
+export type Animal = "cat" | "dog" | "bear" | "fox" | "panda" | "bunny" | "frog" | "monkey";
+
+export interface AnimalsOptions extends AvatarOptions {
+    /** Override which animal is rendered */
+    animal?: Animal;
+    /** Custom fur-tone palette (default: earth tones) */
+    furTones?: string[];
+}
+
+// ─── Gradient style option unions ─────────────────────────────────────────
+
+export type GradientDirection = "linear" | "radial" | "diagonal";
+export type GradientPattern = "none" | "dots" | "stripes" | "waves" | "grid";
+
+export interface GradientOptions extends AvatarOptions {
+    /** Override gradient direction */
+    direction?: GradientDirection;
+    /** Override the pattern overlay */
+    pattern?: GradientPattern;
+    /** Number of color stops in the gradient (2 or 3, default 2) */
+    colorStops?: number;
+}
+
 /**
  * Contract implemented by every avatar style package.
  *
