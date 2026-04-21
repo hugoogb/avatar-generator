@@ -1,21 +1,39 @@
 import react from "@vitejs/plugin-react";
+import vue from "@vitejs/plugin-vue";
+import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { defineConfig } from "vite";
+import { defineConfig, type PluginOption } from "vite";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+function pluginsFor(playground: string): PluginOption[] {
+    switch (playground) {
+        case "react":
+            return [react()];
+        case "vue":
+            return [vue()];
+        case "svelte":
+            return [svelte()];
+        default:
+            return [];
+    }
+}
 
 export default defineConfig(({ mode }) => {
     const playground = mode || "core";
 
     return {
         root: resolve(__dirname, playground),
-        plugins: playground === "react" ? [react()] : [],
+        plugins: pluginsFor(playground),
         resolve: {
             alias: {
                 // Core aliases for playground imports
                 "@avatar-core": resolve(__dirname, "../src/lib/core"),
                 "@avatar-react": resolve(__dirname, "../src/packages/react"),
+                "@avatar-vue": resolve(__dirname, "../src/packages/vue"),
+                "@avatar-svelte": resolve(__dirname, "../src/packages/svelte"),
+                "@avatar-web-component": resolve(__dirname, "../src/packages/web-component"),
                 "@avatar-style-initials": resolve(__dirname, "../src/lib/styles/initials"),
                 "@avatar-style-geometric": resolve(__dirname, "../src/lib/styles/geometric"),
                 "@avatar-style-pixels": resolve(__dirname, "../src/lib/styles/pixels"),
@@ -30,6 +48,9 @@ export default defineConfig(({ mode }) => {
                 // Package name aliases for internal imports between packages
                 "@avatar-generator/core": resolve(__dirname, "../src/lib/core/src"),
                 "@avatar-generator/react": resolve(__dirname, "../src/packages/react/src"),
+                "@avatar-generator/vue": resolve(__dirname, "../src/packages/vue/src"),
+                "@avatar-generator/svelte": resolve(__dirname, "../src/packages/svelte/src"),
+                "@avatar-generator/web-component": resolve(__dirname, "../src/packages/web-component/src"),
                 "@avatar-generator/style-initials": resolve(__dirname, "../src/lib/styles/initials/src"),
                 "@avatar-generator/style-geometric": resolve(__dirname, "../src/lib/styles/geometric/src"),
                 "@avatar-generator/style-pixels": resolve(__dirname, "../src/lib/styles/pixels/src"),

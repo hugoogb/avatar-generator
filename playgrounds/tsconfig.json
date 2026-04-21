@@ -17,7 +17,14 @@
             "@avatar-style-rings/*": ["../src/lib/styles/rings/*"],
             "@avatar-style-faces/*": ["../src/lib/styles/faces/*"],
             "@avatar-style-illustrated/*": ["../src/lib/styles/illustrated/*"],
-            "@avatar-style-anime/*": ["../src/lib/styles/anime/*"]
+            "@avatar-style-anime/*": ["../src/lib/styles/anime/*"],
+            "@avatar-style-abstract/*": ["../src/lib/styles/abstract/*"],
+            "@avatar-style-emoji/*": ["../src/lib/styles/emoji/*"],
+            "@avatar-style-animals/*": ["../src/lib/styles/animals/*"],
+            "@avatar-style-gradient/*": ["../src/lib/styles/gradient/*"],
+            "@avatar-vue/*": ["../src/packages/vue/*"],
+            "@avatar-svelte/*": ["../src/packages/svelte/*"],
+            "@avatar-web-component/*": ["../src/packages/web-component/*"]
         }
     },
     "include": ["**/*.ts", "**/*.tsx", "vite.config.ts"]
