@@ -4,7 +4,7 @@ import type { Random } from "./types";
  * Creates a hash from a string seed using a simple but effective algorithm
  * Based on cyrb53 hash function
  */
-function hashSeed(seed: string): number {
+export function hashSeed(seed: string): number {
     let h1 = 0xdeadbeef;
     let h2 = 0x41c6ce57;
 

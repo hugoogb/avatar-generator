@@ -1,3 +1,4 @@
+import { hashSeed } from "./random";
 import type { AvatarOptions, AvatarResult } from "./types";
 
 /**
@@ -121,7 +122,9 @@ export function wrapWithTransform(content: string, options: AvatarOptions): stri
  */
 export function buildSvg(content: string, options: AvatarOptions, backgroundColor: string): AvatarResult {
     const size = options.size ?? 64;
-    const clipId = `clip-${Math.random().toString(36).slice(2, 9)}`;
+    // Derive a deterministic clip id from the seed so identical options
+    // always produce byte-identical SVG output.
+    const clipId = `clip-${hashSeed(options.seed).toString(36)}`;
 
     let svg = createSvgOpen(size);
 
