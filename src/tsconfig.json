@@ -18,7 +18,8 @@
             "@avatar-generator/style-faces": ["./lib/styles/faces/src"],
             "@avatar-generator/style-illustrated": ["./lib/styles/illustrated/src"],
             "@avatar-generator/style-anime": ["./lib/styles/anime/src"],
-            "@avatar-generator/style-abstract": ["./lib/styles/abstract/src"]
+            "@avatar-generator/style-abstract": ["./lib/styles/abstract/src"],
+            "@avatar-generator/style-emoji": ["./lib/styles/emoji/src"]
         }
     },
     "references": [
@@ -31,6 +32,7 @@
         { "path": "./lib/styles/illustrated" },
         { "path": "./lib/styles/anime" },
         { "path": "./lib/styles/abstract" },
+        { "path": "./lib/styles/emoji" },
         { "path": "./packages/react" },
         { "path": "./packages/angular" }
     ],
