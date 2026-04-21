@@ -29,6 +29,7 @@ export type {
 
 // Re-export utilities
 export { createRandom } from "./random";
+export { validateOption } from "./validation";
 export {
     buildSvg,
     buildTransform,

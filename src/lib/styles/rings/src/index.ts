@@ -1,5 +1,5 @@
 import type { AvatarResult, Random, RingsCenterStyle, RingsOptions, Style } from "@avatar-generator/core";
-import { buildSvg, createRandom, DEFAULT_COLORS } from "@avatar-generator/core";
+import { buildSvg, createRandom, DEFAULT_COLORS, validateOption } from "@avatar-generator/core";
 
 type RingType = "solid" | "segmented" | "dashed";
 
@@ -209,6 +209,8 @@ export const rings: Style<RingsOptions> = {
     name: "rings",
 
     create(options: RingsOptions): AvatarResult {
+        validateOption("rings", "centerStyle", options.centerStyle, CENTER_STYLES);
+
         const random = createRandom(options.seed);
         const colors = options.colors ?? DEFAULT_COLORS;
         const backgroundColor = random.pick(colors);

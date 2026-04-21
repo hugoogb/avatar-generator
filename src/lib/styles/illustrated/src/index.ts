@@ -8,7 +8,7 @@ import type {
     IllustratedOptions,
     Style,
 } from "@avatar-generator/core";
-import { buildSvg, createRandom, DEFAULT_COLORS, EYE_COLORS, SKIN_TONES } from "@avatar-generator/core";
+import { buildSvg, createRandom, DEFAULT_COLORS, EYE_COLORS, SKIN_TONES, validateOption } from "@avatar-generator/core";
 
 // ============================================================================
 // Feature variant types
@@ -497,6 +497,12 @@ export const illustrated: Style<IllustratedOptions> = {
     name: "illustrated",
 
     create(options: IllustratedOptions): AvatarResult {
+        validateOption("illustrated", "hairStyle", options.hairStyle, HAIR_STYLES);
+        validateOption("illustrated", "eyeStyle", options.eyeStyle, EYE_STYLES);
+        validateOption("illustrated", "eyebrowStyle", options.eyebrowStyle, EYEBROW_STYLES);
+        validateOption("illustrated", "noseStyle", options.noseStyle, NOSE_STYLES);
+        validateOption("illustrated", "mouthStyle", options.mouthStyle, MOUTH_STYLES);
+
         const random = createRandom(options.seed);
         const colors = options.colors ?? DEFAULT_COLORS;
         const backgroundColor = random.pick(colors);

@@ -6,7 +6,7 @@ import type {
     FacesOptions,
     Style,
 } from "@avatar-generator/core";
-import { buildSvg, createRandom, DEFAULT_COLORS, SKIN_TONES } from "@avatar-generator/core";
+import { buildSvg, createRandom, DEFAULT_COLORS, SKIN_TONES, validateOption } from "@avatar-generator/core";
 
 /**
  * Face shape types — faces uses distinct geometric shapes for the head
@@ -260,6 +260,10 @@ export const faces: Style<FacesOptions> = {
     name: "faces",
 
     create(options: FacesOptions): AvatarResult {
+        validateOption("faces", "hairStyle", options.hairStyle, HAIR_STYLES);
+        validateOption("faces", "eyeStyle", options.eyeStyle, EYE_STYLES);
+        validateOption("faces", "mouthStyle", options.mouthStyle, MOUTH_STYLES);
+
         const random = createRandom(options.seed);
         const colors = options.colors ?? DEFAULT_COLORS;
         const backgroundColor = random.pick(colors);
