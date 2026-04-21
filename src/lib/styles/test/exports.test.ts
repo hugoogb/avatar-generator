@@ -18,6 +18,7 @@ import {
     NOSE_STYLES as ANIME_NOSE_STYLES,
 } from "@avatar-generator/style-anime";
 import { CENTER_STYLES } from "@avatar-generator/style-rings";
+import { COMPOSITIONS as ABSTRACT_COMPOSITIONS } from "@avatar-generator/style-abstract";
 
 describe("exported style constants", () => {
     const suites: Array<[string, unknown[], number]> = [
@@ -34,6 +35,7 @@ describe("exported style constants", () => {
         ["anime MOUTH_STYLES", ANIME_MOUTH_STYLES, 6],
         ["anime NOSE_STYLES", ANIME_NOSE_STYLES, 3],
         ["rings CENTER_STYLES", CENTER_STYLES, 5],
+        ["abstract COMPOSITIONS", ABSTRACT_COMPOSITIONS, 3],
     ];
 
     it.each(suites)("%s has the expected number of entries", (_name, arr, count) => {

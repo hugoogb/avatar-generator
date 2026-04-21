@@ -17,7 +17,8 @@
             "@avatar-generator/style-rings": ["./lib/styles/rings/src"],
             "@avatar-generator/style-faces": ["./lib/styles/faces/src"],
             "@avatar-generator/style-illustrated": ["./lib/styles/illustrated/src"],
-            "@avatar-generator/style-anime": ["./lib/styles/anime/src"]
+            "@avatar-generator/style-anime": ["./lib/styles/anime/src"],
+            "@avatar-generator/style-abstract": ["./lib/styles/abstract/src"]
         }
     },
     "references": [
@@ -29,6 +30,7 @@
         { "path": "./lib/styles/faces" },
         { "path": "./lib/styles/illustrated" },
         { "path": "./lib/styles/anime" },
+        { "path": "./lib/styles/abstract" },
         { "path": "./packages/react" },
         { "path": "./packages/angular" }
     ],

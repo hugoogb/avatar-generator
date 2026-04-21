@@ -8,6 +8,7 @@ import { rings } from "@avatar-generator/style-rings";
 import { faces } from "@avatar-generator/style-faces";
 import { illustrated } from "@avatar-generator/style-illustrated";
 import { anime } from "@avatar-generator/style-anime";
+import { abstract } from "@avatar-generator/style-abstract";
 
 const styles: Array<[string, Style<AvatarOptions>]> = [
     ["initials", initials as Style<AvatarOptions>],
@@ -17,6 +18,7 @@ const styles: Array<[string, Style<AvatarOptions>]> = [
     ["faces", faces as Style<AvatarOptions>],
     ["illustrated", illustrated as Style<AvatarOptions>],
     ["anime", anime as Style<AvatarOptions>],
+    ["abstract", abstract as Style<AvatarOptions>],
 ];
 
 // Locked seeds and sizes so snapshots change only when a style's

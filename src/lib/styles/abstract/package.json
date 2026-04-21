@@ -1,0 +1,31 @@
+{
+    "name": "@avatar-generator/style-abstract",
+    "version": "2.4.0",
+    "description": "Abstract geometric art avatar style for @avatar-generator/core (Mondrian, Kandinsky, Bauhaus inspired)",
+    "main": "dist/index.js",
+    "types": "dist/types/index.d.ts",
+    "sideEffects": false,
+    "scripts": {
+        "build": "tsc",
+        "prepublishOnly": "npm run build"
+    },
+    "dependencies": {
+        "@avatar-generator/core": "workspace:*"
+    },
+    "publishConfig": {
+        "access": "public",
+        "dependencies": {
+            "@avatar-generator/core": "^2.0.0"
+        }
+    },
+    "keywords": [
+        "avatar",
+        "abstract",
+        "mondrian",
+        "kandinsky",
+        "bauhaus",
+        "svg",
+        "generator"
+    ],
+    "license": "MIT"
+}
