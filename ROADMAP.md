@@ -101,16 +101,16 @@ Fix synchronization issues between source, playgrounds, and documentation.
 
 ### New Framework Packages
 
-- [ ] `@avatar-generator/vue` — Vue 3 component
-- [ ] `@avatar-generator/svelte` — Svelte component
-- [ ] `@avatar-generator/web-component` — Framework-agnostic custom element
+- [x] `@avatar-generator/vue` — Vue 3 component
+- [x] `@avatar-generator/svelte` — Svelte component
+- [x] `@avatar-generator/web-component` — Framework-agnostic custom element
 
 ### Playgrounds
 
-- [ ] Angular playground
-- [ ] Vue playground
-- [ ] Svelte playground
-- [ ] Storybook integration with all styles
+- [ ] Angular playground _(deferred — needs zone.js + bootstrapApplication setup; follow-up)_
+- [x] Vue playground
+- [x] Svelte playground
+- [ ] Storybook integration with all styles _(deferred — separate conversation)_
 
 ---
 

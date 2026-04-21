@@ -26,6 +26,9 @@ export default defineConfig({
                         { label: "Manual Usage", slug: "guides/manual" },
                         { label: "React Usage", slug: "guides/react" },
                         { label: "Angular Usage", slug: "guides/angular" },
+                        { label: "Vue Usage", slug: "guides/vue" },
+                        { label: "Svelte Usage", slug: "guides/svelte" },
+                        { label: "Web Component Usage", slug: "guides/web-component" },
                     ],
                 },
                 {

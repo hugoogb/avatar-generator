@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com).
 
 ## [Unreleased]
 
+### v2.5.0 — Framework Ecosystem
+
+#### Added
+
+- `@avatar-generator/vue` — Vue 3 `<Avatar>` component using
+  `defineComponent` + `h()`, with `computed` caching so unchanged props
+  don't re-run `createAvatar`
+- `@avatar-generator/svelte` — Svelte 4+ `<Avatar>` shipped as a raw
+  `.svelte` file, resolved via the `svelte` export condition
+- `@avatar-generator/web-component` — framework-agnostic
+  `<avatar-generator>` custom element. Importing the package
+  auto-registers it; a `register(tagName)` helper supports custom tag
+  names
+- New playgrounds: `pnpm playground:vue`, `pnpm playground:svelte`,
+  `pnpm playground:web-component`
+- Docs: new guide pages for Vue, Svelte, and Web Component usage
+  under `/guides/`
+
+#### Deferred to follow-up
+
+- Angular playground — needs zone.js + bootstrapApplication / Analog
+  plugin configuration; tracked separately
+- Storybook integration — tracked separately
+
 ### v2.4.0 — New Avatar Styles
 
 #### Added

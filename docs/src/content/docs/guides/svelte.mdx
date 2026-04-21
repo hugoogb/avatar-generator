@@ -1,0 +1,70 @@
+---
+title: Svelte Usage
+description: Learn how to use the @avatar-generator/svelte package in your Svelte app.
+---
+
+import { Code } from "@astrojs/starlight/components";
+
+The `@avatar-generator/svelte` package provides a Svelte component for
+rendering avatars with any style. It works with Svelte 4 and Svelte 5.
+
+## Installation
+
+<Code
+    code={`pnpm add @avatar-generator/core @avatar-generator/svelte @avatar-generator/style-initials`}
+    lang="bash"
+></Code>
+
+`svelte` is a peer dependency — use whichever version your app pins.
+
+## Basic Usage
+
+<Code code={`<script lang="ts">
+  import Avatar from "@avatar-generator/svelte/Avatar.svelte";
+  import { initials } from "@avatar-generator/style-initials";
+
+export let userId: string;
+export let userName: string;
+
+</script>
+
+<Avatar
+  style={initials}
+  options={{ seed: userId, name: userName, size: 48 }}
+  alt={userName}
+/>`} lang="svelte"></Code>
+
+You can also import the component from the package root:
+
+<Code code={`import Avatar from "@avatar-generator/svelte";`} lang="ts"></Code>
+
+Svelte's build tooling resolves the `"svelte"` export condition to the raw
+`.svelte` source, so both imports work identically.
+
+## Using Different Styles
+
+<Code code={`<script lang="ts">
+  import Avatar from "@avatar-generator/svelte/Avatar.svelte";
+  import { initials } from "@avatar-generator/style-initials";
+  import { gradient } from "@avatar-generator/style-gradient";
+  import { emoji } from "@avatar-generator/style-emoji";
+
+const common = { seed: "Hugo GB", size: 64 };
+
+</script>
+
+<Avatar style={initials} options={common} />
+<Avatar style={gradient} options={common} />
+<Avatar style={emoji} options={common} />`} lang="svelte"></Code>
+
+## Component Props
+
+| Prop      | Type                      | Description                                    |
+| --------- | ------------------------- | ---------------------------------------------- |
+| `style`   | `Style<T>`                | The avatar style to use (required)             |
+| `options` | `T extends AvatarOptions` | Style-specific options (required)              |
+| `alt`     | `string`                  | Alt text for accessibility (default: "Avatar") |
+| `class`   | `string`                  | Additional CSS classes                         |
+
+The component uses Svelte's reactive statements, so the SVG re-renders
+automatically whenever `style` or `options` change.

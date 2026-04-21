@@ -47,8 +47,11 @@ img.src = avatar.toDataUri();
 
 ## Framework Packages
 
-- `@avatar-generator/react` - React component
-- `@avatar-generator/angular` - Angular component
+- `@avatar-generator/react` — React component
+- `@avatar-generator/angular` — Angular component
+- `@avatar-generator/vue` — Vue 3 component
+- `@avatar-generator/svelte` — Svelte 4+ component
+- `@avatar-generator/web-component` — framework-agnostic custom element
 
 ## Documentation
 
@@ -64,10 +67,13 @@ cd avatar-generator/playgrounds
 pnpm install
 ```
 
-| Package | Command                 |
-| ------- | ----------------------- |
-| Core    | `pnpm playground:core`  |
-| React   | `pnpm playground:react` |
+| Package       | Command                         |
+| ------------- | ------------------------------- |
+| Core          | `pnpm playground:core`          |
+| React         | `pnpm playground:react`         |
+| Vue           | `pnpm playground:vue`           |
+| Svelte        | `pnpm playground:svelte`        |
+| Web Component | `pnpm playground:web-component` |
 
 ## License
 
