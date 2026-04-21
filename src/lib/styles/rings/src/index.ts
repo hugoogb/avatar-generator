@@ -1,8 +1,10 @@
-import type { Style, RingsOptions, AvatarResult } from "@avatar-generator/core";
-import type { Random } from "@avatar-generator/core";
-import { createRandom, DEFAULT_COLORS, buildSvg } from "@avatar-generator/core";
+import type { AvatarResult, Random, RingsCenterStyle, RingsOptions, Style } from "@avatar-generator/core";
+import { buildSvg, createRandom, DEFAULT_COLORS } from "@avatar-generator/core";
 
 type RingType = "solid" | "segmented" | "dashed";
+
+/** All valid center decoration values for the rings style */
+export const CENTER_STYLES: RingsCenterStyle[] = ["solid", "dot", "ring", "diamond", "none"];
 
 /**
  * Creates an SVG arc path segment between two angles on a ring
@@ -218,4 +220,4 @@ export const rings: Style<RingsOptions> = {
 };
 
 export default rings;
-export type { RingsOptions };
+export type { RingsCenterStyle, RingsOptions };

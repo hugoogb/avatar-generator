@@ -85,6 +85,8 @@ export interface PixelsOptions extends AvatarOptions {
     featureColor?: string;
 }
 
+export type RingsCenterStyle = "solid" | "dot" | "ring" | "diamond" | "none";
+
 export interface RingsOptions extends AvatarOptions {
     /** Number of rings (default: 4) */
     ringCount?: number;
@@ -95,7 +97,7 @@ export interface RingsOptions extends AvatarOptions {
     /** Allow dashed rings (default: true) */
     dashed?: boolean;
     /** Center decoration style (default: "solid") */
-    centerStyle?: "solid" | "dot" | "ring" | "diamond" | "none";
+    centerStyle?: RingsCenterStyle;
 }
 
 // ─── Faces style option unions ────────────────────────────────────────────

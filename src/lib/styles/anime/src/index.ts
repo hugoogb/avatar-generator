@@ -20,7 +20,8 @@ type MouthStyle = AnimeMouthStyle;
 type NoseStyle = AnimeNoseStyle;
 type EyebrowStyle = "natural" | "furrowed" | "raised" | "thin";
 
-const HAIR_STYLES: HairStyle[] = [
+/** All valid hair style values for the anime style */
+export const HAIR_STYLES: HairStyle[] = [
     "short-spiky",
     "medium-messy",
     "long-straight",
@@ -32,7 +33,9 @@ const HAIR_STYLES: HairStyle[] = [
     "hime-cut",
     "shaggy",
 ];
-const EYE_STYLES: EyeStyle[] = [
+
+/** All valid eye style values for the anime style */
+export const EYE_STYLES: EyeStyle[] = [
     "normal",
     "sparkly",
     "determined",
@@ -42,8 +45,13 @@ const EYE_STYLES: EyeStyle[] = [
     "closed-happy",
     "surprised",
 ];
-const MOUTH_STYLES: MouthStyle[] = ["small-smile", "open-small", "cat-mouth", "line", "pout", "grin"];
-const NOSE_STYLES: NoseStyle[] = ["dot", "line", "shadow"];
+
+/** All valid mouth style values for the anime style */
+export const MOUTH_STYLES: MouthStyle[] = ["small-smile", "open-small", "cat-mouth", "line", "pout", "grin"];
+
+/** All valid nose style values for the anime style */
+export const NOSE_STYLES: NoseStyle[] = ["dot", "line", "shadow"];
+
 const EYEBROW_STYLES: EyebrowStyle[] = ["natural", "furrowed", "raised", "thin"];
 
 // Anime-typical hair colors (includes unnatural colors)
@@ -614,4 +622,4 @@ export const anime: Style<AnimeOptions> = {
 };
 
 export default anime;
-export type { AnimeOptions };
+export type { AnimeEyeStyle, AnimeHairStyle, AnimeMouthStyle, AnimeNoseStyle, AnimeOptions };

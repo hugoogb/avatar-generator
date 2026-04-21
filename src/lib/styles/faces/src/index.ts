@@ -14,7 +14,9 @@ import { buildSvg, createRandom, DEFAULT_COLORS, SKIN_TONES } from "@avatar-gene
 type FaceShape = "circle" | "square" | "rounded-square";
 
 const FACE_SHAPES: FaceShape[] = ["circle", "square", "rounded-square"];
-const HAIR_STYLES: FacesHairStyle[] = [
+
+/** All valid hair style values for the faces style */
+export const HAIR_STYLES: FacesHairStyle[] = [
     "none",
     "flat-top",
     "cap",
@@ -24,8 +26,12 @@ const HAIR_STYLES: FacesHairStyle[] = [
     "mohawk",
     "beanie",
 ];
-const EYE_STYLES: FacesEyeStyle[] = ["dots", "rectangles", "lines", "round"];
-const MOUTH_STYLES: FacesMouthStyle[] = ["line", "rect-smile", "open-rect", "zigzag", "dot"];
+
+/** All valid eye style values for the faces style */
+export const EYE_STYLES: FacesEyeStyle[] = ["dots", "rectangles", "lines", "round"];
+
+/** All valid mouth style values for the faces style */
+export const MOUTH_STYLES: FacesMouthStyle[] = ["line", "rect-smile", "open-rect", "zigzag", "dot"];
 
 /**
  * Draws the head shape — faces uses bold geometric shapes (circle, square, rounded-square)
@@ -265,4 +271,4 @@ export const faces: Style<FacesOptions> = {
 };
 
 export default faces;
-export type { FacesOptions };
+export type { FacesEyeStyle, FacesHairStyle, FacesMouthStyle, FacesOptions };

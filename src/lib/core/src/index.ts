@@ -22,6 +22,7 @@ export type {
     LegacyAvatarOptions,
     PixelsOptions,
     Random,
+    RingsCenterStyle,
     RingsOptions,
     Style,
 } from "./types";

@@ -23,7 +23,8 @@ type GlassesType = "round" | "square" | "aviator";
 type HatType = "beanie" | "cap" | "tophat";
 type FacialHairType = "stubble" | "mustache" | "beard";
 
-const HAIR_STYLES: HairStyle[] = [
+/** All valid hair style values for the illustrated style */
+export const HAIR_STYLES: HairStyle[] = [
     "bald",
     "buzz",
     "short",
@@ -37,10 +38,18 @@ const HAIR_STYLES: HairStyle[] = [
     "bangs",
     "sidepart",
 ];
-const EYE_STYLES: EyeStyle[] = ["round", "almond", "narrow", "wide", "sleepy", "winking", "looking", "glasses"];
-const EYEBROW_STYLES: EyebrowStyle[] = ["natural", "thick", "thin", "raised", "furrowed", "unibrow"];
-const NOSE_STYLES: NoseStyle[] = ["small", "pointed", "round", "long", "button"];
-const MOUTH_STYLES: MouthStyle[] = ["smile", "bigSmile", "neutral", "frown", "open", "smirk", "tongue", "teeth"];
+
+/** All valid eye style values for the illustrated style */
+export const EYE_STYLES: EyeStyle[] = ["round", "almond", "narrow", "wide", "sleepy", "winking", "looking", "glasses"];
+
+/** All valid eyebrow style values for the illustrated style */
+export const EYEBROW_STYLES: EyebrowStyle[] = ["natural", "thick", "thin", "raised", "furrowed", "unibrow"];
+
+/** All valid nose style values for the illustrated style */
+export const NOSE_STYLES: NoseStyle[] = ["small", "pointed", "round", "long", "button"];
+
+/** All valid mouth style values for the illustrated style */
+export const MOUTH_STYLES: MouthStyle[] = ["smile", "bigSmile", "neutral", "frown", "open", "smirk", "tongue", "teeth"];
 const GLASSES_TYPES: GlassesType[] = ["round", "square", "aviator"];
 const HAT_TYPES: HatType[] = ["beanie", "cap", "tophat"];
 const FACIAL_HAIR_TYPES: FacialHairType[] = ["stubble", "mustache", "beard"];
@@ -499,4 +508,11 @@ export const illustrated: Style<IllustratedOptions> = {
 };
 
 export default illustrated;
-export type { IllustratedOptions };
+export type {
+    IllustratedEyeStyle,
+    IllustratedEyebrowStyle,
+    IllustratedHairStyle,
+    IllustratedMouthStyle,
+    IllustratedNoseStyle,
+    IllustratedOptions,
+};
