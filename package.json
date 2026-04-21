@@ -7,6 +7,9 @@
         "format": "prettier --write .",
         "format:check": "prettier --check .",
         "check": "pnpm run lint && pnpm run format:check",
+        "test": "pnpm --dir src test",
+        "test:watch": "pnpm --dir src test:watch",
+        "test:coverage": "pnpm --dir src test:coverage",
         "prepare": "husky"
     },
     "devDependencies": {
