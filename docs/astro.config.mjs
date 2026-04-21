@@ -30,6 +30,7 @@ export default defineConfig({
                         { label: "Svelte Usage", slug: "guides/svelte" },
                         { label: "Web Component Usage", slug: "guides/web-component" },
                         { label: "Creating Custom Styles", slug: "guides/custom-styles" },
+                        { label: "Cookbook", slug: "guides/cookbook" },
                     ],
                 },
                 {

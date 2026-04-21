@@ -1,0 +1,152 @@
+---
+title: Cookbook
+description: Common recipes for real-world avatar patterns — groups, fallbacks, theming, caching, SSR.
+---
+
+import { Code } from "@astrojs/starlight/components";
+
+Recipes for patterns that come up often with `@avatar-generator`. Each one
+assumes you already have `createAvatar` or a framework wrapper wired up;
+see the [Manual](/guides/manual/), [React](/guides/react/),
+[Vue](/guides/vue/), [Svelte](/guides/svelte/), or
+[Web Component](/guides/web-component/) guides for setup.
+
+## Avatar groups (stacked with overlap)
+
+A common layout in user lists — several avatars overlapping with a border.
+
+<Code code={`import { createAvatar } from "@avatar-generator/core";
+import { initials } from "@avatar-generator/style-initials";
+
+function avatarGroup(users: Array<{ id: string; name: string }>, max = 3): string {
+const displayed = users.slice(0, max);
+const overflow = users.length - displayed.length;
+const size = 32;
+
+    return (
+        \`<div style="display:inline-flex;align-items:center;">\` +
+        displayed
+            .map(
+                (user, i) => {
+                    const avatar = createAvatar(initials, {
+                        seed: user.id,
+                        name: user.name,
+                        size,
+                        border: { width: 2, color: "#fff" },
+                    });
+                    return \`<img src="\${avatar.toDataUri()}" alt="\${user.name}" style="border-radius:50%;margin-left:\${i === 0 ? 0 : -8}px;"/>\`;
+                }
+            )
+            .join("") +
+        (overflow > 0
+            ? \`<span style="margin-left:-8px;width:\${size}px;height:\${size}px;border-radius:50%;background:#e5e7eb;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;">+\${overflow}</span>\`
+            : "") +
+        \`</div>\`
+    );
+
+}`} lang="ts"></Code>
+
+The border on each avatar prevents the overlapping edges from blending
+into each other. Use `-8px` to `-12px` margin-left depending on how much
+overlap you want.
+
+## Gravatar-style fallback
+
+If you have a real profile image but want a deterministic fallback when it
+404s, render an avatar under the `<img>` and swap via the `onerror` handler.
+
+<Code code={`import { createAvatar } from "@avatar-generator/core";
+import { initials } from "@avatar-generator/style-initials";
+
+function userAvatar(user: { email: string; name: string }): string {
+const fallback = createAvatar(initials, {
+seed: user.email,
+name: user.name,
+size: 64,
+});
+const gravatarUrl = \`https://www.gravatar.com/avatar/\${md5(user.email)}?d=404\`;
+
+    return \`<img src="\${gravatarUrl}" onerror="this.src='\${fallback.toDataUri()}'" alt="\${user.name}" width="64" height="64" style="border-radius:50%;"/>\`;
+
+}`} lang="ts"></Code>
+
+Because the fallback is seed-driven, the same user always gets the same
+generated avatar when their Gravatar is missing — no cache-busting flicker.
+
+## Theming (light/dark)
+
+Pass a different palette per theme. The seed stays the same, so each user
+keeps their identity but the colors adapt.
+
+<Code code={`import { createAvatar } from "@avatar-generator/core";
+import { geometric } from "@avatar-generator/style-geometric";
+
+const LIGHT_PALETTE = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7"];
+const DARK_PALETTE = ["#B24747", "#2F8782", "#2E7DA0", "#6B9A85", "#B39E5F"];
+
+function themedAvatar(seed: string, theme: "light" | "dark") {
+return createAvatar(geometric, {
+seed,
+size: 48,
+colors: theme === "dark" ? DARK_PALETTE : LIGHT_PALETTE,
+});
+}`} lang="ts"></Code>
+
+Pair this with a CSS \`prefers-color-scheme\` listener so the avatar
+rerenders when the system theme changes.
+
+## Caching
+
+For very large lists (tables, timelines), you may want to cache the SVG
+string instead of regenerating it on every render.
+
+<Code code={`import { createAvatar } from "@avatar-generator/core";
+import { initials } from "@avatar-generator/style-initials";
+
+const cache = new Map<string, string>();
+
+function cachedAvatar(seed: string): string {
+if (!cache.has(seed)) {
+cache.set(seed, createAvatar(initials, { seed }).toDataUri());
+}
+return cache.get(seed)!;
+}`} lang="ts"></Code>
+
+Cache by a composite key if options vary by call site:
+
+<Code code={`const key = JSON.stringify({ seed, size, square });`} lang="ts"></Code>
+
+Most React apps don't need this — `useMemo` inside the `Avatar`
+component already deduplicates per component instance.
+
+## Server-side rendering
+
+`createAvatar` returns a pure string — no DOM access, no browser APIs. It
+runs fine in Node, Bun, Deno, or any edge runtime.
+
+<Code code={`// Next.js server component, Express handler, Remix loader, etc.
+import { createAvatar } from "@avatar-generator/core";
+import { initials } from "@avatar-generator/style-initials";
+
+export async function getUserAvatar(userId: string): Promise<string> {
+    const avatar = createAvatar(initials, { seed: userId, size: 64 });
+    return avatar.svg; // inline SVG — no data URI needed server-side
+}`} lang="ts"></Code>
+
+Inlining the raw `svg` string (rather than the data URI) is slightly
+smaller on the wire and plays nicely with streaming renderers.
+
+One caveat: `toDataUri()` uses `btoa`, which exists in Node 16+ globally.
+For older Node, swap in `Buffer.from(svg).toString("base64")` yourself.
+
+## Using the same avatar across platforms
+
+All 11 styles are pure `createAvatar` implementations, so the SVG you
+generate in a Next.js server component is byte-identical to the one
+produced by the React component in the browser, the Vue component on the
+next page, or the web component inside a third-party embed. The seed +
+style + options is the ground truth.
+
+This means you can safely hash+store generated SVGs server-side and serve
+them as static PNGs (e.g. via `sharp`) without worrying about
+platform-specific rendering differences.
