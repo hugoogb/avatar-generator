@@ -143,6 +143,43 @@ For `@avatar-generator/style-anime`:
 | `blush`       | `boolean`  | (random, 35%) | Enable blush on cheeks                                                                                                                                                     |
 | `accessories` | `boolean`  | `true`        | Enable accessories (bandaid 5%, headband 8%)                                                                                                                               |
 
+### AbstractOptions
+
+For `@avatar-generator/style-abstract`:
+
+| Option        | Type     | Default  | Description                                                    |
+| ------------- | -------- | -------- | -------------------------------------------------------------- |
+| `composition` | `string` | (random) | Override composition: `"mondrian"`, `"kandinsky"`, `"bauhaus"` |
+| `shapeCount`  | `number` | `3`      | Number of accent shapes in the Kandinsky composition           |
+
+### EmojiOptions
+
+For `@avatar-generator/style-emoji`:
+
+| Option       | Type     | Default  | Description                                                                                                                            |
+| ------------ | -------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `expression` | `string` | (random) | Override expression: `"happy"`, `"laughing"`, `"cool"`, `"wink"`, `"love"`, `"sad"`, `"angry"`, `"surprised"`, `"sleepy"`, `"neutral"` |
+| `faceColor`  | `string` | (random) | Override the face fill color                                                                                                           |
+
+### AnimalsOptions
+
+For `@avatar-generator/style-animals`:
+
+| Option     | Type       | Default       | Description                                                                                      |
+| ---------- | ---------- | ------------- | ------------------------------------------------------------------------------------------------ |
+| `animal`   | `string`   | (random)      | Override animal: `"cat"`, `"dog"`, `"bear"`, `"fox"`, `"panda"`, `"bunny"`, `"frog"`, `"monkey"` |
+| `furTones` | `string[]` | (earth tones) | Custom fur palette                                                                               |
+
+### GradientOptions
+
+For `@avatar-generator/style-gradient`:
+
+| Option       | Type     | Default  | Description                                                           |
+| ------------ | -------- | -------- | --------------------------------------------------------------------- |
+| `direction`  | `string` | (random) | Override direction: `"linear"`, `"radial"`, `"diagonal"`              |
+| `pattern`    | `string` | (random) | Overlay pattern: `"none"`, `"dots"`, `"stripes"`, `"waves"`, `"grid"` |
+| `colorStops` | `number` | `2`      | Number of color stops in the gradient (2 or 3)                        |
+
 ## Utilities
 
 ### createRandom
