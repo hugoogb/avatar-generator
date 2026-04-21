@@ -4,7 +4,7 @@ Generate unique, deterministic SVG avatars with multiple styles.
 
 ## Features
 
-- **7 Unique Styles**: Initials, Geometric, Pixels, Rings, Faces, Illustrated, and Anime
+- **11 Unique Styles**: Initials, Geometric, Pixels, Rings, Faces, Illustrated, Anime, Abstract, Emoji, Animals, and Gradient
 - **Deterministic**: Same seed = same avatar, always
 - **Tree-shakeable**: Only bundle the styles you use
 - **Framework Support**: React, Angular, or vanilla JS
@@ -31,15 +31,19 @@ img.src = avatar.toDataUri();
 
 ## Available Styles
 
-| Style       | Package                               | Description                                     |
-| ----------- | ------------------------------------- | ----------------------------------------------- |
-| Initials    | `@avatar-generator/style-initials`    | Letter initials on colored backgrounds          |
-| Geometric   | `@avatar-generator/style-geometric`   | Grid-based shapes                               |
-| Pixels      | `@avatar-generator/style-pixels`      | Retro pixel art                                 |
-| Rings       | `@avatar-generator/style-rings`       | Concentric colored rings                        |
-| Faces       | `@avatar-generator/style-faces`       | Minimal flat geometric faces                    |
-| Illustrated | `@avatar-generator/style-illustrated` | Detailed cartoon faces with accessories         |
-| Anime       | `@avatar-generator/style-anime`       | Anime/manga-inspired faces with expressive eyes |
+| Style       | Package                               | Description                                      |
+| ----------- | ------------------------------------- | ------------------------------------------------ |
+| Initials    | `@avatar-generator/style-initials`    | Letter initials on colored backgrounds           |
+| Geometric   | `@avatar-generator/style-geometric`   | Grid-based shapes                                |
+| Pixels      | `@avatar-generator/style-pixels`      | Retro pixel art                                  |
+| Rings       | `@avatar-generator/style-rings`       | Concentric colored rings                         |
+| Faces       | `@avatar-generator/style-faces`       | Minimal flat geometric faces                     |
+| Illustrated | `@avatar-generator/style-illustrated` | Detailed cartoon faces with accessories          |
+| Anime       | `@avatar-generator/style-anime`       | Anime/manga-inspired faces with expressive eyes  |
+| Abstract    | `@avatar-generator/style-abstract`    | Mondrian/Kandinsky/Bauhaus-inspired compositions |
+| Emoji       | `@avatar-generator/style-emoji`       | Yellow emoji-style expressive faces              |
+| Animals     | `@avatar-generator/style-animals`     | Cute animal avatars (cat, dog, fox, panda, …)    |
+| Gradient    | `@avatar-generator/style-gradient`    | Smooth color gradients with pattern overlays     |
 
 ## Framework Packages
 

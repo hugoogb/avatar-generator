@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com).
 
 ## [Unreleased]
 
+### v2.4.0 — New Avatar Styles
+
+#### Added
+
+- `@avatar-generator/style-abstract` — three compositions (Mondrian,
+  Kandinsky, Bauhaus); exports `COMPOSITIONS` and
+  `AbstractComposition`/`AbstractOptions` types
+- `@avatar-generator/style-emoji` — ten expressions (happy, laughing, cool,
+  wink, love, sad, angry, surprised, sleepy, neutral); exports
+  `EXPRESSIONS` and `EmojiExpression`/`EmojiOptions` types
+- `@avatar-generator/style-animals` — eight animals (cat, dog, bear, fox,
+  panda, bunny, frog, monkey); exports `ANIMALS` and
+  `Animal`/`AnimalsOptions` types
+- `@avatar-generator/style-gradient` — linear/radial/diagonal gradients with
+  optional dots/stripes/waves/grid overlays; exports `DIRECTIONS`,
+  `PATTERNS`, and `GradientDirection`/`GradientPattern`/`GradientOptions`
+- Core exports the new option types and literal unions
+- Docs: new `/reference/gallery/` page rendering all 11 styles side by side
+  from a shared seed set
+- Docs: interactive Playground now includes abstract, emoji, animals, and
+  gradient preview cards
+- Docs: API Reference tables for the four new option interfaces
+- Playgrounds (core and React) render the new styles with fixture options
+
 ### v2.3.0 — Type Safety & Validation
 
 #### Added
