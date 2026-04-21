@@ -47,18 +47,18 @@ Fix synchronization issues between source, playgrounds, and documentation.
 
 ### Testing
 
-- [ ] Vitest setup with workspace support
-- [ ] Unit tests for `@avatar-generator/core` (createRandom, buildSvg, utilities)
-- [ ] Unit tests for each style package (deterministic output for given seed)
-- [ ] SVG snapshot tests for output consistency
-- [ ] Type tests for style option interfaces
+- [x] Vitest setup with workspace support
+- [x] Unit tests for `@avatar-generator/core` (createRandom, buildSvg, utilities)
+- [x] Unit tests for each style package (deterministic output for given seed)
+- [x] SVG snapshot tests for output consistency
+- [x] Type tests for style option interfaces
 
 ### CI/CD
 
-- [ ] GitHub Actions workflow: test on PR
-- [ ] Build verification step for all packages
-- [ ] Docs build verification
-- [ ] Code coverage reporting
+- [x] GitHub Actions workflow: test on PR
+- [x] Build verification step for all packages
+- [x] Docs build verification
+- [x] Code coverage reporting
 
 ---
 
@@ -68,13 +68,13 @@ Fix synchronization issues between source, playgrounds, and documentation.
 
 ### Stricter Types
 
-- [ ] Literal union types for style-specific string options (replace `string` with `"flat-top" | "cap" | ...`)
-- [ ] Export type constants (`HAIR_STYLES`, `EYE_STYLES`, etc.) from each style for consumer use
+- [x] Literal union types for style-specific string options (replace `string` with `"flat-top" | "cap" | ...`)
+- [x] Export type constants (`HAIR_STYLES`, `EYE_STYLES`, etc.) from each style for consumer use
 
 ### Runtime Validation
 
-- [ ] Runtime validation for style option values with helpful error messages
-- [ ] JSDoc improvements across all public APIs
+- [x] Runtime validation for style option values with helpful error messages
+- [x] JSDoc improvements across all public APIs
 
 ---
 

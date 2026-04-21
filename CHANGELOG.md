@@ -6,6 +6,52 @@ The format is based on [Keep a Changelog](https://keepachangelog.com).
 
 ## [Unreleased]
 
+### v2.3.0 — Type Safety & Validation
+
+#### Added
+
+- Literal union types for all string-based style overrides: `FacesHairStyle`,
+  `FacesEyeStyle`, `FacesMouthStyle`, `IllustratedHairStyle`,
+  `IllustratedEyeStyle`, `IllustratedEyebrowStyle`, `IllustratedNoseStyle`,
+  `IllustratedMouthStyle`, `AnimeHairStyle`, `AnimeEyeStyle`,
+  `AnimeMouthStyle`, `AnimeNoseStyle`, `RingsCenterStyle`
+- Named value-array exports from each style package (`HAIR_STYLES`,
+  `EYE_STYLES`, `MOUTH_STYLES`, etc.) for building UI pickers
+- `validateOption` helper in core that throws a descriptive error when a
+  user-provided override is not in the accepted value list
+- Runtime validation wired into `faces`, `illustrated`, `anime`, and `rings`
+- Expanded JSDoc on `createAvatar`, `createRandom`, `buildSvg`, `Random`,
+  `AvatarResult`, and `Style`
+
+#### Changed
+
+- `FacesOptions`, `IllustratedOptions`, `AnimeOptions`, and `RingsOptions`
+  now type their override fields with literal unions instead of `string`
+
+### v2.2.0 — Testing & CI/CD
+
+#### Added
+
+- Vitest with workspace support, coverage via `@vitest/coverage-v8`
+- Unit tests for `@avatar-generator/core` (`createRandom`, `buildSvg`,
+  `createAvatar`, SVG utilities)
+- Parameterized deterministic-output tests covering all seven styles
+- SVG file snapshots under `src/lib/styles/test/__snapshots__/`
+- Type tests using `expectTypeOf` and a dedicated `tsconfig.test.json`
+- `tsc --noEmit` typecheck script for test files
+- GitHub Actions workflow (`.github/workflows/ci.yml`) running lint,
+  typecheck, tests with coverage upload, package build, and docs build
+
+#### Fixed
+
+- `buildSvg` generated the clip-path id with `Math.random()`, producing
+  different SVG bytes for the same seed; ids are now derived from the seed
+  hash so output is fully deterministic
+
+#### Changed
+
+- Stopped tracking `tsconfig.tsbuildinfo` files (build artifacts)
+
 ### v2.1.0 — Developer Experience Foundations
 
 #### Added
