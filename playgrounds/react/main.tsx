@@ -7,6 +7,10 @@ import { rings } from "@avatar-style-rings/src";
 import { faces } from "@avatar-style-faces/src";
 import { illustrated } from "@avatar-style-illustrated/src";
 import { anime } from "@avatar-style-anime/src";
+import { abstract } from "@avatar-style-abstract/src";
+import { emoji } from "@avatar-style-emoji/src";
+import { animals } from "@avatar-style-animals/src";
+import { gradient } from "@avatar-style-gradient/src";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
 import {
@@ -17,6 +21,10 @@ import {
     FACES_OPTIONS,
     ILLUSTRATED_OPTIONS,
     ANIME_OPTIONS,
+    ABSTRACT_OPTIONS,
+    EMOJI_OPTIONS,
+    ANIMALS_OPTIONS,
+    GRADIENT_OPTIONS,
 } from "../consts";
 
 const StyleSection = ({
@@ -63,6 +71,14 @@ const App = () => {
             <StyleSection title="Illustrated" style={illustrated} options={ILLUSTRATED_OPTIONS} />
 
             <StyleSection title="Anime" style={anime} options={ANIME_OPTIONS} />
+
+            <StyleSection title="Abstract" style={abstract} options={ABSTRACT_OPTIONS} />
+
+            <StyleSection title="Emoji" style={emoji} options={EMOJI_OPTIONS} />
+
+            <StyleSection title="Animals" style={animals} options={ANIMALS_OPTIONS} />
+
+            <StyleSection title="Gradient" style={gradient} options={GRADIENT_OPTIONS} />
         </div>
     );
 };

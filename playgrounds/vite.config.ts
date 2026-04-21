@@ -23,6 +23,10 @@ export default defineConfig(({ mode }) => {
                 "@avatar-style-faces": resolve(__dirname, "../src/lib/styles/faces"),
                 "@avatar-style-illustrated": resolve(__dirname, "../src/lib/styles/illustrated"),
                 "@avatar-style-anime": resolve(__dirname, "../src/lib/styles/anime"),
+                "@avatar-style-abstract": resolve(__dirname, "../src/lib/styles/abstract"),
+                "@avatar-style-emoji": resolve(__dirname, "../src/lib/styles/emoji"),
+                "@avatar-style-animals": resolve(__dirname, "../src/lib/styles/animals"),
+                "@avatar-style-gradient": resolve(__dirname, "../src/lib/styles/gradient"),
                 // Package name aliases for internal imports between packages
                 "@avatar-generator/core": resolve(__dirname, "../src/lib/core/src"),
                 "@avatar-generator/react": resolve(__dirname, "../src/packages/react/src"),
@@ -33,6 +37,10 @@ export default defineConfig(({ mode }) => {
                 "@avatar-generator/style-faces": resolve(__dirname, "../src/lib/styles/faces/src"),
                 "@avatar-generator/style-illustrated": resolve(__dirname, "../src/lib/styles/illustrated/src"),
                 "@avatar-generator/style-anime": resolve(__dirname, "../src/lib/styles/anime/src"),
+                "@avatar-generator/style-abstract": resolve(__dirname, "../src/lib/styles/abstract/src"),
+                "@avatar-generator/style-emoji": resolve(__dirname, "../src/lib/styles/emoji/src"),
+                "@avatar-generator/style-animals": resolve(__dirname, "../src/lib/styles/animals/src"),
+                "@avatar-generator/style-gradient": resolve(__dirname, "../src/lib/styles/gradient/src"),
             },
         },
     };

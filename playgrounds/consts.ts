@@ -1,8 +1,12 @@
 import type {
+    AbstractOptions,
+    AnimalsOptions,
     AnimeOptions,
     AvatarOptions,
+    EmojiOptions,
     FacesOptions,
     GeometricOptions,
+    GradientOptions,
     IllustratedOptions,
     InitialsOptions,
     PixelsOptions,
@@ -100,4 +104,48 @@ export const ANIME_OPTIONS: AnimeOptions[] = [
     { seed: "anime-5", size: 80, blush: true, ahoge: true },
     { seed: "anime-6", size: 80, hairStyle: "wild", eyeStyle: "determined" },
     { seed: "anime-7", size: 80, hairStyle: "hime-cut", mouthStyle: "small-smile", bangs: true },
+];
+
+// Abstract style options
+export const ABSTRACT_OPTIONS: AbstractOptions[] = [
+    { seed: "abstract-1", size: 80 },
+    { seed: "abstract-2", size: 80, composition: "mondrian" },
+    { seed: "abstract-3", size: 80, composition: "kandinsky" },
+    { seed: "abstract-4", size: 80, composition: "bauhaus" },
+    { seed: "abstract-5", size: 100, square: true },
+    { seed: "abstract-6", size: 80, composition: "kandinsky", shapeCount: 6 },
+    { seed: "abstract-7", size: 80, border: { width: 2, color: "#000" } },
+];
+
+// Emoji style options
+export const EMOJI_OPTIONS: EmojiOptions[] = [
+    { seed: "emoji-1", size: 80 },
+    { seed: "emoji-2", size: 80, expression: "laughing" },
+    { seed: "emoji-3", size: 80, expression: "cool" },
+    { seed: "emoji-4", size: 80, expression: "love" },
+    { seed: "emoji-5", size: 100, expression: "sleepy" },
+    { seed: "emoji-6", size: 80, expression: "surprised" },
+    { seed: "emoji-7", size: 80, expression: "angry", faceColor: "#FFAD42" },
+];
+
+// Animals style options
+export const ANIMALS_OPTIONS: AnimalsOptions[] = [
+    { seed: "animals-1", size: 80 },
+    { seed: "animals-2", size: 80, animal: "cat" },
+    { seed: "animals-3", size: 80, animal: "dog" },
+    { seed: "animals-4", size: 80, animal: "fox" },
+    { seed: "animals-5", size: 80, animal: "panda" },
+    { seed: "animals-6", size: 80, animal: "bunny" },
+    { seed: "animals-7", size: 80, animal: "frog" },
+];
+
+// Gradient style options
+export const GRADIENT_OPTIONS: GradientOptions[] = [
+    { seed: "gradient-1", size: 80 },
+    { seed: "gradient-2", size: 80, direction: "linear", pattern: "dots" },
+    { seed: "gradient-3", size: 80, direction: "radial", pattern: "waves" },
+    { seed: "gradient-4", size: 80, direction: "diagonal", pattern: "stripes" },
+    { seed: "gradient-5", size: 100, square: true, pattern: "grid" },
+    { seed: "gradient-6", size: 80, colorStops: 3 },
+    { seed: "gradient-7", size: 80, colors: ["#FF6B9D", "#FFD600"], pattern: "none" },
 ];
