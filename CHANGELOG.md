@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com).
 
 ## [Unreleased]
 
+### v2.6.0 — Enhanced Documentation
+
+#### Added
+
+- "Creating Custom Styles" guide — Style\<T\> contract, core helpers
+  (createRandom, buildSvg, escapeXml, validateOption), a checker-style
+  walkthrough, literal-union option pattern, determinism checklist,
+  and packaging-for-npm notes
+- "Cookbook" guide — avatar groups, Gravatar-style fallbacks, per-theme
+  palettes, in-memory caching, server-side rendering notes
+- Interactive `/reference/configurator/` page with a per-style
+  Configurator component: pick a style, adjust every option via form
+  controls, see the generated avatar update live, copy the exact
+  `createAvatar()` call
+
+#### Deferred to follow-up
+
+- Live in-page code editor — needs CodeMirror + sandboxed eval
+- CDN/standalone script bundle — tracked separately
+
 ### v2.5.0 — Framework Ecosystem
 
 #### Added

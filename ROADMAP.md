@@ -120,18 +120,18 @@ Fix synchronization issues between source, playgrounds, and documentation.
 
 ### Interactive Docs
 
-- [ ] Per-style option controls (dropdowns for hairStyle, eyeStyle, etc.)
-- [ ] Live code editor in docs (edit options, see result)
-- [ ] Style comparison gallery page
+- [x] Per-style option controls (dropdowns for hairStyle, eyeStyle, etc.) — `/reference/configurator/`
+- [ ] Live code editor in docs (edit options, see result) _(deferred — needs CodeMirror + sandboxed eval)_
+- [x] Style comparison gallery page — `/reference/gallery/` (shipped in v2.4.0)
 
 ### Guides
 
-- [ ] "Creating Custom Styles" guide
-- [ ] Cookbook with common patterns (avatar groups, fallbacks, theming)
+- [x] "Creating Custom Styles" guide
+- [x] Cookbook with common patterns (avatar groups, fallbacks, theming)
 
 ### Distribution
 
-- [ ] CDN/standalone script bundle for no-build usage
+- [ ] CDN/standalone script bundle for no-build usage _(deferred — separate conversation)_
 
 ---
 
