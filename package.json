@@ -10,6 +10,7 @@
         "test": "pnpm --dir src test",
         "test:watch": "pnpm --dir src test:watch",
         "test:coverage": "pnpm --dir src test:coverage",
+        "typecheck": "pnpm --dir src typecheck",
         "prepare": "husky"
     },
     "devDependencies": {

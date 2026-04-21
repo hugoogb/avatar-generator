@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "esModuleInterop": true,
+        "strict": true,
+        "skipLibCheck": true,
+        "noEmit": true,
+        "types": ["node"],
+        "baseUrl": ".",
+        "paths": {
+            "@avatar-generator/core": ["./lib/core/src/index.ts"],
+            "@avatar-generator/style-initials": ["./lib/styles/initials/src/index.ts"],
+            "@avatar-generator/style-geometric": ["./lib/styles/geometric/src/index.ts"],
+            "@avatar-generator/style-pixels": ["./lib/styles/pixels/src/index.ts"],
+            "@avatar-generator/style-rings": ["./lib/styles/rings/src/index.ts"],
+            "@avatar-generator/style-faces": ["./lib/styles/faces/src/index.ts"],
+            "@avatar-generator/style-illustrated": ["./lib/styles/illustrated/src/index.ts"],
+            "@avatar-generator/style-anime": ["./lib/styles/anime/src/index.ts"]
+        }
+    },
+    "include": ["lib/**/test/**/*.test.ts", "packages/**/test/**/*.test.ts", "vitest.config.mts"]
+}

@@ -11,9 +11,11 @@
         "clean": "rm -rf node_modules && pnpm -r exec rm -rf dist node_modules",
         "test": "vitest run",
         "test:watch": "vitest",
-        "test:coverage": "vitest run --coverage"
+        "test:coverage": "vitest run --coverage",
+        "typecheck": "tsc -p tsconfig.test.json"
     },
     "devDependencies": {
+        "@types/node": "^22.10.1",
         "@vitest/coverage-v8": "^2.1.9",
         "typescript": "^5.7.2",
         "vitest": "^2.1.9"
