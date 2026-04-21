@@ -17,6 +17,7 @@ export default defineConfig({
             "@avatar-generator/style-abstract": here("./lib/styles/abstract/src/index.ts"),
             "@avatar-generator/style-emoji": here("./lib/styles/emoji/src/index.ts"),
             "@avatar-generator/style-animals": here("./lib/styles/animals/src/index.ts"),
+            "@avatar-generator/style-gradient": here("./lib/styles/gradient/src/index.ts"),
         },
     },
     test: {

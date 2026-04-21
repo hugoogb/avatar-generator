@@ -11,6 +11,7 @@ import { anime } from "@avatar-generator/style-anime";
 import { abstract } from "@avatar-generator/style-abstract";
 import { emoji } from "@avatar-generator/style-emoji";
 import { animals } from "@avatar-generator/style-animals";
+import { gradient } from "@avatar-generator/style-gradient";
 
 const styles: Array<[string, Style<AvatarOptions>]> = [
     ["initials", initials as Style<AvatarOptions>],
@@ -23,6 +24,7 @@ const styles: Array<[string, Style<AvatarOptions>]> = [
     ["abstract", abstract as Style<AvatarOptions>],
     ["emoji", emoji as Style<AvatarOptions>],
     ["animals", animals as Style<AvatarOptions>],
+    ["gradient", gradient as Style<AvatarOptions>],
 ];
 
 describe.each(styles)("%s style", (name, style) => {

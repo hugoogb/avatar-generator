@@ -21,6 +21,7 @@ import { CENTER_STYLES } from "@avatar-generator/style-rings";
 import { COMPOSITIONS as ABSTRACT_COMPOSITIONS } from "@avatar-generator/style-abstract";
 import { EXPRESSIONS as EMOJI_EXPRESSIONS } from "@avatar-generator/style-emoji";
 import { ANIMALS } from "@avatar-generator/style-animals";
+import { DIRECTIONS as GRADIENT_DIRECTIONS, PATTERNS as GRADIENT_PATTERNS } from "@avatar-generator/style-gradient";
 
 describe("exported style constants", () => {
     const suites: Array<[string, unknown[], number]> = [
@@ -40,6 +41,8 @@ describe("exported style constants", () => {
         ["abstract COMPOSITIONS", ABSTRACT_COMPOSITIONS, 3],
         ["emoji EXPRESSIONS", EMOJI_EXPRESSIONS, 10],
         ["animals ANIMALS", ANIMALS, 8],
+        ["gradient DIRECTIONS", GRADIENT_DIRECTIONS, 3],
+        ["gradient PATTERNS", GRADIENT_PATTERNS, 5],
     ];
 
     it.each(suites)("%s has the expected number of entries", (_name, arr, count) => {

@@ -20,7 +20,8 @@
             "@avatar-generator/style-anime": ["./lib/styles/anime/src"],
             "@avatar-generator/style-abstract": ["./lib/styles/abstract/src"],
             "@avatar-generator/style-emoji": ["./lib/styles/emoji/src"],
-            "@avatar-generator/style-animals": ["./lib/styles/animals/src"]
+            "@avatar-generator/style-animals": ["./lib/styles/animals/src"],
+            "@avatar-generator/style-gradient": ["./lib/styles/gradient/src"]
         }
     },
     "references": [
@@ -35,6 +36,7 @@
         { "path": "./lib/styles/abstract" },
         { "path": "./lib/styles/emoji" },
         { "path": "./lib/styles/animals" },
+        { "path": "./lib/styles/gradient" },
         { "path": "./packages/react" },
         { "path": "./packages/angular" }
     ],
