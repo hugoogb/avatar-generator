@@ -1,8 +1,21 @@
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
-import tsconfigPaths from "vite-tsconfig-paths";
+
+const here = (relative: string) => fileURLToPath(new URL(relative, import.meta.url));
 
 export default defineConfig({
-    plugins: [tsconfigPaths()],
+    resolve: {
+        alias: {
+            "@avatar-generator/core": here("./lib/core/src/index.ts"),
+            "@avatar-generator/style-initials": here("./lib/styles/initials/src/index.ts"),
+            "@avatar-generator/style-geometric": here("./lib/styles/geometric/src/index.ts"),
+            "@avatar-generator/style-pixels": here("./lib/styles/pixels/src/index.ts"),
+            "@avatar-generator/style-rings": here("./lib/styles/rings/src/index.ts"),
+            "@avatar-generator/style-faces": here("./lib/styles/faces/src/index.ts"),
+            "@avatar-generator/style-illustrated": here("./lib/styles/illustrated/src/index.ts"),
+            "@avatar-generator/style-anime": here("./lib/styles/anime/src/index.ts"),
+        },
+    },
     test: {
         include: ["lib/**/test/**/*.test.ts", "packages/**/test/**/*.test.ts"],
         environment: "node",
