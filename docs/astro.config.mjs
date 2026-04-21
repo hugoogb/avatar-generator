@@ -29,6 +29,7 @@ export default defineConfig({
                         { label: "Vue Usage", slug: "guides/vue" },
                         { label: "Svelte Usage", slug: "guides/svelte" },
                         { label: "Web Component Usage", slug: "guides/web-component" },
+                        { label: "Creating Custom Styles", slug: "guides/custom-styles" },
                     ],
                 },
                 {
