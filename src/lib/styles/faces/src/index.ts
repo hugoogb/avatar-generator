@@ -1,23 +1,40 @@
-import type { Style, FacesOptions, AvatarResult } from "@avatar-generator/core";
-import { createRandom, DEFAULT_COLORS, SKIN_TONES, buildSvg } from "@avatar-generator/core";
+import type {
+    AvatarResult,
+    FacesEyeStyle,
+    FacesHairStyle,
+    FacesMouthStyle,
+    FacesOptions,
+    Style,
+} from "@avatar-generator/core";
+import { buildSvg, createRandom, DEFAULT_COLORS, SKIN_TONES } from "@avatar-generator/core";
 
 /**
  * Face shape types — faces uses distinct geometric shapes for the head
  */
 type FaceShape = "circle" | "square" | "rounded-square";
-type HairStyle = "none" | "flat-top" | "cap" | "side-swept" | "spiky" | "round-top" | "mohawk" | "beanie";
-type EyeStyle = "dots" | "rectangles" | "lines" | "round";
-type MouthStyle = "line" | "rect-smile" | "open-rect" | "zigzag" | "dot";
 
 const FACE_SHAPES: FaceShape[] = ["circle", "square", "rounded-square"];
-const HAIR_STYLES: HairStyle[] = ["none", "flat-top", "cap", "side-swept", "spiky", "round-top", "mohawk", "beanie"];
-const EYE_STYLES: EyeStyle[] = ["dots", "rectangles", "lines", "round"];
-const MOUTH_STYLES: MouthStyle[] = ["line", "rect-smile", "open-rect", "zigzag", "dot"];
+const HAIR_STYLES: FacesHairStyle[] = [
+    "none",
+    "flat-top",
+    "cap",
+    "side-swept",
+    "spiky",
+    "round-top",
+    "mohawk",
+    "beanie",
+];
+const EYE_STYLES: FacesEyeStyle[] = ["dots", "rectangles", "lines", "round"];
+const MOUTH_STYLES: FacesMouthStyle[] = ["line", "rect-smile", "open-rect", "zigzag", "dot"];
 
 /**
  * Draws the head shape — faces uses bold geometric shapes (circle, square, rounded-square)
  * instead of the ellipses used by illustrated
  */
+type HairStyle = FacesHairStyle;
+type EyeStyle = FacesEyeStyle;
+type MouthStyle = FacesMouthStyle;
+
 function drawHead(shape: FaceShape, cx: number, cy: number, headSize: number, color: string): string {
     const half = headSize / 2;
     switch (shape) {
@@ -146,9 +163,9 @@ function createFacesContent(options: FacesOptions): string {
     const faceShape = random.pick(FACE_SHAPES);
 
     // Pick features
-    const hairStyle: HairStyle = (options.hairStyle as HairStyle) ?? random.pick(HAIR_STYLES);
-    const eyeStyle: EyeStyle = (options.eyeStyle as EyeStyle) ?? random.pick(EYE_STYLES);
-    const mouthStyle: MouthStyle = (options.mouthStyle as MouthStyle) ?? random.pick(MOUTH_STYLES);
+    const hairStyle: HairStyle = options.hairStyle ?? random.pick(HAIR_STYLES);
+    const eyeStyle: EyeStyle = options.eyeStyle ?? random.pick(EYE_STYLES);
+    const mouthStyle: MouthStyle = options.mouthStyle ?? random.pick(MOUTH_STYLES);
     const showEyebrows = options.eyebrows !== false && random.bool(0.5);
     const showEars = options.ears !== false && random.bool(0.4);
     const showNose = options.nose !== false && random.bool(0.3);

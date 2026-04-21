@@ -98,6 +98,14 @@ export interface RingsOptions extends AvatarOptions {
     centerStyle?: "solid" | "dot" | "ring" | "diamond" | "none";
 }
 
+// ─── Faces style option unions ────────────────────────────────────────────
+
+export type FacesHairStyle = "none" | "flat-top" | "cap" | "side-swept" | "spiky" | "round-top" | "mohawk" | "beanie";
+
+export type FacesEyeStyle = "dots" | "rectangles" | "lines" | "round";
+
+export type FacesMouthStyle = "line" | "rect-smile" | "open-rect" | "zigzag" | "dot";
+
 export interface FacesOptions extends AvatarOptions {
     /** Custom skin tone palette */
     skinTones?: string[];
@@ -110,26 +118,50 @@ export interface FacesOptions extends AvatarOptions {
     /** Enable nose (default: true) */
     nose?: boolean;
     /** Override mouth style */
-    mouthStyle?: string;
+    mouthStyle?: FacesMouthStyle;
     /** Override eye style */
-    eyeStyle?: string;
+    eyeStyle?: FacesEyeStyle;
     /** Override hair style */
-    hairStyle?: string;
+    hairStyle?: FacesHairStyle;
 }
+
+// ─── Illustrated style option unions ──────────────────────────────────────
+
+export type IllustratedHairStyle =
+    | "bald"
+    | "buzz"
+    | "short"
+    | "medium"
+    | "long"
+    | "curly"
+    | "wavy"
+    | "mohawk"
+    | "afro"
+    | "ponytail"
+    | "bangs"
+    | "sidepart";
+
+export type IllustratedEyeStyle = "round" | "almond" | "narrow" | "wide" | "sleepy" | "winking" | "looking" | "glasses";
+
+export type IllustratedEyebrowStyle = "natural" | "thick" | "thin" | "raised" | "furrowed" | "unibrow";
+
+export type IllustratedNoseStyle = "small" | "pointed" | "round" | "long" | "button";
+
+export type IllustratedMouthStyle = "smile" | "bigSmile" | "neutral" | "frown" | "open" | "smirk" | "tongue" | "teeth";
 
 export interface IllustratedOptions extends AvatarOptions {
     /** Custom skin tone palette */
     skinTones?: string[];
     /** Override hair style */
-    hairStyle?: string;
+    hairStyle?: IllustratedHairStyle;
     /** Override eye style */
-    eyeStyle?: string;
+    eyeStyle?: IllustratedEyeStyle;
     /** Override eyebrow style */
-    eyebrowStyle?: string;
+    eyebrowStyle?: IllustratedEyebrowStyle;
     /** Override nose style */
-    noseStyle?: string;
+    noseStyle?: IllustratedNoseStyle;
     /** Override mouth style */
-    mouthStyle?: string;
+    mouthStyle?: IllustratedMouthStyle;
     /** Enable glasses (default: true, 20% chance) */
     glasses?: boolean;
     /** Enable hat (default: true, 10% chance) */
@@ -142,20 +174,48 @@ export interface IllustratedOptions extends AvatarOptions {
     eyeColors?: string[];
 }
 
+// ─── Anime style option unions ────────────────────────────────────────────
+
+export type AnimeHairStyle =
+    | "short-spiky"
+    | "medium-messy"
+    | "long-straight"
+    | "twin-tails"
+    | "ponytail"
+    | "side-swept"
+    | "wild"
+    | "bob"
+    | "hime-cut"
+    | "shaggy";
+
+export type AnimeEyeStyle =
+    | "normal"
+    | "sparkly"
+    | "determined"
+    | "gentle"
+    | "cat"
+    | "half-closed"
+    | "closed-happy"
+    | "surprised";
+
+export type AnimeMouthStyle = "small-smile" | "open-small" | "cat-mouth" | "line" | "pout" | "grin";
+
+export type AnimeNoseStyle = "dot" | "line" | "shadow";
+
 export interface AnimeOptions extends AvatarOptions {
     /** Custom skin tone palette */
     skinTones?: string[];
     /** Custom eye color palette */
     eyeColors?: string[];
     /** Override hair style */
-    hairStyle?: string;
+    hairStyle?: AnimeHairStyle;
     /** Override eye style */
-    eyeStyle?: string;
+    eyeStyle?: AnimeEyeStyle;
     /** Override mouth style */
-    mouthStyle?: string;
+    mouthStyle?: AnimeMouthStyle;
     /** Override nose style */
-    noseStyle?: string;
-    /** Override expression */
+    noseStyle?: AnimeNoseStyle;
+    /** Reserved for future expression overrides (currently no-op) */
     expression?: string;
     /** Enable bangs (default: random) */
     bangs?: boolean;

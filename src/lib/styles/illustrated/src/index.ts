@@ -1,27 +1,24 @@
-import type { Style, IllustratedOptions, AvatarResult } from "@avatar-generator/core";
-import { createRandom, DEFAULT_COLORS, SKIN_TONES, EYE_COLORS, buildSvg } from "@avatar-generator/core";
+import type {
+    AvatarResult,
+    IllustratedEyeStyle,
+    IllustratedEyebrowStyle,
+    IllustratedHairStyle,
+    IllustratedMouthStyle,
+    IllustratedNoseStyle,
+    IllustratedOptions,
+    Style,
+} from "@avatar-generator/core";
+import { buildSvg, createRandom, DEFAULT_COLORS, EYE_COLORS, SKIN_TONES } from "@avatar-generator/core";
 
 // ============================================================================
 // Feature variant types
 // ============================================================================
 
-type HairStyle =
-    | "bald"
-    | "buzz"
-    | "short"
-    | "medium"
-    | "long"
-    | "curly"
-    | "wavy"
-    | "mohawk"
-    | "afro"
-    | "ponytail"
-    | "bangs"
-    | "sidepart";
-type EyeStyle = "round" | "almond" | "narrow" | "wide" | "sleepy" | "winking" | "looking" | "glasses";
-type EyebrowStyle = "natural" | "thick" | "thin" | "raised" | "furrowed" | "unibrow";
-type NoseStyle = "small" | "pointed" | "round" | "long" | "button";
-type MouthStyle = "smile" | "bigSmile" | "neutral" | "frown" | "open" | "smirk" | "tongue" | "teeth";
+type HairStyle = IllustratedHairStyle;
+type EyeStyle = IllustratedEyeStyle;
+type EyebrowStyle = IllustratedEyebrowStyle;
+type NoseStyle = IllustratedNoseStyle;
+type MouthStyle = IllustratedMouthStyle;
 type GlassesType = "round" | "square" | "aviator";
 type HatType = "beanie" | "cap" | "tophat";
 type FacialHairType = "stubble" | "mustache" | "beard";
@@ -397,11 +394,11 @@ function createIllustratedContent(options: IllustratedOptions): string {
     const g = computeGeo(size);
 
     // Pick features
-    const hairStyle: HairStyle = (options.hairStyle as HairStyle) ?? random.pick(HAIR_STYLES);
-    const eyeStyle: EyeStyle = (options.eyeStyle as EyeStyle) ?? random.pick(EYE_STYLES);
-    const eyebrowStyle: EyebrowStyle = (options.eyebrowStyle as EyebrowStyle) ?? random.pick(EYEBROW_STYLES);
-    const noseStyle: NoseStyle = (options.noseStyle as NoseStyle) ?? random.pick(NOSE_STYLES);
-    const mouthStyle: MouthStyle = (options.mouthStyle as MouthStyle) ?? random.pick(MOUTH_STYLES);
+    const hairStyle: HairStyle = options.hairStyle ?? random.pick(HAIR_STYLES);
+    const eyeStyle: EyeStyle = options.eyeStyle ?? random.pick(EYE_STYLES);
+    const eyebrowStyle: EyebrowStyle = options.eyebrowStyle ?? random.pick(EYEBROW_STYLES);
+    const noseStyle: NoseStyle = options.noseStyle ?? random.pick(NOSE_STYLES);
+    const mouthStyle: MouthStyle = options.mouthStyle ?? random.pick(MOUTH_STYLES);
 
     // Accessories probabilities
     const hasGlasses = options.glasses !== false && random.bool(0.2);
