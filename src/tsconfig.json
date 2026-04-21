@@ -11,6 +11,7 @@
             "@avatar-generator/core": ["./lib/core/src"],
             "@avatar-generator/react": ["./packages/react/src"],
             "@avatar-generator/angular": ["./packages/angular/src"],
+            "@avatar-generator/vue": ["./packages/vue/src"],
             "@avatar-generator/style-initials": ["./lib/styles/initials/src"],
             "@avatar-generator/style-geometric": ["./lib/styles/geometric/src"],
             "@avatar-generator/style-pixels": ["./lib/styles/pixels/src"],
@@ -38,7 +39,8 @@
         { "path": "./lib/styles/animals" },
         { "path": "./lib/styles/gradient" },
         { "path": "./packages/react" },
-        { "path": "./packages/angular" }
+        { "path": "./packages/angular" },
+        { "path": "./packages/vue" }
     ],
     "files": []
 }
