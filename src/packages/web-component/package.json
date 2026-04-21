@@ -1,0 +1,28 @@
+{
+    "name": "@avatar-generator/web-component",
+    "version": "2.5.0",
+    "type": "module",
+    "main": "./dist/index.js",
+    "types": "./dist/types/index.d.ts",
+    "sideEffects": true,
+    "scripts": {
+        "build": "tsc",
+        "prepublishOnly": "npm run build"
+    },
+    "peerDependencies": {
+        "@avatar-generator/core": "^2.0.0"
+    },
+    "devDependencies": {
+        "@avatar-generator/core": "workspace:*"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "keywords": [
+        "avatar",
+        "web-component",
+        "custom-element",
+        "svg"
+    ],
+    "license": "MIT"
+}
