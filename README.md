@@ -1,5 +1,9 @@
 # @avatar-generator
 
+[![npm version](https://img.shields.io/npm/v/@avatar-generator/core?style=flat-square&logo=npm&color=CB3837)](https://www.npmjs.com/package/@avatar-generator/core)
+[![npm downloads](https://img.shields.io/npm/dm/@avatar-generator/core?style=flat-square)](https://www.npmjs.com/package/@avatar-generator/core)
+[![license](https://img.shields.io/npm/l/@avatar-generator/core?style=flat-square&color=blue)](./LICENSE)
+
 Generate unique, deterministic SVG avatars with multiple styles.
 
 ## Features
