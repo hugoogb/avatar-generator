@@ -1,6 +1,6 @@
 # @avatar-generator
 
-[![CI](https://img.shields.io/github/actions/workflow/status/hugoogb/avatar-generator/ci.yml?branch=develop&style=flat-square&label=ci)](https://github.com/hugoogb/avatar-generator/actions/workflows/ci.yml)
+[![CI](https://img.shields.io/github/actions/workflow/status/hugoogb/avatar-generator/ci.yml?style=flat-square&label=ci)](https://github.com/hugoogb/avatar-generator/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/@avatar-generator/core?style=flat-square&logo=npm&color=CB3837)](https://www.npmjs.com/package/@avatar-generator/core)
 [![npm downloads](https://img.shields.io/npm/dm/@avatar-generator/core?style=flat-square)](https://www.npmjs.com/package/@avatar-generator/core)
 [![license](https://img.shields.io/npm/l/@avatar-generator/core?style=flat-square&color=blue)](./LICENSE)
@@ -12,7 +12,7 @@ Generate unique, deterministic SVG avatars with multiple styles.
 - **11 Unique Styles**: Initials, Geometric, Pixels, Rings, Faces, Illustrated, Anime, Abstract, Emoji, Animals, and Gradient
 - **Deterministic**: Same seed = same avatar, always
 - **Tree-shakeable**: Only bundle the styles you use
-- **Framework Support**: React, Angular, or vanilla JS
+- **Framework Support**: React, Vue, Svelte, Angular, a custom element, or plain JS
 - **Tiny**: Core ships ESM and CommonJS builds with no runtime dependencies
 
 ## Quick Start
