@@ -115,8 +115,8 @@ pnpm run release:dry        # full verification + `pnpm publish --dry-run`
 Commit the version bump, then tag and push:
 
 ```bash
-git tag v2.6.1
-git push origin v2.6.1
+git tag v3.0.0
+git push origin v3.0.0
 ```
 
 The tag triggers `.github/workflows/release.yml`, which re-runs typecheck, tests,

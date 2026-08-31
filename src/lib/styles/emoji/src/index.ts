@@ -1,5 +1,21 @@
-import type { AvatarResult, EmojiExpression, EmojiOptions, Style } from "@avatar-generator/core";
+import type { AvatarOptions, AvatarResult, Style } from "@avatar-generator/core";
 import { buildSvg, createRandom, validateOption } from "@avatar-generator/core";
+
+// ============================================================================
+// Options
+// ============================================================================
+
+export type EmojiExpression =
+    "happy" | "laughing" | "cool" | "wink" | "love" | "sad" | "angry" | "surprised" | "sleepy" | "neutral";
+
+export interface EmojiOptions extends AvatarOptions {
+    /** Override the facial expression */
+    expression?: EmojiExpression;
+    /** Override the face fill color (default: yellow emoji palette) */
+    faceColor?: string;
+}
+
+// ─── Animals style option unions ──────────────────────────────────────────
 
 type Expression = EmojiExpression;
 
@@ -226,4 +242,3 @@ export const emoji: Style<EmojiOptions> = {
 };
 
 export default emoji;
-export type { EmojiExpression, EmojiOptions };

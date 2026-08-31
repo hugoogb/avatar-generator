@@ -1,5 +1,26 @@
-import type { AvatarResult, Random, RingsCenterStyle, RingsOptions, Style } from "@avatar-generator/core";
+import type { AvatarOptions, AvatarResult, Random, Style } from "@avatar-generator/core";
 import { buildSvg, createRandom, DEFAULT_COLORS, validateOption } from "@avatar-generator/core";
+
+// ============================================================================
+// Options
+// ============================================================================
+
+export type RingsCenterStyle = "solid" | "dot" | "ring" | "diamond" | "none";
+
+export interface RingsOptions extends AvatarOptions {
+    /** Number of rings (default: 4) */
+    ringCount?: number;
+    /** Gap between rings (default: 2) */
+    ringGap?: number;
+    /** Allow segmented rings (default: true) */
+    segmented?: boolean;
+    /** Allow dashed rings (default: true) */
+    dashed?: boolean;
+    /** Center decoration style (default: "solid") */
+    centerStyle?: RingsCenterStyle;
+}
+
+// ─── Faces style option unions ────────────────────────────────────────────
 
 type RingType = "solid" | "segmented" | "dashed";
 
@@ -222,4 +243,3 @@ export const rings: Style<RingsOptions> = {
 };
 
 export default rings;
-export type { RingsCenterStyle, RingsOptions };

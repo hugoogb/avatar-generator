@@ -1,5 +1,20 @@
-import type { AbstractComposition, AbstractOptions, AvatarResult, Random, Style } from "@avatar-generator/core";
+import type { AvatarOptions, AvatarResult, Random, Style } from "@avatar-generator/core";
 import { buildSvg, createRandom, validateOption } from "@avatar-generator/core";
+
+// ============================================================================
+// Options
+// ============================================================================
+
+export type AbstractComposition = "mondrian" | "kandinsky" | "bauhaus";
+
+export interface AbstractOptions extends AvatarOptions {
+    /** Override the composition style */
+    composition?: AbstractComposition;
+    /** Number of accent shapes drawn on top of the base blocks (default: 3) */
+    shapeCount?: number;
+}
+
+// ─── Emoji style option unions ────────────────────────────────────────────
 
 type Composition = AbstractComposition;
 
@@ -228,4 +243,3 @@ export const abstract: Style<AbstractOptions> = {
 };
 
 export default abstract;
-export type { AbstractComposition, AbstractOptions };

@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/style-anime",
-    "version": "2.6.1",
+    "version": "3.0.0",
     "description": "Anime/manga-inspired face avatar style for @avatar-generator/core",
     "keywords": [
         "avatar",

@@ -1,40 +1,5 @@
 // Re-export types
-export type {
-    AbstractComposition,
-    AbstractOptions,
-    Animal,
-    AnimalsOptions,
-    AnimeEyeStyle,
-    AnimeHairStyle,
-    AnimeMouthStyle,
-    AnimeNoseStyle,
-    AnimeOptions,
-    AvatarOptions,
-    AvatarResult,
-    EmojiExpression,
-    EmojiOptions,
-    FacesEyeStyle,
-    FacesHairStyle,
-    FacesMouthStyle,
-    FacesOptions,
-    GeometricOptions,
-    GradientDirection,
-    GradientOptions,
-    GradientPattern,
-    IllustratedEyeStyle,
-    IllustratedEyebrowStyle,
-    IllustratedHairStyle,
-    IllustratedMouthStyle,
-    IllustratedNoseStyle,
-    IllustratedOptions,
-    InitialsOptions,
-    LegacyAvatarOptions,
-    PixelsOptions,
-    Random,
-    RingsCenterStyle,
-    RingsOptions,
-    Style,
-} from "./types";
+export type { AvatarOptions, AvatarResult, LegacyAvatarOptions, Random, Style } from "./types";
 
 // Re-export utilities
 export { createRandom } from "./random";

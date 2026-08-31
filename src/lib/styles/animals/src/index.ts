@@ -1,5 +1,20 @@
-import type { Animal, AnimalsOptions, AvatarResult, Style } from "@avatar-generator/core";
+import type { AvatarOptions, AvatarResult, Style } from "@avatar-generator/core";
 import { buildSvg, createRandom, DEFAULT_COLORS, validateOption } from "@avatar-generator/core";
+
+// ============================================================================
+// Options
+// ============================================================================
+
+export type Animal = "cat" | "dog" | "bear" | "fox" | "panda" | "bunny" | "frog" | "monkey";
+
+export interface AnimalsOptions extends AvatarOptions {
+    /** Override which animal is rendered */
+    animal?: Animal;
+    /** Custom fur-tone palette (default: earth tones) */
+    furTones?: string[];
+}
+
+// ─── Gradient style option unions ─────────────────────────────────────────
 
 /** All valid animal values for the animals style */
 export const ANIMALS: Animal[] = ["cat", "dog", "bear", "fox", "panda", "bunny", "frog", "monkey"];
@@ -320,4 +335,3 @@ export const animals: Style<AnimalsOptions> = {
 };
 
 export default animals;
-export type { Animal, AnimalsOptions };

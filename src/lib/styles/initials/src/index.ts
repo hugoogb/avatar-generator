@@ -1,5 +1,23 @@
-import type { AvatarResult, InitialsOptions, Style } from "@avatar-generator/core";
+import type { AvatarOptions, AvatarResult, Style } from "@avatar-generator/core";
 import { buildSvg, createRandom, DEFAULT_COLORS, escapeXml } from "@avatar-generator/core";
+
+// ============================================================================
+// Options
+// ============================================================================
+
+/**
+ * Options for the initials style.
+ */
+export interface InitialsOptions extends AvatarOptions {
+    /** Name to extract initials from (defaults to seed) */
+    name?: string;
+    /** Font family (default: sans-serif) */
+    fontFamily?: string;
+    /** Font weight (default: 600) */
+    fontWeight?: number;
+    /** Text color (default: #fff) */
+    textColor?: string;
+}
 
 /**
  * Extracts initials from a name string
@@ -72,4 +90,3 @@ export const initials: Style<InitialsOptions> = {
 };
 
 export default initials;
-export type { InitialsOptions };

@@ -1,12 +1,36 @@
-import type {
-    AvatarResult,
-    FacesEyeStyle,
-    FacesHairStyle,
-    FacesMouthStyle,
-    FacesOptions,
-    Style,
-} from "@avatar-generator/core";
+import type { AvatarOptions, AvatarResult, Style } from "@avatar-generator/core";
 import { buildSvg, createRandom, DEFAULT_COLORS, SKIN_TONES, validateOption } from "@avatar-generator/core";
+
+// ============================================================================
+// Options
+// ============================================================================
+
+export type FacesHairStyle = "none" | "flat-top" | "cap" | "side-swept" | "spiky" | "round-top" | "mohawk" | "beanie";
+
+export type FacesEyeStyle = "dots" | "rectangles" | "lines" | "round";
+
+export type FacesMouthStyle = "line" | "rect-smile" | "open-rect" | "zigzag" | "dot";
+
+export interface FacesOptions extends AvatarOptions {
+    /** Custom skin tone palette */
+    skinTones?: string[];
+    /** Override feature color (eyes, mouth, eyebrows) */
+    featureColor?: string;
+    /** Enable eyebrows (default: true) */
+    eyebrows?: boolean;
+    /** Enable ears (default: true) */
+    ears?: boolean;
+    /** Enable nose (default: true) */
+    nose?: boolean;
+    /** Override mouth style */
+    mouthStyle?: FacesMouthStyle;
+    /** Override eye style */
+    eyeStyle?: FacesEyeStyle;
+    /** Override hair style */
+    hairStyle?: FacesHairStyle;
+}
+
+// ─── Illustrated style option unions ──────────────────────────────────────
 
 /**
  * Face shape types — faces uses distinct geometric shapes for the head
@@ -275,4 +299,3 @@ export const faces: Style<FacesOptions> = {
 };
 
 export default faces;
-export type { FacesEyeStyle, FacesHairStyle, FacesMouthStyle, FacesOptions };

@@ -1,14 +1,55 @@
-import type {
-    AnimeEyeStyle,
-    AnimeHairStyle,
-    AnimeMouthStyle,
-    AnimeNoseStyle,
-    AnimeOptions,
-    AvatarResult,
-    Random,
-    Style,
-} from "@avatar-generator/core";
+import type { AvatarOptions, AvatarResult, Random, Style } from "@avatar-generator/core";
 import { buildSvg, createRandom, DEFAULT_COLORS, EYE_COLORS, SKIN_TONES, validateOption } from "@avatar-generator/core";
+
+// ============================================================================
+// Options
+// ============================================================================
+
+export type AnimeHairStyle =
+    | "short-spiky"
+    | "medium-messy"
+    | "long-straight"
+    | "twin-tails"
+    | "ponytail"
+    | "side-swept"
+    | "wild"
+    | "bob"
+    | "hime-cut"
+    | "shaggy";
+
+export type AnimeEyeStyle =
+    "normal" | "sparkly" | "determined" | "gentle" | "cat" | "half-closed" | "closed-happy" | "surprised";
+
+export type AnimeMouthStyle = "small-smile" | "open-small" | "cat-mouth" | "line" | "pout" | "grin";
+
+export type AnimeNoseStyle = "dot" | "line" | "shadow";
+
+export interface AnimeOptions extends AvatarOptions {
+    /** Custom skin tone palette */
+    skinTones?: string[];
+    /** Custom eye color palette */
+    eyeColors?: string[];
+    /** Override hair style */
+    hairStyle?: AnimeHairStyle;
+    /** Override eye style */
+    eyeStyle?: AnimeEyeStyle;
+    /** Override mouth style */
+    mouthStyle?: AnimeMouthStyle;
+    /** Override nose style */
+    noseStyle?: AnimeNoseStyle;
+    /** Reserved for future expression overrides (currently no-op) */
+    expression?: string;
+    /** Enable bangs (default: random) */
+    bangs?: boolean;
+    /** Enable ahoge hair strand (default: random, 40% chance) */
+    ahoge?: boolean;
+    /** Enable blush (default: random, 35% chance) */
+    blush?: boolean;
+    /** Enable accessories (default: true) */
+    accessories?: boolean;
+}
+
+// ─── Abstract style option unions ─────────────────────────────────────────
 
 // ============================================================================
 // Feature variant types
@@ -627,4 +668,3 @@ export const anime: Style<AnimeOptions> = {
 };
 
 export default anime;
-export type { AnimeEyeStyle, AnimeHairStyle, AnimeMouthStyle, AnimeNoseStyle, AnimeOptions };

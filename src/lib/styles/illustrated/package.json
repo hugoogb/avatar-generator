@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/style-illustrated",
-    "version": "2.6.1",
+    "version": "3.0.0",
     "description": "Detailed cartoon faces avatar style for @avatar-generator/core",
     "keywords": [
         "avatar",

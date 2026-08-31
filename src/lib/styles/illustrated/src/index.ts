@@ -1,14 +1,58 @@
-import type {
-    AvatarResult,
-    IllustratedEyeStyle,
-    IllustratedEyebrowStyle,
-    IllustratedHairStyle,
-    IllustratedMouthStyle,
-    IllustratedNoseStyle,
-    IllustratedOptions,
-    Style,
-} from "@avatar-generator/core";
+import type { AvatarOptions, AvatarResult, Style } from "@avatar-generator/core";
 import { buildSvg, createRandom, DEFAULT_COLORS, EYE_COLORS, SKIN_TONES, validateOption } from "@avatar-generator/core";
+
+// ============================================================================
+// Options
+// ============================================================================
+
+export type IllustratedHairStyle =
+    | "bald"
+    | "buzz"
+    | "short"
+    | "medium"
+    | "long"
+    | "curly"
+    | "wavy"
+    | "mohawk"
+    | "afro"
+    | "ponytail"
+    | "bangs"
+    | "sidepart";
+
+export type IllustratedEyeStyle = "round" | "almond" | "narrow" | "wide" | "sleepy" | "winking" | "looking" | "glasses";
+
+export type IllustratedEyebrowStyle = "natural" | "thick" | "thin" | "raised" | "furrowed" | "unibrow";
+
+export type IllustratedNoseStyle = "small" | "pointed" | "round" | "long" | "button";
+
+export type IllustratedMouthStyle = "smile" | "bigSmile" | "neutral" | "frown" | "open" | "smirk" | "tongue" | "teeth";
+
+export interface IllustratedOptions extends AvatarOptions {
+    /** Custom skin tone palette */
+    skinTones?: string[];
+    /** Override hair style */
+    hairStyle?: IllustratedHairStyle;
+    /** Override eye style */
+    eyeStyle?: IllustratedEyeStyle;
+    /** Override eyebrow style */
+    eyebrowStyle?: IllustratedEyebrowStyle;
+    /** Override nose style */
+    noseStyle?: IllustratedNoseStyle;
+    /** Override mouth style */
+    mouthStyle?: IllustratedMouthStyle;
+    /** Enable glasses (default: true, 20% chance) */
+    glasses?: boolean;
+    /** Enable hat (default: true, 10% chance) */
+    hat?: boolean;
+    /** Enable earrings (default: true, 8% chance) */
+    earrings?: boolean;
+    /** Enable facial hair (default: true, 15% chance) */
+    facialHair?: boolean;
+    /** Custom eye color palette */
+    eyeColors?: string[];
+}
+
+// ─── Anime style option unions ────────────────────────────────────────────
 
 // ============================================================================
 // Feature variant types
@@ -514,11 +558,3 @@ export const illustrated: Style<IllustratedOptions> = {
 };
 
 export default illustrated;
-export type {
-    IllustratedEyeStyle,
-    IllustratedEyebrowStyle,
-    IllustratedHairStyle,
-    IllustratedMouthStyle,
-    IllustratedNoseStyle,
-    IllustratedOptions,
-};

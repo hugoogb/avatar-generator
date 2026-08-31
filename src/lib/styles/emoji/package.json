@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/style-emoji",
-    "version": "2.6.1",
+    "version": "3.0.0",
     "description": "Emoji-style expressive face avatars for @avatar-generator/core",
     "keywords": [
         "avatar",

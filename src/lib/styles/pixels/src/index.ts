@@ -1,5 +1,20 @@
-import type { Style, PixelsOptions, AvatarResult } from "@avatar-generator/core";
+import type { AvatarOptions, AvatarResult, Style } from "@avatar-generator/core";
 import { createRandom, DEFAULT_COLORS, SKIN_TONES, buildSvg } from "@avatar-generator/core";
+
+// ============================================================================
+// Options
+// ============================================================================
+
+export interface PixelsOptions extends AvatarOptions {
+    /** Pixel grid size (default: 8) */
+    pixelSize?: number;
+    /** Custom skin tone palette */
+    skinTones?: string[];
+    /** Enable accessories like glasses (default: true) */
+    accessories?: boolean;
+    /** Override feature color (eyes, mouth) */
+    featureColor?: string;
+}
 
 type HairStyle = "none" | "flat" | "spiky" | "side" | "mohawk" | "full";
 type EyeStyle = "dot" | "wide" | "closed" | "wink";
@@ -247,4 +262,3 @@ export const pixels: Style<PixelsOptions> = {
 };
 
 export default pixels;
-export type { PixelsOptions };

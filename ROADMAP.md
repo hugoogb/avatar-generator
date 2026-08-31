@@ -135,7 +135,7 @@ Fix synchronization issues between source, playgrounds, and documentation.
 
 ---
 
-## v2.6.1 — Distribution, Release Pipeline & CI Repair
+## v3.0.0 — Distribution, Release Pipeline & CI Repair
 
 **Theme**: Make the published artifact real.
 
@@ -160,6 +160,14 @@ Fix synchronization issues between source, playgrounds, and documentation.
 - [x] Fix the Prettier failure in `core/types.ts`
 - [x] MIT LICENSE on `develop`
 
+### Testing & architecture
+
+- [x] Tests for all five framework wrappers (were 0%; now 100/100/100/96/90%)
+- [x] Fix `register(tagName)` in the web component, which could never succeed
+- [x] Move style option types out of core into the style that implements them
+- [x] Boundary test so a style-specific type cannot drift back into core
+- [x] Reconcile `master` and `develop`
+
 ### Release pipeline
 
 - [x] Changesets with a fixed version group across all 17 packages
@@ -171,9 +179,7 @@ Fix synchronization issues between source, playgrounds, and documentation.
 
 ### Follow-ups
 
-- [ ] Add the `NPM_TOKEN` secret and push the `v2.6.1` tag to publish
-- [ ] Reconcile `master` and `develop`
-- [ ] Tests for the five framework wrappers (currently 0% covered)
+- [ ] Add the `NPM_TOKEN` secret and push the `v3.0.0` tag to publish
 - [ ] Make `@avatar-generator/web-component` SSR-safe — importing it touches
       `HTMLElement` at module scope, which throws under Node
 - [ ] `ng-packagr` for the Angular package (plain `tsc`/tsup output is not
@@ -181,12 +187,14 @@ Fix synchronization issues between source, playgrounds, and documentation.
 
 ---
 
-## v3.0.0 — Platform
+## v3.1.0 — Platform
 
 **Theme**: Extensibility and advanced features.
 
 ### Custom Style Builder
 
+- [x] Style packages own their option types, so a third-party style is typeable
+      without core knowing it exists (prerequisite, shipped above)
 - [ ] Public API for creating custom avatar styles with composable feature functions
 - [ ] Style template system for scaffolding new styles
 - [ ] CLI tool (`create-avatar-style`) for generating style packages

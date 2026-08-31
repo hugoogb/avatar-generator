@@ -4,7 +4,43 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com).
 
-## [2.6.1] — Distribution, Release Pipeline & CI Repair
+## [3.0.0] — Distribution, Release Pipeline & CI Repair
+
+### Breaking
+
+#### Style option types moved out of core
+
+`@avatar-generator/core` declared `FacesOptions`, `AnimeOptions`,
+`AnimalsOptions` and every other style's option type — 29 in all. Core therefore
+knew about all eleven styles: adding one meant editing and releasing core, and a
+style published by anyone else could not be typed. Each style now owns its
+option type.
+
+```diff
+- import type { FacesOptions } from "@avatar-generator/core";
++ import type { FacesOptions } from "@avatar-generator/style-faces";
+```
+
+Core now declares only `AvatarOptions`, `Style`, `Random`, `AvatarResult` and
+the deprecated `LegacyAvatarOptions`. The types themselves are unchanged and the
+style packages already re-exported them, so code importing from the style
+package needs no change. A test in core asserts the boundary holds.
+
+This is the only breaking change, and it is why this release is 3.0.0 rather
+than the 2.6.1 originally prepared.
+
+### Testing
+
+- The five framework wrappers had no tests at all; they are now covered for
+  rendering, prop reactivity, sizing, alt handling and determinism
+  (100/100/100/96/90%). 274 tests, up from 221
+- Fixed `register(tagName)` in `@avatar-generator/web-component`, which could
+  never succeed: importing the package auto-registers `AvatarElement` as
+  `<avatar-generator>`, and the custom element registry allows one tag name per
+  constructor, so any consumer calling `register('my-avatar')` hit
+  `NotSupportedError`. Additional names now get their own subclass
+
+### Everything below shipped in the same release
 
 Nothing in this release changes what an avatar looks like — the SVG snapshots
 are byte-identical. It makes the packages installable and the pipeline real.

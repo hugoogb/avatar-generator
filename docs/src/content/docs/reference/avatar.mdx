@@ -48,6 +48,15 @@ All styles accept these base options:
 
 ## Style-Specific Options
 
+Each style owns its option type and exports it from its own package — not from
+`@avatar-generator/core`, which knows only about `AvatarOptions`, `Style`,
+`Random` and `AvatarResult`:
+
+<Code code={`import { faces, type FacesOptions } from "@avatar-generator/style-faces";`} lang="ts"></Code>
+
+That is what lets you publish a style of your own without core needing to know
+it exists. See [Creating Custom Styles](/guides/custom-styles/).
+
 ### InitialsOptions
 
 For `@avatar-generator/style-initials`:
@@ -250,6 +259,9 @@ import {
 `} lang="ts"></Code>
 
 ## Types
+
+These are the only types `@avatar-generator/core` declares. Everything
+style-specific lives in the style's own package.
 
 ### Style Interface
 

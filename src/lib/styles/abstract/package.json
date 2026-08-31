@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/style-abstract",
-    "version": "2.6.1",
+    "version": "3.0.0",
     "description": "Abstract geometric art avatar style for @avatar-generator/core (Mondrian, Kandinsky, Bauhaus inspired)",
     "keywords": [
         "avatar",

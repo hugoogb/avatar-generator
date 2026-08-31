@@ -1,12 +1,22 @@
-import type {
-    AvatarResult,
-    GradientDirection,
-    GradientOptions,
-    GradientPattern,
-    Random,
-    Style,
-} from "@avatar-generator/core";
+import type { AvatarOptions, AvatarResult, Random, Style } from "@avatar-generator/core";
 import { buildSvg, createRandom, validateOption } from "@avatar-generator/core";
+
+// ============================================================================
+// Options
+// ============================================================================
+
+export type GradientDirection = "linear" | "radial" | "diagonal";
+
+export type GradientPattern = "none" | "dots" | "stripes" | "waves" | "grid";
+
+export interface GradientOptions extends AvatarOptions {
+    /** Override gradient direction */
+    direction?: GradientDirection;
+    /** Override the pattern overlay */
+    pattern?: GradientPattern;
+    /** Number of color stops in the gradient (2 or 3, default 2) */
+    colorStops?: number;
+}
 
 /** All valid gradient directions */
 export const DIRECTIONS: GradientDirection[] = ["linear", "radial", "diagonal"];
@@ -161,4 +171,3 @@ export const gradient: Style<GradientOptions> = {
 };
 
 export default gradient;
-export type { GradientDirection, GradientOptions, GradientPattern };

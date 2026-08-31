@@ -1,25 +1,14 @@
 import { describe, expectTypeOf, it } from "vitest";
-import type {
-    AnimeOptions,
-    AvatarOptions,
-    AvatarResult,
-    FacesOptions,
-    GeometricOptions,
-    IllustratedOptions,
-    InitialsOptions,
-    PixelsOptions,
-    Random,
-    RingsOptions,
-    Style,
-} from "@avatar-generator/core";
+import type { AvatarOptions, AvatarResult, Random, Style } from "@avatar-generator/core";
 import { createAvatar, createRandom } from "@avatar-generator/core";
-import { initials } from "@avatar-generator/style-initials";
-import { geometric } from "@avatar-generator/style-geometric";
-import { pixels } from "@avatar-generator/style-pixels";
-import { rings } from "@avatar-generator/style-rings";
-import { faces } from "@avatar-generator/style-faces";
-import { illustrated } from "@avatar-generator/style-illustrated";
-import { anime } from "@avatar-generator/style-anime";
+// Option types belong to the style that implements them, not to core.
+import { initials, type InitialsOptions } from "@avatar-generator/style-initials";
+import { geometric, type GeometricOptions } from "@avatar-generator/style-geometric";
+import { pixels, type PixelsOptions } from "@avatar-generator/style-pixels";
+import { rings, type RingsOptions } from "@avatar-generator/style-rings";
+import { faces, type FacesOptions } from "@avatar-generator/style-faces";
+import { illustrated, type IllustratedOptions } from "@avatar-generator/style-illustrated";
+import { anime, type AnimeOptions } from "@avatar-generator/style-anime";
 
 describe("AvatarOptions", () => {
     it("requires a seed", () => {

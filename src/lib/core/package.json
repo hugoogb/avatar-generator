@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/core",
-    "version": "2.6.1",
+    "version": "3.0.0",
     "description": "Core logic for multi-style SVG avatar generation",
     "keywords": [
         "avatar",

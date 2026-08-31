@@ -1,5 +1,18 @@
-import type { AvatarResult, GeometricOptions, Style } from "@avatar-generator/core";
+import type { AvatarOptions, AvatarResult, Style } from "@avatar-generator/core";
 import { buildSvg, createRandom, DEFAULT_COLORS } from "@avatar-generator/core";
+
+// ============================================================================
+// Options
+// ============================================================================
+
+export interface GeometricOptions extends AvatarOptions {
+    /** Grid size (default: 5, odd recommended) */
+    gridSize?: number;
+    /** Padding cells around the pattern (default: 1) */
+    padding?: number;
+    /** Override foreground color (otherwise picked from palette) */
+    foregroundColor?: string;
+}
 
 /**
  * Creates identicon-style avatar content using a 5x5 symmetrical grid
@@ -115,4 +128,3 @@ export const geometric: Style<GeometricOptions> = {
 };
 
 export default geometric;
-export type { GeometricOptions };

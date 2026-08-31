@@ -1,5 +1,45 @@
 # @avatar-generator/core
 
+## 3.0.0
+
+### Major Changes
+
+- **Breaking:** style option types now live in the style package that implements
+  them, not in `@avatar-generator/core`.
+
+    `@avatar-generator/core` used to declare `FacesOptions`, `AnimeOptions`,
+    `AnimalsOptions`, `GradientOptions` and every other style's option type — 29
+    types in all. That meant core knew about all eleven styles, adding a style meant
+    editing and releasing core, and a style published by anyone else could not be
+    typed at all. Core now declares only the Style contract: `AvatarOptions`,
+    `Style`, `Random`, `AvatarResult` and the deprecated `LegacyAvatarOptions`.
+
+    **Migration** — import the option type from the style you are using:
+
+    ```diff
+    - import type { FacesOptions } from "@avatar-generator/core";
+    + import type { FacesOptions } from "@avatar-generator/style-faces";
+    ```
+
+    The types are unchanged; only where they come from has moved. Style packages
+    already re-exported them, so code that imported from the style package needs no
+    change. Runtime behaviour is identical and the SVG snapshots are byte-identical.
+
+    A test in core asserts the boundary holds, so a style-specific type cannot drift
+    back in.
+
+### Patch Changes
+
+- c6e7e63: Fix `register(tagName)` in `@avatar-generator/web-component`, which could never
+  succeed. Importing the package auto-registers `AvatarElement` as
+  `<avatar-generator>`, and the custom element registry allows one tag name per
+  constructor — so any consumer calling `register('my-avatar')` hit
+  `NotSupportedError`. Additional tag names now get their own subclass.
+
+    Found by the first tests these wrappers have ever had: `@avatar-generator/react`,
+    `vue`, `svelte`, `angular` and `web-component` were at 0% coverage and are now
+    covered for rendering, prop reactivity, sizing, alt handling and determinism.
+
 ## 2.6.1
 
 ### Patch Changes
