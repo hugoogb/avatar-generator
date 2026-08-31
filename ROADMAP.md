@@ -177,13 +177,21 @@ Fix synchronization issues between source, playgrounds, and documentation.
 - [x] Tag/version guard so a mismatched tag cannot publish
 - [x] Per-package README and CHANGELOG so npm pages are not blank
 
+### Framework packages
+
+- [x] `@avatar-generator/web-component` is SSR-safe — it no longer throws
+      `ReferenceError: HTMLElement is not defined` when imported on a server
+- [x] `@avatar-generator/angular` is built with ng-packagr as an Angular Package
+      Format library (FESM2022, partial Ivy), so AOT builds can consume it
+- [x] `AvatarComponent` is standalone; `AvatarModule` re-exports it for
+      NgModule applications
+- [x] Angular support widened to `^17 || ^18 || ^19 || ^20 || ^21`
+- [x] Smoke test asserts the Angular tarball really is partial-Ivy APF
+
 ### Follow-ups
 
 - [ ] Add the `NPM_TOKEN` secret and push the `v3.0.0` tag to publish
-- [ ] Make `@avatar-generator/web-component` SSR-safe — importing it touches
-      `HTMLElement` at module scope, which throws under Node
-- [ ] `ng-packagr` for the Angular package (plain `tsc`/tsup output is not
-      Angular Package Format)
+- [ ] Angular playground (still the only framework without one)
 
 ---
 

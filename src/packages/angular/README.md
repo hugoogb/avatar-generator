@@ -13,6 +13,26 @@ npm install @avatar-generator/core @avatar-generator/angular @avatar-generator/s
 
 ## Usage
 
+`AvatarComponent` is standalone, so import it where you use it:
+
+```ts
+import { Component } from "@angular/core";
+import { AvatarComponent } from "@avatar-generator/angular";
+import { initials } from "@avatar-generator/style-initials";
+
+@Component({
+    selector: "user-avatar",
+    imports: [AvatarComponent],
+    template: `<avatar-generator [style]="style" [options]="options" alt="John Doe" />`,
+})
+export class UserAvatarComponent {
+    style = initials;
+    options = { seed: "john.doe@example.com", size: 64 };
+}
+```
+
+For NgModule-based applications, `AvatarModule` re-exports it:
+
 ```ts
 import { AvatarModule } from "@avatar-generator/angular";
 
@@ -22,17 +42,8 @@ import { AvatarModule } from "@avatar-generator/angular";
 export class AppModule {}
 ```
 
-```ts
-import { initials } from "@avatar-generator/style-initials";
-
-@Component({
-    template: `<avatar-generator [style]="style" [options]="options" alt="John Doe" />`,
-})
-export class UserAvatarComponent {
-    style = initials;
-    options = { seed: "john.doe@example.com", size: 64 };
-}
-```
+Built with ng-packagr as an Angular Package Format library (FESM2022, partial
+Ivy), so it works in AOT builds. Like every Angular library, it is ESM-only.
 
 ## Styles
 

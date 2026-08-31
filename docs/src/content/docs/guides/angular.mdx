@@ -7,9 +7,30 @@ import { Code } from "@astrojs/starlight/components";
 
 The `@avatar-generator/angular` package provides an Angular component for rendering avatars with any style.
 
-## Import the Module
+## Import the component
 
-After installing the package, import the `AvatarModule` in your Angular module:
+`AvatarComponent` is standalone, so add it to the `imports` of whichever
+component uses it:
+
+<Code code={`
+import { Component } from "@angular/core";
+import { AvatarComponent } from "@avatar-generator/angular";
+import { initials } from "@avatar-generator/style-initials";
+
+@Component({
+selector: "app-user-profile",
+imports: [AvatarComponent],
+template: \`<avatar-generator [style]="initialsStyle" [options]="{ seed: 'user-123' }" />\`,
+})
+export class UserProfileComponent {
+initialsStyle = initials;
+}
+`} lang="ts"></Code>
+
+### NgModule applications
+
+If your application still uses NgModules, import `AvatarModule`, which
+re-exports the standalone component:
 
 <Code code={`
 import { NgModule } from "@angular/core";
@@ -29,10 +50,12 @@ export class AppModule {}
 
 <Code code={`
 import { Component } from "@angular/core";
+import { AvatarComponent } from "@avatar-generator/angular";
 import { initials } from "@avatar-generator/style-initials";
 
 @Component({
 selector: "app-user-profile",
+imports: [AvatarComponent],
 template: \`
 <avatar-generator
 [style]="initialsStyle"
@@ -123,29 +146,3 @@ border: { width: 2, color: "#333" },
 | `style`   | `Style<T>`                | The avatar style to use (required)             |
 | `options` | `T extends AvatarOptions` | Style-specific options (required)              |
 | `alt`     | `string`                  | Alt text for accessibility (default: "Avatar") |
-
-## Standalone Components
-
-If you're using standalone components (Angular 14+), you can import the component directly:
-
-<Code code={`
-import { Component } from "@angular/core";
-import { AvatarComponent } from "@avatar-generator/angular";
-import { initials } from "@avatar-generator/style-initials";
-
-@Component({
-selector: "app-user-avatar",
-standalone: true,
-imports: [AvatarComponent],
-template: \`
-<avatar-generator
-[style]="initialsStyle"
-[options]="{ seed: userId, size: 48 }"
-/>
-\`,
-})
-export class UserAvatarComponent {
-initialsStyle = initials;
-userId = "user-123";
-}
-`} lang="ts"></Code>

@@ -45,12 +45,29 @@ const PEERS = { react: "^19", vue: "^3", svelte: "^4", "@angular/core": "^19" };
 const NOT_NODE_LOADABLE = new Set(["@avatar-generator/svelte"]);
 
 /**
- * Packages whose module body touches browser globals (`HTMLElement`,
- * `customElements`) and therefore cannot execute under Node. For these we
- * prove the entry *resolves* through the exports map — which is what this
- * script exists to catch — and leave executing them to a DOM environment.
+ * Packages that resolve but cannot *execute* under bare Node, with the reason.
+ * For these we prove the entry resolves through the exports map — which is what
+ * this script exists to catch — and leave running them to their real toolchain.
+ *
+ * The web component is deliberately absent: it is SSR-safe and must import
+ * cleanly on a server.
  */
-const BROWSER_ONLY = new Set(["@avatar-generator/web-component"]);
+const RESOLVE_ONLY = new Map([
+    ["@avatar-generator/angular", "partial-Ivy declarations are linked by the Angular build, not by Node"],
+]);
+
+/**
+ * Angular Package Format is ESM-only — Angular dropped CommonJS and UMD output
+ * in v13 — so `require()` resolving to ESM is correct here, not a defect.
+ */
+const ESM_ONLY = new Set(["@avatar-generator/angular"]);
+
+/**
+ * ng-packagr publishes its build output as the package root, so the Angular
+ * tarball is laid out as Angular Package Format (a `fesm2022/` bundle and flat
+ * declaration files) rather than the `dist/` every other package ships.
+ */
+const APF_ENTRIES = /^(fesm2022\/|.*\.d\.ts(\.map)?$)/;
 
 const run = (cmd, args, cwd) => execFileSync(cmd, args, { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
 
@@ -93,18 +110,17 @@ try {
     console.log(`Packed ${tarballs.length} package(s)`);
 
     // ---- 2. The tarball must contain only what we meant to publish -------
-    for (const tarball of tarballs) {
+    for (const [name, tarball] of packed) {
         const leaked = run("tar", ["tzf", tarball])
             .split("\n")
             .filter(Boolean)
             .map((e) => e.replace(/^package\//, ""))
-            .filter(
-                (e) => !e.startsWith("dist/") && !["package.json", "LICENSE", "README.md", "CHANGELOG.md"].includes(e),
-            );
-        if (leaked.length) fail(`${tarball.split("/").pop()} ships non-dist files: ${leaked.join(", ")}`);
+            .filter((e) => !["package.json", "LICENSE", "README.md", "CHANGELOG.md"].includes(e))
+            .filter((e) => (ESM_ONLY.has(name) ? !APF_ENTRIES.test(e) : !e.startsWith("dist/")));
+        if (leaked.length) fail(`${tarball.split("/").pop()} ships unexpected files: ${leaked.join(", ")}`);
     }
     if (failures === 0)
-        console.log("  ✓ every tarball contains only dist/, package.json, LICENSE, README and CHANGELOG");
+        console.log("  ✓ every tarball ships only its build output, manifest, LICENSE, README and CHANGELOG");
 
     // ---- 3. Install them into a clean project ----------------------------
     const app = join(workdir, "app");
@@ -145,14 +161,14 @@ try {
 
     console.log("\nESM import:");
     for (const name of loadable) {
-        const browserOnly = BROWSER_ONLY.has(name);
-        const probe = browserOnly
+        const reason = RESOLVE_ONLY.get(name);
+        const probe = reason
             ? `import.meta.resolve(${JSON.stringify(name)});\n`
             : `await import(${JSON.stringify(name)});\n`;
         writeFileSync(join(app, "probe.mjs"), probe);
         try {
             run("node", ["probe.mjs"], app);
-            console.log(`  ✓ import "${name}"${browserOnly ? " (resolved; browser-only)" : ""}`);
+            console.log(`  ✓ import "${name}"${reason ? ` (resolved only — ${reason})` : ""}`);
         } catch (err) {
             fail(`import "${name}" — ${errorLine(err)}`);
         }
@@ -160,14 +176,16 @@ try {
 
     console.log("\nCJS require:");
     for (const name of loadable) {
-        const browserOnly = BROWSER_ONLY.has(name);
-        const probe = browserOnly
-            ? `require.resolve(${JSON.stringify(name)});\n`
-            : `require(${JSON.stringify(name)});\n`;
+        if (ESM_ONLY.has(name)) {
+            console.log(`  - require("${name}") skipped (ESM-only by design)`);
+            continue;
+        }
+        const reason = RESOLVE_ONLY.get(name);
+        const probe = reason ? `require.resolve(${JSON.stringify(name)});\n` : `require(${JSON.stringify(name)});\n`;
         writeFileSync(join(app, "probe.cjs"), probe);
         try {
             run("node", ["probe.cjs"], app);
-            console.log(`  ✓ require("${name}")${browserOnly ? " (resolved; browser-only)" : ""}`);
+            console.log(`  ✓ require("${name}")${reason ? ` (resolved only — ${reason})` : ""}`);
         } catch (err) {
             fail(`require("${name}") — ${errorLine(err)}`);
         }
@@ -200,6 +218,34 @@ for (const name of ${JSON.stringify(styles)}) {
         process.stdout.write(run("node", ["generate.mjs"], app));
     } catch (err) {
         fail(`avatar generation — ${errorLine(err)}`);
+    }
+
+    // ---- 6. The Angular package must be Angular Package Format ----------
+    // A library that is not partially compiled falls back to the JIT compiler
+    // in the consumer's app, which fails their AOT build. The marker for
+    // partial compilation is the ɵɵngDeclare* calls in the FESM bundle.
+    console.log("\nAngular Package Format:");
+    try {
+        const angularDir = join(app, "node_modules", "@avatar-generator", "angular");
+        const manifest = JSON.parse(readFileSync(join(angularDir, "package.json"), "utf8"));
+
+        const fesm = manifest.module;
+        if (!fesm?.startsWith("fesm2022/")) throw new Error(`expected a fesm2022 bundle, got ${fesm}`);
+
+        const bundle = readFileSync(join(angularDir, fesm), "utf8");
+        for (const marker of ["ɵɵngDeclareComponent", "ɵɵngDeclareNgModule"]) {
+            if (!bundle.includes(marker)) {
+                throw new Error(`${marker} missing — the library is not partially compiled`);
+            }
+        }
+        if (bundle.includes("ɵɵdefineComponent")) {
+            throw new Error("full Ivy instructions found; the library must ship partial declarations");
+        }
+
+        console.log(`  ✓ ${fesm} carries partial-Ivy declarations`);
+        console.log(`  ✓ types resolve through ${manifest.typings}`);
+    } catch (err) {
+        fail(`angular package format — ${err.message}`);
     }
 
     // ---- 6. The Svelte component must compile with no preprocessor -------

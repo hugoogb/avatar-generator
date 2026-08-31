@@ -15,6 +15,9 @@ import { createAvatar, type AvatarOptions, type Style } from "@avatar-generator/
  */
 @Component({
     selector: "avatar-generator",
+    // Explicit rather than inherited: standalone is the default from Angular 19
+    // but not before, and this package supports 17 and up.
+    standalone: true,
     template: `<img [src]="dataUri" [alt]="alt" [width]="size" [height]="size" />`,
     changeDetection: ChangeDetectionStrategy.OnPush,
 })

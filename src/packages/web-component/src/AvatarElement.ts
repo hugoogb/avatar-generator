@@ -1,6 +1,20 @@
 import { createAvatar, type AvatarOptions, type Style } from "@avatar-generator/core";
 
 /**
+ * `HTMLElement` does not exist on a server, and `class X extends HTMLElement`
+ * is evaluated the moment this module is imported — so importing the package
+ * from a Next.js, Nuxt, Astro or SvelteKit server render used to throw
+ * `ReferenceError: HTMLElement is not defined` before any of the consumer's
+ * code ran.
+ *
+ * Extending a stand-in when there is no DOM lets the module evaluate anywhere.
+ * The stand-in is never instantiated: custom elements are only ever constructed
+ * by the browser, and {@link register} does nothing without a registry.
+ */
+const HTMLElementBase: typeof HTMLElement =
+    typeof HTMLElement === "undefined" ? (class {} as unknown as typeof HTMLElement) : HTMLElement;
+
+/**
  * Framework-agnostic custom element that renders an avatar.
  *
  * The element exposes two JavaScript properties — `styleImpl` (the avatar
@@ -20,7 +34,7 @@ import { createAvatar, type AvatarOptions, type Style } from "@avatar-generator/
  * document.body.append(el);
  * ```
  */
-export class AvatarElement extends HTMLElement {
+export class AvatarElement extends HTMLElementBase {
     private _styleImpl: Style<AvatarOptions> | null = null;
     private _options: AvatarOptions | null = null;
     private _img: HTMLImageElement;
@@ -98,6 +112,10 @@ let baseConstructorUsed = false;
  * ```
  */
 export function register(tagName = "avatar-generator"): void {
+    // No registry means no DOM: this is a server render, and there is nothing
+    // to define. Importing the package must stay a no-op there.
+    if (typeof customElements === "undefined") return;
+
     if (customElements.get(tagName)) return;
 
     // A constructor may back exactly one tag name; the registry throws on a

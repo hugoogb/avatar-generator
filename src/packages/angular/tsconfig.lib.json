@@ -1,0 +1,21 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "noEmit": false,
+        "declaration": true,
+        "declarationMap": true,
+        "sourceMap": true,
+        "moduleResolution": "Node",
+        "module": "ES2022",
+        "target": "ES2022",
+        "importHelpers": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "paths": {}
+    },
+    "angularCompilerOptions": {
+        "compilationMode": "partial",
+        "strictTemplates": true
+    },
+    "include": ["src/**/*.ts"]
+}

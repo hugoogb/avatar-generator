@@ -26,8 +26,42 @@ the deprecated `LegacyAvatarOptions`. The types themselves are unchanged and the
 style packages already re-exported them, so code importing from the style
 package needs no change. A test in core asserts the boundary holds.
 
-This is the only breaking change, and it is why this release is 3.0.0 rather
-than the 2.6.1 originally prepared.
+#### Angular is now a real Angular library
+
+`@avatar-generator/angular` shipped plain `tsc` output, which is not Angular
+Package Format. The component was never partially compiled, so a consumer's AOT
+build fell back to the JIT compiler and failed with "needs to be compiled using
+the JIT compiler, but '@angular/compiler' is not available". It is now built
+with ng-packagr and ships a FESM2022 bundle with partial-Ivy declarations.
+
+`AvatarComponent` is also `standalone: true`. Components have been standalone by
+default since Angular 19 and declaring one in an NgModule is an error, so the
+old shape could not compile on current Angular at all.
+
+```diff
+  @Component({
++   imports: [AvatarComponent],
+    template: `<avatar-generator [style]="style" [options]="options" />`,
+  })
+```
+
+`AvatarModule` still works and now re-exports the standalone component, so
+existing `imports: [AvatarModule]` code needs no change. Supported Angular
+versions widen to `^17 || ^18 || ^19 || ^20 || ^21`. Angular Package Format is
+ESM-only, so this package has no `require()` entry point.
+
+These are the only breaking changes, and they are why this release is 3.0.0
+rather than the 2.6.1 originally prepared.
+
+### Fixed
+
+- `@avatar-generator/web-component` broke server-side rendering. The class
+  extended `HTMLElement` at module scope, so importing the package from a
+  Next.js, Nuxt, Astro or SvelteKit server render threw
+  `ReferenceError: HTMLElement is not defined` before any consumer code ran. The
+  element now extends a stand-in when there is no DOM, and `register()` returns
+  early without a registry. The smoke test imports and executes this package
+  under real Node so it cannot regress quietly
 
 ### Testing
 
