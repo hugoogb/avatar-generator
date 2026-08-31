@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/web-component",
-    "version": "2.5.0",
+    "version": "2.6.1",
     "keywords": [
         "avatar",
         "web-component",
@@ -36,7 +36,9 @@
     },
     "files": [
         "dist",
-        "LICENSE"
+        "LICENSE",
+        "README.md",
+        "CHANGELOG.md"
     ],
     "sideEffects": true,
     "engines": {
@@ -49,7 +51,7 @@
         "attw": "attw --pack ."
     },
     "peerDependencies": {
-        "@avatar-generator/core": "^2.0.0"
+        "@avatar-generator/core": "workspace:^"
     },
     "devDependencies": {
         "@avatar-generator/core": "workspace:*",

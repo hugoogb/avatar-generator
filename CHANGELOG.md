@@ -4,9 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com).
 
-## [Unreleased]
-
-### v2.6.1 — Distribution & CI Repair
+## [2.6.1] — Distribution, Release Pipeline & CI Repair
 
 Nothing in this release changes what an avatar looks like — the SVG snapshots
 are byte-identical. It makes the packages installable and the pipeline real.
@@ -53,6 +51,35 @@ are byte-identical. It makes the packages installable and the pipeline real.
 - Packages build with tsup instead of `tsc`; `tsc` now only typechecks
 - Per-package tsconfigs extend a shared `src/tsconfig.base.json` and use
   `moduleResolution: "Bundler"`
+
+#### Release pipeline
+
+- Versions are managed with [changesets](https://github.com/changesets/changesets);
+  all `@avatar-generator/*` packages are a fixed group and move together
+- All 17 packages aligned onto one version line — they had drifted to
+  2.0.0 / 2.4.0 / 2.5.0 and were hand-bumped
+- Cross-package ranges use `workspace:^`, resolved at publish time, replacing a
+  hand-written `publishConfig.dependencies` pin of `^2.0.0` that never moved
+- `.github/workflows/release.yml` — publishes on a `v*` tag after re-running
+  typecheck, tests, build, publint, attw and the Node smoke test against the
+  tagged tree, with npm provenance and a generated GitHub release. Nothing
+  publishes on a merge
+- `scripts/check-release-version.mjs` refuses to publish when the tag and the
+  package versions disagree
+- Every package now ships a README and CHANGELOG, so npm package pages are not
+  blank
+
+#### Note for consumers on 2.0.0
+
+`@avatar-generator/core@2.0.0`, `style-initials@2.0.0` and `react@2.0.0` are the
+only versions ever published, and none of them could be loaded by Node. 2.6.1 is
+the first release that can be, and the first to carry the eleven styles and five
+framework wrappers the documentation describes.
+
+The added `exports` map means deep paths such as
+`@avatar-generator/core/dist/svg` no longer resolve. They were never documented,
+and the packages that exposed them could not be imported at all, so nothing can
+have depended on them in practice.
 
 ### v2.6.0 — Enhanced Documentation
 

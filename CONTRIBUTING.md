@@ -90,6 +90,50 @@ preprocessor configured.
 If you change a package's `exports`, `main`, `types` or build script, run
 `pnpm run verify:publish` before opening the PR.
 
+## Releasing
+
+Versions are managed with [changesets](https://github.com/changesets/changesets).
+Every `@avatar-generator/*` package is in a **fixed** group and moves to the same
+version together — hand-bumping them separately is what let the versions drift to
+2.0.0 / 2.4.0 / 2.5.0.
+
+When you make a user-visible change, describe it:
+
+```bash
+cd src
+pnpm changeset
+```
+
+To cut a release:
+
+```bash
+cd src
+pnpm run version-packages   # applies pending changesets, updates CHANGELOGs
+pnpm run release:dry        # full verification + `pnpm publish --dry-run`
+```
+
+Commit the version bump, then tag and push:
+
+```bash
+git tag v2.6.1
+git push origin v2.6.1
+```
+
+The tag triggers `.github/workflows/release.yml`, which re-runs typecheck, tests,
+the build, `publint`, `attw` and the Node smoke test against the tagged tree,
+verifies the tag matches every package version, and only then publishes to npm
+with provenance and opens a GitHub release. Nothing publishes on a merge.
+
+`workflow_dispatch` runs the same workflow with `dry_run` on by default, so you
+can exercise it without releasing.
+
+### One-time setup
+
+Publishing needs an `NPM_TOKEN` repository secret — an npm **automation** token
+for an account with publish rights on the `@avatar-generator` scope
+(_Settings → Secrets and variables → Actions_). Provenance additionally requires
+the workflow's `id-token: write` permission, which is already set.
+
 ## Making Changes
 
 1. Create a feature branch from `develop`:

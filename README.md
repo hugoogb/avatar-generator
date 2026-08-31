@@ -1,5 +1,10 @@
 # @avatar-generator
 
+[![CI](https://img.shields.io/github/actions/workflow/status/hugoogb/avatar-generator/ci.yml?branch=develop&style=flat-square&label=ci)](https://github.com/hugoogb/avatar-generator/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/@avatar-generator/core?style=flat-square&logo=npm&color=CB3837)](https://www.npmjs.com/package/@avatar-generator/core)
+[![npm downloads](https://img.shields.io/npm/dm/@avatar-generator/core?style=flat-square)](https://www.npmjs.com/package/@avatar-generator/core)
+[![license](https://img.shields.io/npm/l/@avatar-generator/core?style=flat-square&color=blue)](./LICENSE)
+
 Generate unique, deterministic SVG avatars with multiple styles.
 
 ## Features
@@ -8,7 +13,7 @@ Generate unique, deterministic SVG avatars with multiple styles.
 - **Deterministic**: Same seed = same avatar, always
 - **Tree-shakeable**: Only bundle the styles you use
 - **Framework Support**: React, Angular, or vanilla JS
-- **Tiny**: Core is under 2KB minified
+- **Tiny**: Core ships ESM and CommonJS builds with no runtime dependencies
 
 ## Quick Start
 
@@ -77,4 +82,4 @@ pnpm install
 
 ## License
 
-MIT
+MIT © [Hugo García Benjumea](https://github.com/hugoogb) — see [LICENSE](./LICENSE)

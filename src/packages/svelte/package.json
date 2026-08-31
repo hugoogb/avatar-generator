@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/svelte",
-    "version": "2.5.0",
+    "version": "2.6.1",
     "keywords": [
         "avatar",
         "svelte",
@@ -39,7 +39,9 @@
     },
     "files": [
         "dist",
-        "LICENSE"
+        "LICENSE",
+        "README.md",
+        "CHANGELOG.md"
     ],
     "sideEffects": false,
     "engines": {
@@ -52,7 +54,7 @@
         "attw": "attw --pack . --exclude-entrypoints ./Avatar.svelte"
     },
     "peerDependencies": {
-        "@avatar-generator/core": "^2.0.0",
+        "@avatar-generator/core": "workspace:^",
         "svelte": "^4.0.0 || ^5.0.0"
     },
     "devDependencies": {

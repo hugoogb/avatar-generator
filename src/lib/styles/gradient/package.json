@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/style-gradient",
-    "version": "2.4.0",
+    "version": "2.6.1",
     "description": "Gradient-based avatar style with pattern overlays for @avatar-generator/core",
     "keywords": [
         "avatar",
@@ -37,7 +37,9 @@
     },
     "files": [
         "dist",
-        "LICENSE"
+        "LICENSE",
+        "README.md",
+        "CHANGELOG.md"
     ],
     "sideEffects": false,
     "engines": {
@@ -50,15 +52,12 @@
         "attw": "attw --pack ."
     },
     "dependencies": {
-        "@avatar-generator/core": "workspace:*"
+        "@avatar-generator/core": "workspace:^"
     },
     "devDependencies": {
         "tsup": "^8.5.0"
     },
     "publishConfig": {
-        "access": "public",
-        "dependencies": {
-            "@avatar-generator/core": "^2.0.0"
-        }
+        "access": "public"
     }
 }

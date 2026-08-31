@@ -98,10 +98,13 @@ try {
             .split("\n")
             .filter(Boolean)
             .map((e) => e.replace(/^package\//, ""))
-            .filter((e) => !e.startsWith("dist/") && !["package.json", "LICENSE", "README.md"].includes(e));
+            .filter(
+                (e) => !e.startsWith("dist/") && !["package.json", "LICENSE", "README.md", "CHANGELOG.md"].includes(e),
+            );
         if (leaked.length) fail(`${tarball.split("/").pop()} ships non-dist files: ${leaked.join(", ")}`);
     }
-    if (failures === 0) console.log("  ✓ every tarball contains only dist/, package.json and LICENSE");
+    if (failures === 0)
+        console.log("  ✓ every tarball contains only dist/, package.json, LICENSE, README and CHANGELOG");
 
     // ---- 3. Install them into a clean project ----------------------------
     const app = join(workdir, "app");

@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/style-pixels",
-    "version": "2.0.0",
+    "version": "2.6.1",
     "description": "Pixel art avatar style for @avatar-generator/core",
     "keywords": [
         "avatar",
@@ -39,7 +39,9 @@
     },
     "files": [
         "dist",
-        "LICENSE"
+        "LICENSE",
+        "README.md",
+        "CHANGELOG.md"
     ],
     "sideEffects": false,
     "engines": {
@@ -52,15 +54,12 @@
         "attw": "attw --pack ."
     },
     "dependencies": {
-        "@avatar-generator/core": "workspace:*"
+        "@avatar-generator/core": "workspace:^"
     },
     "devDependencies": {
         "tsup": "^8.5.0"
     },
     "publishConfig": {
-        "access": "public",
-        "dependencies": {
-            "@avatar-generator/core": "^2.0.0"
-        }
+        "access": "public"
     }
 }

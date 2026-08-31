@@ -15,14 +15,19 @@
         "typecheck": "tsc -p tsconfig.test.json && pnpm -r run typecheck",
         "check:exports": "pnpm -r run publint && pnpm -r run attw",
         "smoke": "node scripts/smoke-test.mjs",
-        "verify:publish": "pnpm run build && pnpm run check:exports && pnpm run smoke"
+        "verify:publish": "pnpm run build && pnpm run check:exports && pnpm run smoke",
+        "changeset": "changeset",
+        "version-packages": "changeset version && pnpm install --lockfile-only",
+        "check:version": "node scripts/check-release-version.mjs",
+        "release:dry": "pnpm run verify:publish && pnpm publish --recursive --access public --no-git-checks --dry-run"
     },
     "devDependencies": {
+        "@arethetypeswrong/cli": "^0.18.2",
+        "@changesets/cli": "^3.0.1",
         "@types/node": "^22.10.1",
         "@vitest/coverage-v8": "^2.1.9",
-        "typescript": "^5.7.2",
-        "vitest": "^2.1.9",
         "publint": "^0.3.14",
-        "@arethetypeswrong/cli": "^0.18.2"
+        "typescript": "^5.7.2",
+        "vitest": "^2.1.9"
     }
 }

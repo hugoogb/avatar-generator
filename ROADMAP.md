@@ -135,7 +135,7 @@ Fix synchronization issues between source, playgrounds, and documentation.
 
 ---
 
-## v2.6.1 — Distribution & CI Repair
+## v2.6.1 — Distribution, Release Pipeline & CI Repair
 
 **Theme**: Make the published artifact real.
 
@@ -160,10 +160,18 @@ Fix synchronization issues between source, playgrounds, and documentation.
 - [x] Fix the Prettier failure in `core/types.ts`
 - [x] MIT LICENSE on `develop`
 
+### Release pipeline
+
+- [x] Changesets with a fixed version group across all 17 packages
+- [x] All packages aligned onto one version line (were 2.0.0 / 2.4.0 / 2.5.0)
+- [x] `workspace:^` cross-package ranges, resolved at publish time
+- [x] Release workflow: tag-triggered, full verification, npm provenance
+- [x] Tag/version guard so a mismatched tag cannot publish
+- [x] Per-package README and CHANGELOG so npm pages are not blank
+
 ### Follow-ups
 
-- [ ] Publish v2.6.x — npm still only has 2.0.0 of core, style-initials and react
-- [ ] Changesets + a release workflow (versions are hand-bumped and drifted)
+- [ ] Add the `NPM_TOKEN` secret and push the `v2.6.1` tag to publish
 - [ ] Reconcile `master` and `develop`
 - [ ] Tests for the five framework wrappers (currently 0% covered)
 - [ ] Make `@avatar-generator/web-component` SSR-safe — importing it touches
