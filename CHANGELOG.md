@@ -6,6 +6,54 @@ The format is based on [Keep a Changelog](https://keepachangelog.com).
 
 ## [Unreleased]
 
+### v2.6.1 — Distribution & CI Repair
+
+Nothing in this release changes what an avatar looks like — the SVG snapshots
+are byte-identical. It makes the packages installable and the pipeline real.
+
+#### Fixed
+
+- **Published packages could not be loaded by Node.** Every `lib/*` package
+  shipped ESM output with no `"type": "module"`, so `require()` failed on the
+  `export` keyword, and `tsc` emitted extensionless relative specifiers
+  (`from "./random"`), so `import` failed with `ERR_MODULE_NOT_FOUND`. Only a
+  bundler doing node10-style resolution could load them, which is why the
+  playgrounds never caught it. Builds now go through tsup and emit ESM + CJS
+  with correct extensions, a conditional `exports` map, and per-condition
+  type declarations
+- **CI had never passed a single run.** All four jobs died at
+  `actions/setup-node` because `cache: pnpm` requires a lockfile and
+  `pnpm-lock.yaml` was in `.gitignore` — tests, typecheck and build
+  verification had never executed on GitHub. Lockfiles are now committed for
+  all four projects and every install uses `--frozen-lockfile`
+- `src/lib/core/src/types.ts` was not Prettier-clean, which would have failed
+  the lint job independently
+- Tarballs shipped `src/`, `tsconfig.json` and `tsconfig.tsbuildinfo`; every
+  package now declares `files` and publishes only `dist/` plus its LICENSE
+- `@avatar-generator/svelte` shipped a `<script lang="ts">` component, so it
+  could not compile for any consumer without a preprocessor configured. The
+  published component is now preprocessed to plain JavaScript
+- The Svelte playground could not build: `@sveltejs/vite-plugin-svelte@4`
+  requires Svelte 5 while the playground pins Svelte 4
+- `develop` was missing the MIT LICENSE file that only existed on `master`
+
+#### Added
+
+- `pnpm run smoke` — packs all 17 packages, installs the tarballs into a clean
+  project, and loads each from real Node as both ESM and CommonJS, generates an
+  avatar from every style, and compiles the published Svelte component with no
+  preprocessor
+- `pnpm run check:exports` — `publint --strict` and `attw` across every package
+- `pnpm run verify:publish` — build plus both of the above
+- CI jobs for packaging verification and for building all five playgrounds
+- `engines.node: ">=18"`, `repository`, `homepage` and `bugs` on every package
+
+#### Changed
+
+- Packages build with tsup instead of `tsc`; `tsc` now only typechecks
+- Per-package tsconfigs extend a shared `src/tsconfig.base.json` and use
+  `moduleResolution: "Bundler"`
+
 ### v2.6.0 — Enhanced Documentation
 
 #### Added

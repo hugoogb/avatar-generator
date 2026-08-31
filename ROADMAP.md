@@ -135,6 +135,44 @@ Fix synchronization issues between source, playgrounds, and documentation.
 
 ---
 
+## v2.6.1 — Distribution & CI Repair
+
+**Theme**: Make the published artifact real.
+
+### Packaging
+
+- [x] Build with tsup: ESM + CJS + declarations, correct file extensions
+- [x] `"type": "module"`, conditional `exports` map, `files` on all 17 packages
+- [x] Publish only `dist/` and LICENSE (tarballs were shipping `src/` and tsconfig)
+- [x] Preprocess the Svelte component so consumers need no preprocessor
+- [x] `engines.node`, `repository`, `homepage`, `bugs` metadata
+
+### Verification
+
+- [x] `publint --strict` and `attw` across every package
+- [x] Smoke test: pack, install and load every package from real Node (ESM + CJS)
+- [x] CI job for packaging verification
+- [x] CI job building all five playgrounds
+
+### CI
+
+- [x] Commit lockfiles and install with `--frozen-lockfile` (CI had never passed)
+- [x] Fix the Prettier failure in `core/types.ts`
+- [x] MIT LICENSE on `develop`
+
+### Follow-ups
+
+- [ ] Publish v2.6.x — npm still only has 2.0.0 of core, style-initials and react
+- [ ] Changesets + a release workflow (versions are hand-bumped and drifted)
+- [ ] Reconcile `master` and `develop`
+- [ ] Tests for the five framework wrappers (currently 0% covered)
+- [ ] Make `@avatar-generator/web-component` SSR-safe — importing it touches
+      `HTMLElement` at module scope, which throws under Node
+- [ ] `ng-packagr` for the Angular package (plain `tsc`/tsup output is not
+      Angular Package Format)
+
+---
+
 ## v3.0.0 — Platform
 
 **Theme**: Extensibility and advanced features.

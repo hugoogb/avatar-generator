@@ -5,10 +5,11 @@
         "playground:react": "vite --mode react",
         "playground:vue": "vite --mode vue",
         "playground:svelte": "vite --mode svelte",
-        "playground:web-component": "vite --mode web-component"
+        "playground:web-component": "vite --mode web-component",
+        "build:all": "for m in core react vue svelte web-component; do vite build --mode $m || exit 1; done"
     },
     "devDependencies": {
-        "@sveltejs/vite-plugin-svelte": "^4.0.0",
+        "@sveltejs/vite-plugin-svelte": "^3.1.2",
         "@types/node": "^22.0.0",
         "@types/react": "^19.0.2",
         "@types/react-dom": "^19.0.2",

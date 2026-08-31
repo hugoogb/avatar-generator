@@ -41,8 +41,8 @@ pnpm build
 # Run a playground
 cd ../playgrounds
 pnpm install
-pnpm dev        # Core playground
-pnpm dev:react  # React playground
+pnpm playground:core   # Core playground
+pnpm playground:react  # React playground
 
 # Run the docs site
 cd ../docs
@@ -64,6 +64,31 @@ pnpm run check         # Run both lint and format check
 ```
 
 These checks run automatically on staged files when you commit (via Husky + lint-staged).
+
+## Packaging
+
+Packages are built with [tsup](https://tsup.egoist.dev/), which emits ESM, CommonJS
+and matching declaration files into `dist/`. `tsc` is only used for typechecking.
+
+A green build does not prove a package is usable. Bundlers resolve extensionless
+imports and largely ignore `type` and `exports`, so a package can work in every
+playground here and still fail for anyone who installs it from npm. Three checks
+guard against that, and all three run in CI:
+
+```bash
+cd src
+pnpm run check:exports   # publint (manifest) + attw (type resolution)
+pnpm run smoke           # pack, install and load every package from real Node
+pnpm run verify:publish  # build + both of the above
+```
+
+`pnpm run smoke` packs all 17 packages, installs the tarballs into a throwaway
+project and loads each one from Node as ESM and as CommonJS, generates an avatar
+from every style, and compiles the published Svelte component with no
+preprocessor configured.
+
+If you change a package's `exports`, `main`, `types` or build script, run
+`pnpm run verify:publish` before opening the PR.
 
 ## Making Changes
 

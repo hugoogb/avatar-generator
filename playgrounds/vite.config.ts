@@ -1,6 +1,6 @@
 import react from "@vitejs/plugin-react";
 import vue from "@vitejs/plugin-vue";
-import { svelte } from "@sveltejs/vite-plugin-svelte";
+import { svelte, vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig, type PluginOption } from "vite";
@@ -14,7 +14,7 @@ function pluginsFor(playground: string): PluginOption[] {
         case "vue":
             return [vue()];
         case "svelte":
-            return [svelte()];
+            return [svelte({ preprocess: vitePreprocess() })];
         default:
             return [];
     }

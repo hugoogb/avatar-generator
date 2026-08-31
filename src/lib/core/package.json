@@ -2,21 +2,57 @@
     "name": "@avatar-generator/core",
     "version": "2.0.0",
     "description": "Core logic for multi-style SVG avatar generation",
-    "main": "dist/index.js",
-    "types": "dist/types/index.d.ts",
-    "sideEffects": false,
-    "scripts": {
-        "build": "tsc",
-        "prepublishOnly": "npm run build"
-    },
-    "publishConfig": {
-        "access": "public"
-    },
     "keywords": [
         "avatar",
         "svg",
         "generator",
         "identicon"
     ],
-    "license": "MIT"
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/hugoogb/avatar-generator.git",
+        "directory": "src/lib/core"
+    },
+    "homepage": "https://github.com/hugoogb/avatar-generator#readme",
+    "bugs": {
+        "url": "https://github.com/hugoogb/avatar-generator/issues"
+    },
+    "type": "module",
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            },
+            "require": {
+                "types": "./dist/index.d.cts",
+                "default": "./dist/index.cjs"
+            }
+        },
+        "./package.json": "./package.json"
+    },
+    "files": [
+        "dist",
+        "LICENSE"
+    ],
+    "sideEffects": false,
+    "engines": {
+        "node": ">=18"
+    },
+    "scripts": {
+        "build": "tsup src/index.ts --format esm,cjs --dts --sourcemap --clean --target es2020",
+        "typecheck": "tsc -p tsconfig.json",
+        "publint": "publint --strict",
+        "attw": "attw --pack ."
+    },
+    "devDependencies": {
+        "tsup": "^8.5.0"
+    },
+    "publishConfig": {
+        "access": "public"
+    }
 }

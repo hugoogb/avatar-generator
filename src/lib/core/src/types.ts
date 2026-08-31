@@ -209,14 +209,7 @@ export type AnimeHairStyle =
     | "shaggy";
 
 export type AnimeEyeStyle =
-    | "normal"
-    | "sparkly"
-    | "determined"
-    | "gentle"
-    | "cat"
-    | "half-closed"
-    | "closed-happy"
-    | "surprised";
+    "normal" | "sparkly" | "determined" | "gentle" | "cat" | "half-closed" | "closed-happy" | "surprised";
 
 export type AnimeMouthStyle = "small-smile" | "open-small" | "cat-mouth" | "line" | "pout" | "grin";
 
@@ -261,16 +254,7 @@ export interface AbstractOptions extends AvatarOptions {
 // ─── Emoji style option unions ────────────────────────────────────────────
 
 export type EmojiExpression =
-    | "happy"
-    | "laughing"
-    | "cool"
-    | "wink"
-    | "love"
-    | "sad"
-    | "angry"
-    | "surprised"
-    | "sleepy"
-    | "neutral";
+    "happy" | "laughing" | "cool" | "wink" | "love" | "sad" | "angry" | "surprised" | "sleepy" | "neutral";
 
 export interface EmojiOptions extends AvatarOptions {
     /** Override the facial expression */

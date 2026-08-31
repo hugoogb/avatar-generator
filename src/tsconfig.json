@@ -1,11 +1,6 @@
 {
+    "extends": "./tsconfig.base.json",
     "compilerOptions": {
-        "target": "ESNext",
-        "module": "ESNext",
-        "moduleResolution": "Node",
-        "esModuleInterop": true,
-        "strict": true,
-        "skipLibCheck": true,
         "baseUrl": ".",
         "paths": {
             "@avatar-generator/core": ["./lib/core/src"],
@@ -27,24 +22,5 @@
             "@avatar-generator/style-gradient": ["./lib/styles/gradient/src"]
         }
     },
-    "references": [
-        { "path": "./lib/core" },
-        { "path": "./lib/styles/initials" },
-        { "path": "./lib/styles/geometric" },
-        { "path": "./lib/styles/pixels" },
-        { "path": "./lib/styles/rings" },
-        { "path": "./lib/styles/faces" },
-        { "path": "./lib/styles/illustrated" },
-        { "path": "./lib/styles/anime" },
-        { "path": "./lib/styles/abstract" },
-        { "path": "./lib/styles/emoji" },
-        { "path": "./lib/styles/animals" },
-        { "path": "./lib/styles/gradient" },
-        { "path": "./packages/react" },
-        { "path": "./packages/angular" },
-        { "path": "./packages/vue" },
-        { "path": "./packages/svelte" },
-        { "path": "./packages/web-component" }
-    ],
-    "files": []
+    "include": ["lib/**/src/**/*.ts", "packages/**/src/**/*.ts"]
 }
