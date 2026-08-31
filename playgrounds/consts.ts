@@ -1,17 +1,16 @@
-import type {
-    AbstractOptions,
-    AnimalsOptions,
-    AnimeOptions,
-    AvatarOptions,
-    EmojiOptions,
-    FacesOptions,
-    GeometricOptions,
-    GradientOptions,
-    IllustratedOptions,
-    InitialsOptions,
-    PixelsOptions,
-    RingsOptions,
-} from "@avatar-core/src";
+import type { AvatarOptions } from "@avatar-core/src";
+// Each style owns its option type; core only declares the Style contract.
+import type { AbstractOptions } from "@avatar-style-abstract/src";
+import type { AnimalsOptions } from "@avatar-style-animals/src";
+import type { AnimeOptions } from "@avatar-style-anime/src";
+import type { EmojiOptions } from "@avatar-style-emoji/src";
+import type { FacesOptions } from "@avatar-style-faces/src";
+import type { GeometricOptions } from "@avatar-style-geometric/src";
+import type { GradientOptions } from "@avatar-style-gradient/src";
+import type { IllustratedOptions } from "@avatar-style-illustrated/src";
+import type { InitialsOptions } from "@avatar-style-initials/src";
+import type { PixelsOptions } from "@avatar-style-pixels/src";
+import type { RingsOptions } from "@avatar-style-rings/src";
 
 // Test seeds for avatar generation
 export const TEST_SEEDS = [

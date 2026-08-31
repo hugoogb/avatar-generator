@@ -41,8 +41,9 @@ pnpm build
 # Run a playground
 cd ../playgrounds
 pnpm install
-pnpm playground:core   # Core playground
-pnpm playground:react  # React playground
+pnpm playground:core     # Core playground
+pnpm playground:react    # React playground
+pnpm playground:angular  # Angular playground (also: vue, svelte, web-component)
 
 # Run the docs site
 cd ../docs

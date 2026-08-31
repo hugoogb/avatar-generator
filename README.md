@@ -76,6 +76,7 @@ pnpm install
 | ------------- | ------------------------------- |
 | Core          | `pnpm playground:core`          |
 | React         | `pnpm playground:react`         |
+| Angular       | `pnpm playground:angular`       |
 | Vue           | `pnpm playground:vue`           |
 | Svelte        | `pnpm playground:svelte`        |
 | Web Component | `pnpm playground:web-component` |

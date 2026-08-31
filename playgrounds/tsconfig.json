@@ -24,8 +24,11 @@
             "@avatar-style-gradient/*": ["../src/lib/styles/gradient/*"],
             "@avatar-vue/*": ["../src/packages/vue/*"],
             "@avatar-svelte/*": ["../src/packages/svelte/*"],
-            "@avatar-web-component/*": ["../src/packages/web-component/*"]
-        }
+            "@avatar-web-component/*": ["../src/packages/web-component/*"],
+            "@avatar-angular/*": ["../src/packages/angular/*"]
+        },
+        "experimentalDecorators": true,
+        "useDefineForClassFields": false
     },
     "include": ["**/*.ts", "**/*.tsx", "vite.config.ts"]
 }

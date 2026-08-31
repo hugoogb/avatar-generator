@@ -1,3 +1,4 @@
+import angular from "@analogjs/vite-plugin-angular";
 import react from "@vitejs/plugin-react";
 import vue from "@vitejs/plugin-vue";
 import { svelte, vitePreprocess } from "@sveltejs/vite-plugin-svelte";
@@ -15,6 +16,11 @@ function pluginsFor(playground: string): PluginOption[] {
             return [vue()];
         case "svelte":
             return [svelte({ preprocess: vitePreprocess() })];
+        // Angular components need the Angular compiler, not just esbuild:
+        // esbuild strips the decorators without producing an Ivy definition,
+        // and the component fails to instantiate at runtime.
+        case "angular":
+            return [angular()];
         default:
             return [];
     }
@@ -27,10 +33,17 @@ export default defineConfig(({ mode }) => {
         root: resolve(__dirname, playground),
         plugins: pluginsFor(playground),
         resolve: {
+            // The playground and src/packages/angular are separate pnpm
+            // projects, so each has its own physical @angular/* install. Two
+            // copies of @angular/core in one bundle means the component's
+            // definition is created by one runtime and executed by the other,
+            // which fails inside ɵɵelementStart with a null internal table.
+            dedupe: ["@angular/core", "@angular/common", "@angular/compiler", "@angular/platform-browser"],
             alias: {
                 // Core aliases for playground imports
                 "@avatar-core": resolve(__dirname, "../src/lib/core"),
                 "@avatar-react": resolve(__dirname, "../src/packages/react"),
+                "@avatar-angular": resolve(__dirname, "../src/packages/angular"),
                 "@avatar-vue": resolve(__dirname, "../src/packages/vue"),
                 "@avatar-svelte": resolve(__dirname, "../src/packages/svelte"),
                 "@avatar-web-component": resolve(__dirname, "../src/packages/web-component"),
@@ -48,6 +61,7 @@ export default defineConfig(({ mode }) => {
                 // Package name aliases for internal imports between packages
                 "@avatar-generator/core": resolve(__dirname, "../src/lib/core/src"),
                 "@avatar-generator/react": resolve(__dirname, "../src/packages/react/src"),
+                "@avatar-generator/angular": resolve(__dirname, "../src/packages/angular/src"),
                 "@avatar-generator/vue": resolve(__dirname, "../src/packages/vue/src"),
                 "@avatar-generator/svelte": resolve(__dirname, "../src/packages/svelte/src"),
                 "@avatar-generator/web-component": resolve(__dirname, "../src/packages/web-component/src"),

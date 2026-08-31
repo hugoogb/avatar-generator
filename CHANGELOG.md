@@ -63,6 +63,18 @@ rather than the 2.6.1 originally prepared.
   early without a registry. The smoke test imports and executes this package
   under real Node so it cannot regress quietly
 
+### Tooling
+
+- Angular playground, the last framework wrapper without one. It needs the
+  Angular compiler rather than plain esbuild, and `resolve.dedupe` for
+  `@angular/*` — the playground and the package are separate pnpm projects, so
+  each had its own physical `@angular/core`, and two copies in one bundle fail
+  inside `ɵɵelementStart`
+- All six playgrounds are now verified to render in a real browser, not merely
+  to build
+- `playgrounds/consts.ts` imported the style option types from core; they moved
+  to their own packages in this release
+
 ### Testing
 
 - The five framework wrappers had no tests at all; they are now covered for

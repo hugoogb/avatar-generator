@@ -3,12 +3,19 @@
     "scripts": {
         "playground:core": "vite --mode core",
         "playground:react": "vite --mode react",
+        "playground:angular": "vite --mode angular",
         "playground:vue": "vite --mode vue",
         "playground:svelte": "vite --mode svelte",
         "playground:web-component": "vite --mode web-component",
-        "build:all": "for m in core react vue svelte web-component; do vite build --mode $m || exit 1; done"
+        "build:all": "for m in core react angular vue svelte web-component; do vite build --mode $m || exit 1; done"
     },
     "devDependencies": {
+        "@analogjs/vite-plugin-angular": "^2.7.1",
+        "@angular/build": "^19.2.27",
+        "@angular/common": "^19.2.25",
+        "@angular/compiler-cli": "^19.2.25",
+        "@angular/core": "^19.2.25",
+        "@angular/platform-browser": "^19.2.25",
         "@sveltejs/vite-plugin-svelte": "^3.1.2",
         "@types/node": "^22.0.0",
         "@types/react": "^19.0.2",
@@ -18,7 +25,7 @@
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
         "svelte": "^4.2.19",
-        "typescript": "^5.7.0",
+        "typescript": "^5.7.3",
         "vite": "^6.0.7",
         "vue": "^3.5.0"
     }

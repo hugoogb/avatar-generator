@@ -107,7 +107,7 @@ Fix synchronization issues between source, playgrounds, and documentation.
 
 ### Playgrounds
 
-- [ ] Angular playground _(deferred — needs zone.js + bootstrapApplication setup; follow-up)_
+- [x] Angular playground _(shipped in 3.0.0)_
 - [x] Vue playground
 - [x] Svelte playground
 - [ ] Storybook integration with all styles _(deferred — separate conversation)_
@@ -191,7 +191,8 @@ Fix synchronization issues between source, playgrounds, and documentation.
 ### Follow-ups
 
 - [ ] Add the `NPM_TOKEN` secret and push the `v3.0.0` tag to publish
-- [ ] Angular playground (still the only framework without one)
+- [x] Angular playground — every framework wrapper now has one, and all six
+      are verified to render in a real browser, not just to build
 
 ---
 
