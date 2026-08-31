@@ -22,9 +22,10 @@ jobs:
               with:
                   node-version: 20
                   cache: pnpm
+                  cache-dependency-path: "**/pnpm-lock.yaml"
 
             - name: Install root dependencies
-              run: pnpm install
+              run: pnpm install --frozen-lockfile
 
             - name: Lint & format
               run: pnpm run check
@@ -44,12 +45,13 @@ jobs:
               with:
                   node-version: 20
                   cache: pnpm
+                  cache-dependency-path: "**/pnpm-lock.yaml"
 
             - name: Install dependencies (workspace)
-              run: pnpm install
+              run: pnpm install --frozen-lockfile
               working-directory: src
 
-            - name: Typecheck tests
+            - name: Typecheck
               run: pnpm run typecheck
               working-directory: src
 
@@ -65,8 +67,8 @@ jobs:
                   path: src/coverage/
                   retention-days: 14
 
-    build-packages:
-        name: Build packages
+    verify-packaging:
+        name: Verify published artifacts
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
@@ -80,14 +82,53 @@ jobs:
               with:
                   node-version: 20
                   cache: pnpm
+                  cache-dependency-path: "**/pnpm-lock.yaml"
 
             - name: Install dependencies (workspace)
-              run: pnpm install
+              run: pnpm install --frozen-lockfile
               working-directory: src
 
             - name: Build all packages
               run: pnpm run build
               working-directory: src
+
+            # A green build says nothing about whether the tarball is usable.
+            # publint checks the manifest, attw checks the type resolution, and
+            # the smoke test installs every tarball and loads it from real Node.
+            - name: Lint package manifests and type resolution
+              run: pnpm run check:exports
+              working-directory: src
+
+            - name: Install and load every package from real Node
+              run: pnpm run smoke
+              working-directory: src
+
+    build-playgrounds:
+        name: Build playgrounds
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@v4
+              with:
+                  version: 10
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: pnpm
+                  cache-dependency-path: "**/pnpm-lock.yaml"
+
+            - name: Install playground dependencies
+              run: pnpm install --frozen-lockfile
+              working-directory: playgrounds
+
+            # The playgrounds are the only place the framework wrappers are
+            # exercised at all, so a broken one has to fail the build.
+            - name: Build every playground
+              run: pnpm run build:all
+              working-directory: playgrounds
 
     build-docs:
         name: Build docs
@@ -104,9 +145,10 @@ jobs:
               with:
                   node-version: 20
                   cache: pnpm
+                  cache-dependency-path: "**/pnpm-lock.yaml"
 
             - name: Install docs dependencies
-              run: pnpm install
+              run: pnpm install --frozen-lockfile
               working-directory: docs
 
             - name: Build docs site
