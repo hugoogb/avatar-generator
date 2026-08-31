@@ -1,9 +1,13 @@
+import { svelte, vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 
 const here = (relative: string) => fileURLToPath(new URL(relative, import.meta.url));
 
 export default defineConfig({
+    // The Svelte wrapper ships a component, so testing it means compiling one.
+    // `hot: false` keeps the compiler out of HMR mode under the test runner.
+    plugins: [svelte({ preprocess: vitePreprocess(), hot: false })],
     resolve: {
         alias: {
             "@avatar-generator/core": here("./lib/core/src/index.ts"),
@@ -18,11 +22,17 @@ export default defineConfig({
             "@avatar-generator/style-emoji": here("./lib/styles/emoji/src/index.ts"),
             "@avatar-generator/style-animals": here("./lib/styles/animals/src/index.ts"),
             "@avatar-generator/style-gradient": here("./lib/styles/gradient/src/index.ts"),
+            "@avatar-generator/react": here("./packages/react/src/index.ts"),
+            "@avatar-generator/vue": here("./packages/vue/src/index.ts"),
+            "@avatar-generator/angular": here("./packages/angular/src/index.ts"),
+            "@avatar-generator/web-component": here("./packages/web-component/src/index.ts"),
         },
     },
     test: {
-        include: ["lib/**/test/**/*.test.ts", "packages/**/test/**/*.test.ts"],
+        include: ["lib/**/test/**/*.test.ts", "packages/**/test/**/*.test.{ts,tsx}"],
         environment: "node",
+        // Framework wrappers render, so those files opt into a DOM with a
+        // `@vitest-environment happy-dom` docblock.
         coverage: {
             provider: "v8",
             reporter: ["text", "json-summary", "html", "lcov"],

@@ -15,8 +15,19 @@
             "@avatar-generator/style-abstract": ["./lib/styles/abstract/src/index.ts"],
             "@avatar-generator/style-emoji": ["./lib/styles/emoji/src/index.ts"],
             "@avatar-generator/style-animals": ["./lib/styles/animals/src/index.ts"],
-            "@avatar-generator/style-gradient": ["./lib/styles/gradient/src/index.ts"]
-        }
+            "@avatar-generator/style-gradient": ["./lib/styles/gradient/src/index.ts"],
+            "@avatar-generator/react": ["./packages/react/src/index.ts"],
+            "@avatar-generator/vue": ["./packages/vue/src/index.ts"],
+            "@avatar-generator/angular": ["./packages/angular/src/index.ts"],
+            "@avatar-generator/web-component": ["./packages/web-component/src/index.ts"]
+        },
+        "jsx": "react-jsx"
     },
-    "include": ["lib/**/test/**/*.test.ts", "packages/**/test/**/*.test.ts", "vitest.config.mts"]
+    "include": [
+        "lib/**/test/**/*.test.ts",
+        "packages/**/test/**/*.test.ts",
+        "packages/**/test/**/*.test.tsx",
+        "vitest.config.mts",
+        "packages/**/test/**/*.d.ts"
+    ]
 }

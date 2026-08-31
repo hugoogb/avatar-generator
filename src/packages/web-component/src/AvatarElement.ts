@@ -80,13 +80,30 @@ export class AvatarElement extends HTMLElement {
     }
 }
 
+/** Whether `AvatarElement` itself has been handed to the registry yet. */
+let baseConstructorUsed = false;
+
 /**
- * Registers the `<avatar-generator>` custom element. Called automatically
- * when the module is imported. Safe to call multiple times — additional
- * registrations are ignored.
+ * Registers the custom element, `<avatar-generator>` by default. Called
+ * automatically when the module is imported. Safe to call multiple times —
+ * registering a tag name that already exists is ignored.
+ *
+ * @param tagName - The tag name to register the element under
+ *
+ * @example Register under a second name as well
+ * ```ts
+ * import { register } from '@avatar-generator/web-component';
+ *
+ * register('user-avatar'); // <user-avatar> alongside <avatar-generator>
+ * ```
  */
 export function register(tagName = "avatar-generator"): void {
-    if (!customElements.get(tagName)) {
-        customElements.define(tagName, AvatarElement);
-    }
+    if (customElements.get(tagName)) return;
+
+    // A constructor may back exactly one tag name; the registry throws on a
+    // second use. Importing this module already binds AvatarElement to
+    // <avatar-generator>, so every additional name gets its own subclass —
+    // otherwise `register('my-avatar')` could never work for anyone.
+    customElements.define(tagName, baseConstructorUsed ? class extends AvatarElement {} : AvatarElement);
+    baseConstructorUsed = true;
 }
