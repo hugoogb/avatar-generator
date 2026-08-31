@@ -21,8 +21,8 @@ import { createAvatar } from "@avatar-generator/core";
 import { initials } from "@avatar-generator/style-initials";
 
 const avatar = createAvatar(initials, {
-  seed: "john.doe@example.com",
-  size: 64,
+    seed: "john.doe@example.com",
+    size: 64,
 });
 
 // Use the SVG

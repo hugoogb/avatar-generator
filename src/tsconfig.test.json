@@ -1,0 +1,22 @@
+{
+    "extends": "./tsconfig.base.json",
+    "compilerOptions": {
+        "types": ["node"],
+        "baseUrl": ".",
+        "paths": {
+            "@avatar-generator/core": ["./lib/core/src/index.ts"],
+            "@avatar-generator/style-initials": ["./lib/styles/initials/src/index.ts"],
+            "@avatar-generator/style-geometric": ["./lib/styles/geometric/src/index.ts"],
+            "@avatar-generator/style-pixels": ["./lib/styles/pixels/src/index.ts"],
+            "@avatar-generator/style-rings": ["./lib/styles/rings/src/index.ts"],
+            "@avatar-generator/style-faces": ["./lib/styles/faces/src/index.ts"],
+            "@avatar-generator/style-illustrated": ["./lib/styles/illustrated/src/index.ts"],
+            "@avatar-generator/style-anime": ["./lib/styles/anime/src/index.ts"],
+            "@avatar-generator/style-abstract": ["./lib/styles/abstract/src/index.ts"],
+            "@avatar-generator/style-emoji": ["./lib/styles/emoji/src/index.ts"],
+            "@avatar-generator/style-animals": ["./lib/styles/animals/src/index.ts"],
+            "@avatar-generator/style-gradient": ["./lib/styles/gradient/src/index.ts"]
+        }
+    },
+    "include": ["lib/**/test/**/*.test.ts", "packages/**/test/**/*.test.ts", "vitest.config.mts"]
+}

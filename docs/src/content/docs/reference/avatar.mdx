@@ -96,16 +96,16 @@ For `@avatar-generator/style-rings`:
 
 For `@avatar-generator/style-faces`:
 
-| Option         | Type       | Default      | Description                                                                                         |
-| -------------- | ---------- | ------------ | --------------------------------------------------------------------------------------------------- |
-| `skinTones`    | `string[]` | `SKIN_TONES` | Custom skin tone palette                                                                            |
-| `featureColor` | `string`   | `"#2C1810"`  | Override feature color                                                                              |
-| `eyebrows`     | `boolean`  | `true`       | Enable eyebrows (50% chance)                                                                        |
-| `ears`         | `boolean`  | `true`       | Enable ears (40% chance)                                                                            |
-| `nose`         | `boolean`  | `true`       | Enable nose (30% chance)                                                                            |
-| `mouthStyle`   | `string`   | (random)     | Override mouth: `"smile"`, `"neutral"`, `"open"`, `"smirk"`, `"small"`                              |
-| `eyeStyle`     | `string`   | (random)     | Override eyes: `"dots"`, `"circles"`, `"closed"`, `"happy"`                                         |
-| `hairStyle`    | `string`   | (random)     | Override hair: `"none"`, `"short"`, `"flat"`, `"parted"`, `"long"`, `"curly"`, `"mohawk"`, `"buzz"` |
+| Option         | Type       | Default      | Description                                                                                                      |
+| -------------- | ---------- | ------------ | ---------------------------------------------------------------------------------------------------------------- |
+| `skinTones`    | `string[]` | `SKIN_TONES` | Custom skin tone palette                                                                                         |
+| `featureColor` | `string`   | `"#2C1810"`  | Override feature color                                                                                           |
+| `eyebrows`     | `boolean`  | `true`       | Enable eyebrows (50% chance)                                                                                     |
+| `ears`         | `boolean`  | `true`       | Enable ears (40% chance)                                                                                         |
+| `nose`         | `boolean`  | `true`       | Enable nose (30% chance)                                                                                         |
+| `mouthStyle`   | `string`   | (random)     | Override mouth: `"line"`, `"rect-smile"`, `"open-rect"`, `"zigzag"`, `"dot"`                                     |
+| `eyeStyle`     | `string`   | (random)     | Override eyes: `"dots"`, `"rectangles"`, `"lines"`, `"round"`                                                    |
+| `hairStyle`    | `string`   | (random)     | Override hair: `"none"`, `"flat-top"`, `"cap"`, `"side-swept"`, `"spiky"`, `"round-top"`, `"mohawk"`, `"beanie"` |
 
 ### IllustratedOptions
 
@@ -142,6 +142,43 @@ For `@avatar-generator/style-anime`:
 | `ahoge`       | `boolean`  | (random, 40%) | Enable ahoge hair strand on top                                                                                                                                            |
 | `blush`       | `boolean`  | (random, 35%) | Enable blush on cheeks                                                                                                                                                     |
 | `accessories` | `boolean`  | `true`        | Enable accessories (bandaid 5%, headband 8%)                                                                                                                               |
+
+### AbstractOptions
+
+For `@avatar-generator/style-abstract`:
+
+| Option        | Type     | Default  | Description                                                    |
+| ------------- | -------- | -------- | -------------------------------------------------------------- |
+| `composition` | `string` | (random) | Override composition: `"mondrian"`, `"kandinsky"`, `"bauhaus"` |
+| `shapeCount`  | `number` | `3`      | Number of accent shapes in the Kandinsky composition           |
+
+### EmojiOptions
+
+For `@avatar-generator/style-emoji`:
+
+| Option       | Type     | Default  | Description                                                                                                                            |
+| ------------ | -------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `expression` | `string` | (random) | Override expression: `"happy"`, `"laughing"`, `"cool"`, `"wink"`, `"love"`, `"sad"`, `"angry"`, `"surprised"`, `"sleepy"`, `"neutral"` |
+| `faceColor`  | `string` | (random) | Override the face fill color                                                                                                           |
+
+### AnimalsOptions
+
+For `@avatar-generator/style-animals`:
+
+| Option     | Type       | Default       | Description                                                                                      |
+| ---------- | ---------- | ------------- | ------------------------------------------------------------------------------------------------ |
+| `animal`   | `string`   | (random)      | Override animal: `"cat"`, `"dog"`, `"bear"`, `"fox"`, `"panda"`, `"bunny"`, `"frog"`, `"monkey"` |
+| `furTones` | `string[]` | (earth tones) | Custom fur palette                                                                               |
+
+### GradientOptions
+
+For `@avatar-generator/style-gradient`:
+
+| Option       | Type     | Default  | Description                                                           |
+| ------------ | -------- | -------- | --------------------------------------------------------------------- |
+| `direction`  | `string` | (random) | Override direction: `"linear"`, `"radial"`, `"diagonal"`              |
+| `pattern`    | `string` | (random) | Overlay pattern: `"none"`, `"dots"`, `"stripes"`, `"waves"`, `"grid"` |
+| `colorStops` | `number` | `2`      | Number of color stops in the gradient (2 or 3)                        |
 
 ## Utilities
 
@@ -217,31 +254,31 @@ import {
 ### Style Interface
 
 <Code
-  code={`
+    code={`
 interface Style<T extends AvatarOptions = AvatarOptions> {
   name: string;
   create(options: T): AvatarResult;
 }
 `}
-  lang="ts"
+    lang="ts"
 ></Code>
 
 ### AvatarResult
 
 <Code
-  code={`
+    code={`
 interface AvatarResult {
   svg: string;
   toDataUri(): string;
 }
 `}
-  lang="ts"
+    lang="ts"
 ></Code>
 
 ### Random
 
 <Code
-  code={`
+    code={`
 interface Random {
   next(): number;
   int(min: number, max: number): number;
@@ -250,5 +287,5 @@ interface Random {
   shuffle<T>(array: T[]): T[];
 }
 `}
-  lang="ts"
+    lang="ts"
 ></Code>

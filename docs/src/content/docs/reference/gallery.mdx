@@ -1,0 +1,21 @@
+---
+title: Style Gallery
+description: Every avatar style rendered side-by-side from the same seeds.
+---
+
+import Gallery from "../../../components/Gallery.astro";
+
+Every style in `@avatar-generator`, rendered from the same seed set so you can
+compare them directly. Each row uses identical seeds — the differences come
+entirely from the style.
+
+<Gallery />
+
+## Choosing a style
+
+- **Initials / Geometric / Rings / Gradient / Abstract** — no personal features; good for organizations, teams, and abstract identity
+- **Pixels / Faces / Illustrated / Anime / Emoji / Animals** — face or character-based; good when you want an avatar that reads as a "person" or mascot
+
+All 11 styles share the same base options (`seed`, `size`, `colors`,
+`square`, `transparent`, `border`, `rotate`, `flip`, `scale`). See the [API
+Reference](/reference/avatar/) for style-specific options.

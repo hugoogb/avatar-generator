@@ -1,8 +1,21 @@
-import type { AnimeOptions, AvatarOptions, FacesOptions, GeometricOptions, IllustratedOptions, InitialsOptions, PixelsOptions, RingsOptions } from "@avatar-core/src";
+import type {
+    AbstractOptions,
+    AnimalsOptions,
+    AnimeOptions,
+    AvatarOptions,
+    EmojiOptions,
+    FacesOptions,
+    GeometricOptions,
+    GradientOptions,
+    IllustratedOptions,
+    InitialsOptions,
+    PixelsOptions,
+    RingsOptions,
+} from "@avatar-core/src";
 
 // Test seeds for avatar generation
 export const TEST_SEEDS = [
-    "Hugo GB
+    "Hugo GB",
     "Jane Smith",
     "Josh Stanley",
     "Chris Evans",
@@ -63,8 +76,8 @@ export const RINGS_OPTIONS: RingsOptions[] = [
 // Faces style options
 export const FACES_OPTIONS: FacesOptions[] = [
     { seed: "face-1", size: 80 },
-    { seed: "face-2", size: 64, hairStyle: "curly" },
-    { seed: "face-3", size: 80, eyeStyle: "happy", mouthStyle: "smile" },
+    { seed: "face-2", size: 64, hairStyle: "side-swept" },
+    { seed: "face-3", size: 80, eyeStyle: "round", mouthStyle: "rect-smile" },
     { seed: "face-4", size: 100, square: true },
     { seed: "face-5", size: 64, eyebrows: false, ears: false },
     { seed: "face-6", size: 80, featureColor: "#1a1a2e" },
@@ -93,24 +106,46 @@ export const ANIME_OPTIONS: AnimeOptions[] = [
     { seed: "anime-7", size: 80, hairStyle: "hime-cut", mouthStyle: "small-smile", bangs: true },
 ];
 
-// Legacy v1 options (for backwards compatibility testing)
-export const LEGACY_OPTIONS = [
-    {
-        name: "Hugo GB",
-        backgroundColor: "#4CAF50",
-        shape: "circle" as const,
-        textColor: "#000",
-        fontSize: "30px",
-        width: "120px",
-        height: "120px",
-        tooltip: true,
-    },
-    {
-        name: "Jane Smith",
-        backgroundColor: ["#2196F3", "#21CBF3"],
-        textColor: "#fff",
-        fontSize: "40px",
-        width: "100px",
-        height: "100px",
-    },
+// Abstract style options
+export const ABSTRACT_OPTIONS: AbstractOptions[] = [
+    { seed: "abstract-1", size: 80 },
+    { seed: "abstract-2", size: 80, composition: "mondrian" },
+    { seed: "abstract-3", size: 80, composition: "kandinsky" },
+    { seed: "abstract-4", size: 80, composition: "bauhaus" },
+    { seed: "abstract-5", size: 100, square: true },
+    { seed: "abstract-6", size: 80, composition: "kandinsky", shapeCount: 6 },
+    { seed: "abstract-7", size: 80, border: { width: 2, color: "#000" } },
+];
+
+// Emoji style options
+export const EMOJI_OPTIONS: EmojiOptions[] = [
+    { seed: "emoji-1", size: 80 },
+    { seed: "emoji-2", size: 80, expression: "laughing" },
+    { seed: "emoji-3", size: 80, expression: "cool" },
+    { seed: "emoji-4", size: 80, expression: "love" },
+    { seed: "emoji-5", size: 100, expression: "sleepy" },
+    { seed: "emoji-6", size: 80, expression: "surprised" },
+    { seed: "emoji-7", size: 80, expression: "angry", faceColor: "#FFAD42" },
+];
+
+// Animals style options
+export const ANIMALS_OPTIONS: AnimalsOptions[] = [
+    { seed: "animals-1", size: 80 },
+    { seed: "animals-2", size: 80, animal: "cat" },
+    { seed: "animals-3", size: 80, animal: "dog" },
+    { seed: "animals-4", size: 80, animal: "fox" },
+    { seed: "animals-5", size: 80, animal: "panda" },
+    { seed: "animals-6", size: 80, animal: "bunny" },
+    { seed: "animals-7", size: 80, animal: "frog" },
+];
+
+// Gradient style options
+export const GRADIENT_OPTIONS: GradientOptions[] = [
+    { seed: "gradient-1", size: 80 },
+    { seed: "gradient-2", size: 80, direction: "linear", pattern: "dots" },
+    { seed: "gradient-3", size: 80, direction: "radial", pattern: "waves" },
+    { seed: "gradient-4", size: 80, direction: "diagonal", pattern: "stripes" },
+    { seed: "gradient-5", size: 100, square: true, pattern: "grid" },
+    { seed: "gradient-6", size: 80, colorStops: 3 },
+    { seed: "gradient-7", size: 80, colors: ["#FF6B9D", "#FFD600"], pattern: "none" },
 ];

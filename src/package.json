@@ -1,16 +1,33 @@
 {
-  "name": "avatar-generator",
-  "private": true,
-  "workspaces": [
-    "packages/*",
-    "lib/*",
-    "lib/styles/*"
-  ],
-  "scripts": {
-    "build": "pnpm -r run build",
-    "clean": "rm -rf node_modules && pnpm -r exec rm -rf dist node_modules"
-  },
-  "devDependencies": {
-    "typescript": "^5.7.2"
-  }
+    "name": "avatar-generator",
+    "private": true,
+    "workspaces": [
+        "packages/*",
+        "lib/*",
+        "lib/styles/*"
+    ],
+    "scripts": {
+        "build": "pnpm -r run build",
+        "clean": "rm -rf node_modules && pnpm -r exec rm -rf dist node_modules",
+        "test": "vitest run",
+        "test:watch": "vitest",
+        "test:coverage": "vitest run --coverage",
+        "typecheck": "tsc -p tsconfig.test.json && pnpm -r run typecheck",
+        "check:exports": "pnpm -r run publint && pnpm -r run attw",
+        "smoke": "node scripts/smoke-test.mjs",
+        "verify:publish": "pnpm run build && pnpm run check:exports && pnpm run smoke",
+        "changeset": "changeset",
+        "version-packages": "changeset version && pnpm install --lockfile-only",
+        "check:version": "node scripts/check-release-version.mjs",
+        "release:dry": "pnpm run verify:publish && pnpm publish --recursive --access public --no-git-checks --dry-run"
+    },
+    "devDependencies": {
+        "@arethetypeswrong/cli": "^0.18.2",
+        "@changesets/cli": "^3.0.1",
+        "@types/node": "^22.10.1",
+        "@vitest/coverage-v8": "^2.1.9",
+        "publint": "^0.3.14",
+        "typescript": "^5.7.2",
+        "vitest": "^2.1.9"
+    }
 }

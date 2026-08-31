@@ -1,0 +1,80 @@
+---
+title: Web Component Usage
+description: Use the framework-agnostic <avatar-generator> custom element from any HTML page.
+---
+
+import { Code } from "@astrojs/starlight/components";
+
+The `@avatar-generator/web-component` package ships a standards-based custom
+element, so you can drop an avatar into any HTML page — no framework
+required. It works just as well inside React, Vue, Svelte, Solid, or any
+other framework that supports custom elements.
+
+## Installation
+
+<Code
+    code={`pnpm add @avatar-generator/core @avatar-generator/web-component @avatar-generator/style-initials`}
+    lang="bash"
+></Code>
+
+## Basic Usage
+
+Importing the package auto-registers `<avatar-generator>`. Set the JS
+properties `styleImpl` and `options` on the element:
+
+<Code code={`import "@avatar-generator/web-component";
+import { initials } from "@avatar-generator/style-initials";
+
+const el = document.createElement("avatar-generator");
+el.styleImpl = initials;
+el.options = { seed: "Hugo GB", size: 64 };
+el.setAttribute("alt", "Hugo GB");
+document.body.append(el);`} lang="ts"></Code>
+
+The property is called `styleImpl` (not `style`) to avoid clashing with
+the built-in `HTMLElement.style` CSS property.
+
+## Custom tag name
+
+If the default `<avatar-generator>` tag name collides with something in
+your app, register the element under a different name:
+
+<Code code={`import { register } from "@avatar-generator/web-component";
+import { initials } from "@avatar-generator/style-initials";
+
+register("my-avatar");
+
+const el = document.createElement("my-avatar");
+el.styleImpl = initials;
+el.options = { seed: "Hugo GB" };
+document.body.append(el);`} lang="ts"></Code>
+
+## Using inside a framework
+
+Because the element is a standard custom element, any framework that
+supports DOM property binding can use it. For example, in a vanilla HTML
+page:
+
+<Code code={`<script type="module">
+  import "@avatar-generator/web-component";
+  import { initials } from "@avatar-generator/style-initials";
+
+customElements.whenDefined("avatar-generator").then(() => {
+const el = document.querySelector("avatar-generator");
+el.styleImpl = initials;
+el.options = { seed: "Hugo GB", size: 64 };
+});
+
+</script>
+
+<avatar-generator alt="Hugo GB"></avatar-generator>`} lang="html"></Code>
+
+## Properties and attributes
+
+| Name        | Kind      | Description                                                                |
+| ----------- | --------- | -------------------------------------------------------------------------- |
+| `styleImpl` | property  | The avatar `Style` object (required, must be set as a JS property)         |
+| `options`   | property  | Avatar options matching the style (required, must be set as a JS property) |
+| `alt`       | attribute | Alt text for the internal `<img>` (default: `"Avatar"`)                    |
+
+Setting `styleImpl` or `options` triggers an immediate re-render.

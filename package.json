@@ -1,0 +1,26 @@
+{
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
+        "check": "pnpm run lint && pnpm run format:check",
+        "test": "pnpm --dir src test",
+        "test:watch": "pnpm --dir src test:watch",
+        "test:coverage": "pnpm --dir src test:coverage",
+        "typecheck": "pnpm --dir src typecheck",
+        "prepare": "husky"
+    },
+    "devDependencies": {
+        "@eslint/js": "^10.0.1",
+        "eslint": "^10.0.3",
+        "eslint-config-prettier": "^10.1.8",
+        "globals": "^17.4.0",
+        "husky": "^9.1.7",
+        "lint-staged": "^16.3.2",
+        "prettier": "^3.8.1",
+        "typescript-eslint": "^8.57.0"
+    }
+}

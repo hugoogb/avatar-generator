@@ -1,36 +1,26 @@
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "esModuleInterop": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "baseUrl": ".",
-    "paths": {
-      "@avatar-generator/core": ["./lib/core/src"],
-      "@avatar-generator/react": ["./packages/react/src"],
-      "@avatar-generator/angular": ["./packages/angular/src"],
-      "@avatar-generator/style-initials": ["./lib/styles/initials/src"],
-      "@avatar-generator/style-geometric": ["./lib/styles/geometric/src"],
-      "@avatar-generator/style-pixels": ["./lib/styles/pixels/src"],
-      "@avatar-generator/style-rings": ["./lib/styles/rings/src"],
-      "@avatar-generator/style-faces": ["./lib/styles/faces/src"],
-      "@avatar-generator/style-illustrated": ["./lib/styles/illustrated/src"],
-      "@avatar-generator/style-anime": ["./lib/styles/anime/src"]
-    }
-  },
-  "references": [
-    { "path": "./lib/core" },
-    { "path": "./lib/styles/initials" },
-    { "path": "./lib/styles/geometric" },
-    { "path": "./lib/styles/pixels" },
-    { "path": "./lib/styles/rings" },
-    { "path": "./lib/styles/faces" },
-    { "path": "./lib/styles/illustrated" },
-    { "path": "./lib/styles/anime" },
-    { "path": "./packages/react" },
-    { "path": "./packages/angular" }
-  ],
-  "files": []
+    "extends": "./tsconfig.base.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@avatar-generator/core": ["./lib/core/src"],
+            "@avatar-generator/react": ["./packages/react/src"],
+            "@avatar-generator/angular": ["./packages/angular/src"],
+            "@avatar-generator/vue": ["./packages/vue/src"],
+            "@avatar-generator/svelte": ["./packages/svelte/src"],
+            "@avatar-generator/web-component": ["./packages/web-component/src"],
+            "@avatar-generator/style-initials": ["./lib/styles/initials/src"],
+            "@avatar-generator/style-geometric": ["./lib/styles/geometric/src"],
+            "@avatar-generator/style-pixels": ["./lib/styles/pixels/src"],
+            "@avatar-generator/style-rings": ["./lib/styles/rings/src"],
+            "@avatar-generator/style-faces": ["./lib/styles/faces/src"],
+            "@avatar-generator/style-illustrated": ["./lib/styles/illustrated/src"],
+            "@avatar-generator/style-anime": ["./lib/styles/anime/src"],
+            "@avatar-generator/style-abstract": ["./lib/styles/abstract/src"],
+            "@avatar-generator/style-emoji": ["./lib/styles/emoji/src"],
+            "@avatar-generator/style-animals": ["./lib/styles/animals/src"],
+            "@avatar-generator/style-gradient": ["./lib/styles/gradient/src"]
+        }
+    },
+    "include": ["lib/**/src/**/*.ts", "packages/**/src/**/*.ts"]
 }

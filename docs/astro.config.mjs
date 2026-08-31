@@ -4,35 +4,40 @@ import starlight from "@astrojs/starlight";
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [
-    starlight({
-      title: "@avatar-generator Docs",
-      description: "Documentation for @avatar-generator components.",
-      social: {
-        github: "https://github.com/hugoogb/avatar-generator",
-      },
-      sidebar: [
-        {
-          label: "Start Here",
-          items: [
-            { label: "Introduction", slug: "get-started/introduction" },
-            { label: "Installation", slug: "get-started/installation" },
-            { label: "Playground", slug: "get-started/playground" },
-          ],
-        },
-        {
-          label: "Guides",
-          items: [
-            { label: "Manual Usage", slug: "guides/manual" },
-            { label: "React Usage", slug: "guides/react" },
-            { label: "Angular Usage", slug: "guides/angular" },
-          ],
-        },
-        {
-          label: "Reference",
-          autogenerate: { directory: "reference" },
-        },
-      ],
-    }),
-  ],
+    integrations: [
+        starlight({
+            title: "@avatar-generator Docs",
+            description: "Documentation for @avatar-generator components.",
+            social: {
+                github: "https://github.com/hugoogb/avatar-generator",
+            },
+            sidebar: [
+                {
+                    label: "Start Here",
+                    items: [
+                        { label: "Introduction", slug: "get-started/introduction" },
+                        { label: "Installation", slug: "get-started/installation" },
+                        { label: "Playground", slug: "get-started/playground" },
+                    ],
+                },
+                {
+                    label: "Guides",
+                    items: [
+                        { label: "Manual Usage", slug: "guides/manual" },
+                        { label: "React Usage", slug: "guides/react" },
+                        { label: "Angular Usage", slug: "guides/angular" },
+                        { label: "Vue Usage", slug: "guides/vue" },
+                        { label: "Svelte Usage", slug: "guides/svelte" },
+                        { label: "Web Component Usage", slug: "guides/web-component" },
+                        { label: "Creating Custom Styles", slug: "guides/custom-styles" },
+                        { label: "Cookbook", slug: "guides/cookbook" },
+                    ],
+                },
+                {
+                    label: "Reference",
+                    autogenerate: { directory: "reference" },
+                },
+            ],
+        }),
+    ],
 });

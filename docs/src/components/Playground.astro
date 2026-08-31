@@ -1,7 +1,7 @@
 ---
 /**
  * Interactive Playground Component for Avatar Generator
- * Shows all 6 avatar styles with live preview
+ * Shows all 11 avatar styles with live preview
  */
 ---
 
@@ -65,6 +65,36 @@
       <h4>Illustrated</h4>
       <div class="avatar-preview" id="preview-illustrated"></div>
       <code>@avatar-generator/style-illustrated</code>
+    </div>
+
+    <div class="style-card">
+      <h4>Anime</h4>
+      <div class="avatar-preview" id="preview-anime"></div>
+      <code>@avatar-generator/style-anime</code>
+    </div>
+
+    <div class="style-card">
+      <h4>Abstract</h4>
+      <div class="avatar-preview" id="preview-abstract"></div>
+      <code>@avatar-generator/style-abstract</code>
+    </div>
+
+    <div class="style-card">
+      <h4>Emoji</h4>
+      <div class="avatar-preview" id="preview-emoji"></div>
+      <code>@avatar-generator/style-emoji</code>
+    </div>
+
+    <div class="style-card">
+      <h4>Animals</h4>
+      <div class="avatar-preview" id="preview-animals"></div>
+      <code>@avatar-generator/style-animals</code>
+    </div>
+
+    <div class="style-card">
+      <h4>Gradient</h4>
+      <div class="avatar-preview" id="preview-gradient"></div>
+      <code>@avatar-generator/style-gradient</code>
     </div>
   </div>
 
@@ -434,6 +464,275 @@
     return svgWrap(size, square, transparent, bg, content);
   };
 
+  const ANIME_HAIR_COLORS = [
+    '#1a1a2e', '#2d1b36', '#4a1942', '#c23616', '#e17055',
+    '#0984e3', '#6c5ce7', '#fd79a8', '#ffeaa7', '#dfe6e9',
+  ];
+
+  const generateAnime: GenFn = (seed, size, square, transparent) => {
+    const rng = createRandom(seed);
+    const bg = rng.pick(DEFAULT_COLORS);
+    const skinColor = rng.pick(SKIN_TONES);
+    const hairColor = rng.pick(ANIME_HAIR_COLORS);
+    const eyeColor = rng.pick(['#634E34', '#2E536F', '#3D6B45', '#0984e3', '#6c5ce7']);
+    const feat = '#2C1810';
+    const cx = size * 0.5;
+    const cy = size * 0.5;
+    const headW = size * 0.58;
+    const headH = size * 0.68;
+    const eyeY = cy - headH * 0.02;
+    const eyeSpacing = headW * 0.2;
+    const mouthY = cy + headH * 0.25;
+    const top = cy - headH / 2;
+
+    let content = '';
+    // Hair behind
+    const hairW = headW * 0.7;
+    content += `<path d="M ${cx - hairW} ${cy} Q ${cx - hairW - 2} ${top - 14} ${cx} ${top - 12} Q ${cx + hairW + 2} ${top - 14} ${cx + hairW} ${cy}" fill="${hairColor}"/>`;
+    // Head (slightly pointed chin for anime look)
+    content += `<ellipse cx="${cx}" cy="${cy - headH * 0.05}" rx="${headW / 2}" ry="${headH / 2}" fill="${skinColor}"/>`;
+    // Big anime eyes
+    const lx = cx - eyeSpacing;
+    const rx = cx + eyeSpacing;
+    const eyeRx = size * 0.06;
+    const eyeRy = size * 0.08;
+    content += `<ellipse cx="${lx}" cy="${eyeY}" rx="${eyeRx}" ry="${eyeRy}" fill="white"/>`;
+    content += `<ellipse cx="${lx}" cy="${eyeY + 1}" rx="${eyeRx * 0.65}" ry="${eyeRy * 0.7}" fill="${eyeColor}"/>`;
+    content += `<ellipse cx="${lx - 1}" cy="${eyeY - 1}" rx="1.5" ry="1.5" fill="white"/>`;
+    content += `<ellipse cx="${rx}" cy="${eyeY}" rx="${eyeRx}" ry="${eyeRy}" fill="white"/>`;
+    content += `<ellipse cx="${rx}" cy="${eyeY + 1}" rx="${eyeRx * 0.65}" ry="${eyeRy * 0.7}" fill="${eyeColor}"/>`;
+    content += `<ellipse cx="${rx - 1}" cy="${eyeY - 1}" rx="1.5" ry="1.5" fill="white"/>`;
+    // Small mouth
+    content += `<path d="M ${cx - 3} ${mouthY} Q ${cx} ${mouthY + 3} ${cx + 3} ${mouthY}" fill="none" stroke="${feat}" stroke-width="1" stroke-linecap="round"/>`;
+    // Blush
+    if (rng.bool(0.5)) {
+      const blushY = cy + headH * 0.12;
+      content += `<ellipse cx="${lx - 2}" cy="${blushY}" rx="4" ry="2.5" fill="#FF6B6B" opacity="0.25"/>`;
+      content += `<ellipse cx="${rx + 2}" cy="${blushY}" rx="4" ry="2.5" fill="#FF6B6B" opacity="0.25"/>`;
+    }
+    // Hair bangs on top
+    content += `<path d="M ${cx - headW / 2 - 2} ${top + headH * 0.15} Q ${cx - headW * 0.25} ${top - 6} ${cx} ${top - 8} Q ${cx + headW * 0.25} ${top - 6} ${cx + headW / 2 + 2} ${top + headH * 0.15}" fill="${hairColor}"/>`;
+
+    return svgWrap(size, square, transparent, bg, content);
+  };
+
+  const generateAbstract: GenFn = (seed, size, square, transparent) => {
+    const rng = createRandom(seed);
+    const composition = rng.pick(['mondrian', 'kandinsky', 'bauhaus'] as const);
+    const bold = ['#E63946', '#F1C40F', '#2A9D8F', '#264653', '#F4A261', '#6C5CE7'];
+    const primary = ['#D40000', '#FFDE00', '#0051BA', '#FFFFFF'];
+    let content = '';
+
+    if (composition === 'mondrian') {
+      const vx = Math.floor(size * (0.4 + rng.next() * 0.2));
+      const hy = Math.floor(size * (0.35 + rng.next() * 0.3));
+      content += `<rect x="0" y="0" width="${vx}" height="${hy}" fill="${rng.pick(primary)}"/>`;
+      content += `<rect x="${vx}" y="0" width="${size - vx}" height="${hy}" fill="${rng.pick(primary)}"/>`;
+      content += `<rect x="0" y="${hy}" width="${vx}" height="${size - hy}" fill="${rng.pick(primary)}"/>`;
+      content += `<rect x="${vx}" y="${hy}" width="${size - vx}" height="${size - hy}" fill="${rng.pick(primary)}"/>`;
+      content += `<rect x="${vx - 1.5}" y="0" width="3" height="${size}" fill="#111"/>`;
+      content += `<rect x="0" y="${hy - 1.5}" width="${size}" height="3" fill="#111"/>`;
+    } else if (composition === 'kandinsky') {
+      const r = size / 2;
+      content += `<circle cx="${r}" cy="${r}" r="${size * 0.25}" fill="${rng.pick(bold)}"/>`;
+      content += `<circle cx="${r}" cy="${r}" r="${size * 0.15}" fill="${rng.pick(bold)}"/>`;
+      content += `<polygon points="${size * 0.2},${size * 0.2} ${size * 0.3},${size * 0.1} ${size * 0.4},${size * 0.25}" fill="${rng.pick(bold)}"/>`;
+      content += `<circle cx="${size * 0.75}" cy="${size * 0.8}" r="${size * 0.1}" fill="${rng.pick(bold)}"/>`;
+      content += `<line x1="0" y1="${size * 0.85}" x2="${size}" y2="${size * 0.15}" stroke="${rng.pick(bold)}" stroke-width="2"/>`;
+    } else {
+      const half = size / 2;
+      for (let row = 0; row < 2; row++) {
+        for (let col = 0; col < 2; col++) {
+          const x = col * half;
+          const y = row * half;
+          const bg = rng.pick(bold);
+          content += `<rect x="${x}" y="${y}" width="${half}" height="${half}" fill="${bg}"/>`;
+          const kind = rng.pick(['triangle', 'circle', 'half'] as const);
+          const fill = rng.pick(bold.filter(c => c !== bg));
+          if (kind === 'triangle') {
+            content += `<polygon points="${x},${y} ${x + half},${y} ${x},${y + half}" fill="${fill}"/>`;
+          } else if (kind === 'circle') {
+            content += `<circle cx="${x + half / 2}" cy="${y + half / 2}" r="${half * 0.35}" fill="${fill}"/>`;
+          } else {
+            content += `<path d="M ${x} ${y + half} A ${half / 2} ${half / 2} 0 0 1 ${x + half} ${y + half} Z" fill="${fill}"/>`;
+          }
+        }
+      }
+    }
+    return svgWrap(size, square, transparent, rng.pick(bold), content);
+  };
+
+  const generateEmoji: GenFn = (seed, size, square, transparent) => {
+    const rng = createRandom(seed);
+    const expressions = ['happy', 'laughing', 'cool', 'wink', 'love', 'sad', 'angry', 'surprised', 'sleepy', 'neutral'] as const;
+    const expr = rng.pick(expressions);
+    const faceColor = rng.pick(['#FFD93D', '#FFC93C', '#FFCC33']);
+    const stroke = '#2C2C2C';
+    const cx = size / 2;
+    const cy = size / 2;
+    const r = size * 0.42;
+    const eyeY = cy - r * 0.18;
+    const eyeSpacing = r * 0.35;
+    const eyeR = r * 0.09;
+    const mouthY = cy + r * 0.28;
+    const lx = cx - eyeSpacing;
+    const rx = cx + eyeSpacing;
+    const mw = r * 0.5;
+
+    let content = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${faceColor}" stroke="${stroke}" stroke-width="1.5"/>`;
+
+    if (expr === 'laughing') {
+      content += `<path d="M ${lx - eyeR} ${eyeY + 1} Q ${lx} ${eyeY - eyeR} ${lx + eyeR} ${eyeY + 1}" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round"/>`;
+      content += `<path d="M ${rx - eyeR} ${eyeY + 1} Q ${rx} ${eyeY - eyeR} ${rx + eyeR} ${eyeY + 1}" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round"/>`;
+    } else if (expr === 'cool') {
+      const h = eyeR * 1.6, w = eyeR * 2;
+      content += `<rect x="${lx - w/2}" y="${eyeY - h/2}" width="${w}" height="${h}" rx="1" fill="${stroke}"/>`;
+      content += `<rect x="${rx - w/2}" y="${eyeY - h/2}" width="${w}" height="${h}" rx="1" fill="${stroke}"/>`;
+    } else if (expr === 'wink') {
+      content += `<path d="M ${lx - eyeR} ${eyeY} Q ${lx} ${eyeY - eyeR * 0.6} ${lx + eyeR} ${eyeY}" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round"/>`;
+      content += `<circle cx="${rx}" cy="${eyeY}" r="${eyeR}" fill="${stroke}"/>`;
+    } else if (expr === 'love') {
+      content += `<text x="${lx}" y="${eyeY + eyeR}" font-size="${eyeR * 3}" fill="#E74C3C" text-anchor="middle">♥</text>`;
+      content += `<text x="${rx}" y="${eyeY + eyeR}" font-size="${eyeR * 3}" fill="#E74C3C" text-anchor="middle">♥</text>`;
+    } else if (expr === 'sleepy') {
+      content += `<line x1="${lx - eyeR}" y1="${eyeY}" x2="${lx + eyeR}" y2="${eyeY}" stroke="${stroke}" stroke-width="2"/>`;
+      content += `<line x1="${rx - eyeR}" y1="${eyeY}" x2="${rx + eyeR}" y2="${eyeY}" stroke="${stroke}" stroke-width="2"/>`;
+    } else {
+      content += `<circle cx="${lx}" cy="${eyeY}" r="${eyeR}" fill="${stroke}"/><circle cx="${rx}" cy="${eyeY}" r="${eyeR}" fill="${stroke}"/>`;
+    }
+
+    if (expr === 'happy' || expr === 'wink' || expr === 'cool' || expr === 'love') {
+      content += `<path d="M ${cx - mw/2} ${mouthY} Q ${cx} ${mouthY + mw * 0.5} ${cx + mw/2} ${mouthY}" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round"/>`;
+    } else if (expr === 'laughing') {
+      content += `<path d="M ${cx - mw/2} ${mouthY} Q ${cx} ${mouthY + mw * 0.9} ${cx + mw/2} ${mouthY} Z" fill="${stroke}"/>`;
+    } else if (expr === 'sad' || expr === 'angry') {
+      content += `<path d="M ${cx - mw/2} ${mouthY + mw * 0.3} Q ${cx} ${mouthY - mw * 0.1} ${cx + mw/2} ${mouthY + mw * 0.3}" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round"/>`;
+    } else if (expr === 'surprised') {
+      content += `<ellipse cx="${cx}" cy="${mouthY + 1}" rx="${mw * 0.28}" ry="${mw * 0.38}" fill="${stroke}"/>`;
+    } else {
+      content += `<line x1="${cx - mw/2}" y1="${mouthY}" x2="${cx + mw/2}" y2="${mouthY}" stroke="${stroke}" stroke-width="2"/>`;
+    }
+
+    return svgWrap(size, square, transparent, rng.pick(['#FFF8E7', '#FFEAA7', '#FFF3CD']), content);
+  };
+
+  const generateAnimals: GenFn = (seed, size, square, transparent) => {
+    const rng = createRandom(seed);
+    const animal = rng.pick(['cat', 'dog', 'bear', 'fox', 'panda', 'bunny', 'frog', 'monkey'] as const);
+    const furTones = ['#D4A574', '#A67B5B', '#7F5A3C', '#E8C89C'];
+    const fur = rng.pick(furTones);
+    const stroke = '#2C1810';
+    const pink = '#FFB6C1';
+    const cx = size / 2;
+    const cy = size / 2;
+    const halfW = size * 0.3;
+    const halfH = size * 0.29;
+    let content = '';
+
+    if (animal === 'cat') {
+      content += `<polygon points="${cx - halfW + 2},${cy - halfH * 0.4} ${cx - halfW + halfW * 0.2},${cy - halfH - halfW * 0.4} ${cx - halfW + halfW * 0.55},${cy - halfH * 0.2}" fill="${fur}"/>`;
+      content += `<polygon points="${cx + halfW - 2},${cy - halfH * 0.4} ${cx + halfW - halfW * 0.2},${cy - halfH - halfW * 0.4} ${cx + halfW - halfW * 0.55},${cy - halfH * 0.2}" fill="${fur}"/>`;
+      content += `<ellipse cx="${cx}" cy="${cy}" rx="${halfW}" ry="${halfH}" fill="${fur}"/>`;
+      content += `<circle cx="${cx - halfW * 0.35}" cy="${cy - halfH * 0.05}" r="2" fill="${stroke}"/>`;
+      content += `<circle cx="${cx + halfW * 0.35}" cy="${cy - halfH * 0.05}" r="2" fill="${stroke}"/>`;
+      content += `<polygon points="${cx},${cy + halfH * 0.15} ${cx - 4},${cy + halfH * 0.05} ${cx + 4},${cy + halfH * 0.05}" fill="${pink}"/>`;
+    } else if (animal === 'panda') {
+      const earR = halfW * 0.25, black = '#1A1A1A';
+      content += `<circle cx="${cx - halfW * 0.85}" cy="${cy - halfH * 0.8}" r="${earR}" fill="${black}"/>`;
+      content += `<circle cx="${cx + halfW * 0.85}" cy="${cy - halfH * 0.8}" r="${earR}" fill="${black}"/>`;
+      content += `<ellipse cx="${cx}" cy="${cy}" rx="${halfW}" ry="${halfH}" fill="#FFFFFF"/>`;
+      content += `<ellipse cx="${cx - halfW * 0.32}" cy="${cy - halfH * 0.05}" rx="${halfW * 0.2}" ry="${halfH * 0.22}" fill="${black}"/>`;
+      content += `<ellipse cx="${cx + halfW * 0.32}" cy="${cy - halfH * 0.05}" rx="${halfW * 0.2}" ry="${halfH * 0.22}" fill="${black}"/>`;
+      content += `<ellipse cx="${cx}" cy="${cy + halfH * 0.18}" rx="${halfW * 0.08}" ry="${halfH * 0.05}" fill="${black}"/>`;
+    } else if (animal === 'bunny') {
+      const earW = halfW * 0.2, earH = halfH * 0.9;
+      content += `<ellipse cx="${cx - halfW * 0.35}" cy="${cy - halfH * 0.8}" rx="${earW}" ry="${earH}" fill="${fur}"/>`;
+      content += `<ellipse cx="${cx + halfW * 0.35}" cy="${cy - halfH * 0.8}" rx="${earW}" ry="${earH}" fill="${fur}"/>`;
+      content += `<ellipse cx="${cx - halfW * 0.35}" cy="${cy - halfH * 0.75}" rx="${earW * 0.5}" ry="${earH * 0.75}" fill="${pink}"/>`;
+      content += `<ellipse cx="${cx + halfW * 0.35}" cy="${cy - halfH * 0.75}" rx="${earW * 0.5}" ry="${earH * 0.75}" fill="${pink}"/>`;
+      content += `<ellipse cx="${cx}" cy="${cy + halfH * 0.05}" rx="${halfW}" ry="${halfH * 0.9}" fill="${fur}"/>`;
+      content += `<circle cx="${cx - halfW * 0.28}" cy="${cy - halfH * 0.05}" r="2" fill="${stroke}"/>`;
+      content += `<circle cx="${cx + halfW * 0.28}" cy="${cy - halfH * 0.05}" r="2" fill="${stroke}"/>`;
+    } else if (animal === 'fox') {
+      const orange = '#D96E2E';
+      content += `<polygon points="${cx - halfW + 2},${cy - halfH * 0.3} ${cx - halfW + halfW * 0.3},${cy - halfH - halfW * 0.55} ${cx - halfW + halfW * 0.55},${cy - halfH * 0.1}" fill="${orange}"/>`;
+      content += `<polygon points="${cx + halfW - 2},${cy - halfH * 0.3} ${cx + halfW - halfW * 0.3},${cy - halfH - halfW * 0.55} ${cx + halfW - halfW * 0.55},${cy - halfH * 0.1}" fill="${orange}"/>`;
+      content += `<ellipse cx="${cx}" cy="${cy}" rx="${halfW}" ry="${halfH}" fill="${orange}"/>`;
+      content += `<ellipse cx="${cx}" cy="${cy + halfH * 0.25}" rx="${halfW * 0.55}" ry="${halfH * 0.4}" fill="#FFFFFF"/>`;
+      content += `<circle cx="${cx - halfW * 0.3}" cy="${cy - halfH * 0.1}" r="2" fill="${stroke}"/>`;
+      content += `<circle cx="${cx + halfW * 0.3}" cy="${cy - halfH * 0.1}" r="2" fill="${stroke}"/>`;
+    } else if (animal === 'frog') {
+      const green = '#6FB368';
+      content += `<circle cx="${cx - halfW * 0.45}" cy="${cy - halfH * 0.55}" r="${halfW * 0.3}" fill="${green}"/>`;
+      content += `<circle cx="${cx + halfW * 0.45}" cy="${cy - halfH * 0.55}" r="${halfW * 0.3}" fill="${green}"/>`;
+      content += `<ellipse cx="${cx}" cy="${cy + halfH * 0.1}" rx="${halfW * 1.05}" ry="${halfH * 0.85}" fill="${green}"/>`;
+      content += `<circle cx="${cx - halfW * 0.45}" cy="${cy - halfH * 0.55}" r="${halfW * 0.2}" fill="#FFFFFF"/>`;
+      content += `<circle cx="${cx + halfW * 0.45}" cy="${cy - halfH * 0.55}" r="${halfW * 0.2}" fill="#FFFFFF"/>`;
+      content += `<circle cx="${cx - halfW * 0.45}" cy="${cy - halfH * 0.5}" r="${halfW * 0.1}" fill="${stroke}"/>`;
+      content += `<circle cx="${cx + halfW * 0.45}" cy="${cy - halfH * 0.5}" r="${halfW * 0.1}" fill="${stroke}"/>`;
+      content += `<path d="M ${cx - halfW * 0.55} ${cy + halfH * 0.25} Q ${cx} ${cy + halfH * 0.5} ${cx + halfW * 0.55} ${cy + halfH * 0.25}" fill="none" stroke="#4A7A45" stroke-width="2"/>`;
+    } else {
+      // Generic fallback (dog/bear/monkey)
+      content += `<circle cx="${cx - halfW * 0.85}" cy="${cy - halfH * 0.6}" r="${halfW * 0.22}" fill="${fur}"/>`;
+      content += `<circle cx="${cx + halfW * 0.85}" cy="${cy - halfH * 0.6}" r="${halfW * 0.22}" fill="${fur}"/>`;
+      content += `<ellipse cx="${cx}" cy="${cy}" rx="${halfW}" ry="${halfH}" fill="${fur}"/>`;
+      content += `<circle cx="${cx - halfW * 0.28}" cy="${cy - halfH * 0.1}" r="2" fill="${stroke}"/>`;
+      content += `<circle cx="${cx + halfW * 0.28}" cy="${cy - halfH * 0.1}" r="2" fill="${stroke}"/>`;
+      content += `<ellipse cx="${cx}" cy="${cy + halfH * 0.2}" rx="4" ry="3" fill="#1A1A1A"/>`;
+    }
+
+    return svgWrap(size, square, transparent, rng.pick(DEFAULT_COLORS), content);
+  };
+
+  const generateGradient: GenFn = (seed, size, square, transparent) => {
+    const rng = createRandom(seed);
+    const palette = ['#FF6B9D', '#C644FC', '#5A17EE', '#2196F3', '#00BCD4', '#00E676', '#FFD600', '#FF9800', '#E91E63', '#9C27B0'];
+    const direction = rng.pick(['linear', 'radial', 'diagonal'] as const);
+    const pattern = rng.pick(['none', 'dots', 'stripes', 'waves', 'grid'] as const);
+    const stops = [rng.pick(palette), rng.pick(palette)];
+    const gradId = `grad-${seed.replace(/\W/g, '')}-${direction}`;
+
+    let defs = '';
+    if (direction === 'linear') {
+      defs = `<linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${stops[0]}"/><stop offset="100%" stop-color="${stops[1]}"/></linearGradient>`;
+    } else if (direction === 'diagonal') {
+      defs = `<linearGradient id="${gradId}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${stops[0]}"/><stop offset="100%" stop-color="${stops[1]}"/></linearGradient>`;
+    } else {
+      defs = `<radialGradient id="${gradId}" cx="50%" cy="50%" r="70%"><stop offset="0%" stop-color="${stops[0]}"/><stop offset="100%" stop-color="${stops[1]}"/></radialGradient>`;
+    }
+
+    let overlay = '';
+    if (pattern === 'dots') {
+      const step = size / 6;
+      for (let y = step / 2; y < size; y += step) {
+        for (let x = step / 2; x < size; x += step) {
+          overlay += `<circle cx="${x}" cy="${y}" r="${step * 0.15}" fill="rgba(255,255,255,0.18)"/>`;
+        }
+      }
+    } else if (pattern === 'stripes') {
+      for (let i = 0; i < size; i += size / 10) {
+        overlay += `<line x1="${i}" y1="0" x2="${i}" y2="${size}" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>`;
+      }
+    } else if (pattern === 'grid') {
+      for (let i = size / 6; i < size; i += size / 6) {
+        overlay += `<line x1="${i}" y1="0" x2="${i}" y2="${size}" stroke="rgba(255,255,255,0.25)" stroke-width="0.8"/>`;
+        overlay += `<line x1="0" y1="${i}" x2="${size}" y2="${i}" stroke="rgba(255,255,255,0.25)" stroke-width="0.8"/>`;
+      }
+    } else if (pattern === 'waves') {
+      for (let i = 1; i < 4; i++) {
+        const y = (size / 4) * i;
+        overlay += `<path d="M 0 ${y} Q ${size / 4} ${y - size * 0.05} ${size / 2} ${y} T ${size} ${y}" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>`;
+      }
+    }
+
+    const r = size / 2;
+    const clip = square
+      ? `<clipPath id="c"><rect x="0" y="0" width="${size}" height="${size}"/></clipPath>`
+      : `<clipPath id="c"><circle cx="${r}" cy="${r}" r="${r}"/></clipPath>`;
+    const bgRect = transparent ? '' : `<rect x="0" y="0" width="${size}" height="${size}" fill="url(#${gradId})"/>`;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}"><defs>${clip}${defs}</defs><g clip-path="url(#c)">${bgRect}${overlay}</g></svg>`;
+  };
+
   function updatePreviews() {
     const seedInput = document.getElementById('seed-input') as HTMLInputElement;
     const sizeInput = document.getElementById('size-input') as HTMLInputElement;
@@ -455,6 +754,11 @@
       'preview-rings': generateRings,
       'preview-faces': generateFaces,
       'preview-illustrated': generateIllustrated,
+      'preview-anime': generateAnime,
+      'preview-abstract': generateAbstract,
+      'preview-emoji': generateEmoji,
+      'preview-animals': generateAnimals,
+      'preview-gradient': generateGradient,
     };
 
     for (const [id, generator] of Object.entries(previews)) {

@@ -1,0 +1,69 @@
+---
+title: Vue Usage
+description: Learn how to use the @avatar-generator/vue package in your Vue 3 application.
+---
+
+import { Code } from "@astrojs/starlight/components";
+
+The `@avatar-generator/vue` package provides a Vue 3 component for rendering
+avatars with any style.
+
+## Installation
+
+<Code
+    code={`pnpm add @avatar-generator/core @avatar-generator/vue @avatar-generator/style-initials`}
+    lang="bash"
+></Code>
+
+`vue` is a peer dependency — use whichever version your app pins.
+
+## Basic Usage
+
+<Code code={`<script setup lang="ts">
+import { Avatar } from "@avatar-generator/vue";
+import { initials } from "@avatar-generator/style-initials";
+
+defineProps<{ userId: string; userName: string }>();
+
+</script>
+
+<template>
+  <Avatar
+    :style="initials"
+    :options="{ seed: userId, name: userName, size: 48 }"
+    :alt="userName"
+  />
+</template>`} lang="vue"></Code>
+
+## Using Different Styles
+
+<Code code={`<script setup lang="ts">
+import { Avatar } from "@avatar-generator/vue";
+import { initials } from "@avatar-generator/style-initials";
+import { anime } from "@avatar-generator/style-anime";
+import { animals } from "@avatar-generator/style-animals";
+
+const common = { seed: "Hugo GB", size: 64 };
+
+</script>
+
+<template>
+  <Avatar :style="initials" :options="common" />
+  <Avatar :style="anime" :options="common" />
+  <Avatar :style="animals" :options="common" />
+</template>`} lang="vue"></Code>
+
+## Component Props
+
+| Prop      | Type                      | Description                                    |
+| --------- | ------------------------- | ---------------------------------------------- |
+| `style`   | `Style<T>`                | The avatar style to use (required)             |
+| `options` | `T extends AvatarOptions` | Style-specific options (required)              |
+| `alt`     | `string`                  | Alt text for accessibility (default: "Avatar") |
+| `class`   | `string`                  | Additional CSS classes                         |
+
+## Performance
+
+The component uses `computed` so the SVG is only re-generated when `style`
+or `options` actually change. Pass options reactively to get automatic
+updates.

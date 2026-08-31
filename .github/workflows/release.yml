@@ -1,0 +1,88 @@
+name: Release
+
+# Publishing is deliberately manual and explicit: it runs when a v* tag is
+# pushed, or from the Actions tab. Nothing publishes on a merge.
+on:
+    push:
+        tags: ["v*"]
+    workflow_dispatch:
+        inputs:
+            dry_run:
+                description: "Verify and pack, but do not publish"
+                type: boolean
+                default: true
+
+jobs:
+    release:
+        name: Publish to npm
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write # create the GitHub release
+            id-token: write # npm provenance
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@v4
+              with:
+                  version: 10
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: pnpm
+                  cache-dependency-path: "**/pnpm-lock.yaml"
+                  registry-url: "https://registry.npmjs.org"
+
+            - name: Install dependencies (workspace)
+              run: pnpm install --frozen-lockfile
+              working-directory: src
+
+            # Everything CI checks, again, against the exact tree being
+            # published. A release must never be the first time these run.
+            - name: Typecheck
+              run: pnpm run typecheck
+              working-directory: src
+
+            - name: Test
+              run: pnpm test
+              working-directory: src
+
+            - name: Build all packages
+              run: pnpm run build
+              working-directory: src
+
+            - name: Lint package manifests and type resolution
+              run: pnpm run check:exports
+              working-directory: src
+
+            - name: Install and load every package from real Node
+              run: pnpm run smoke
+              working-directory: src
+
+            # A tag that disagrees with the manifests would publish a version
+            # nobody asked for, and npm publishes cannot be undone.
+            - name: Check the tag matches the package versions
+              if: startsWith(github.ref, 'refs/tags/v')
+              run: node scripts/check-release-version.mjs "${GITHUB_REF_NAME#v}"
+              working-directory: src
+
+            - name: Publish
+              if: startsWith(github.ref, 'refs/tags/v') || inputs.dry_run == false
+              run: pnpm publish --recursive --access public --no-git-checks --provenance
+              working-directory: src
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+                  NPM_CONFIG_PROVENANCE: "true"
+
+            - name: Dry run summary
+              if: inputs.dry_run == true
+              run: |
+                  echo "Dry run: every check passed and the packages built." >> "$GITHUB_STEP_SUMMARY"
+                  echo "Nothing was published. Push a v* tag to release." >> "$GITHUB_STEP_SUMMARY"
+
+            - name: Create GitHub release
+              if: startsWith(github.ref, 'refs/tags/v')
+              uses: softprops/action-gh-release@v2
+              with:
+                  generate_release_notes: true

@@ -1,0 +1,10 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "jsx": "preserve",
+        "paths": {
+            "@avatar-generator/core": ["../../lib/core/src"]
+        }
+    },
+    "include": ["src"]
+}
