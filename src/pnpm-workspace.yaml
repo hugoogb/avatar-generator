@@ -2,3 +2,6 @@ packages:
     - "packages/*"
     - "lib/*"
     - "lib/styles/*"
+allowBuilds:
+    "@parcel/watcher": false
+    esbuild: false
