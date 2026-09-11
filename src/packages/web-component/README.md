@@ -1,6 +1,6 @@
 # @avatar-generator/web-component
 
-Web Component component for [`@avatar-generator`](https://github.com/hugoogb/avatar-generator) —
+Framework-agnostic custom element for [`@avatar-generator`](https://github.com/hugoogb/avatar-generator) —
 deterministic SVG avatars, where the same seed always renders the same avatar.
 
 ## Install

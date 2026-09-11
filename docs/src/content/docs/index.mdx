@@ -1,15 +1,44 @@
 ---
-title: Hi developer! Welcome to @avatar-generator
-description: Get started using @avatar-generator to create customizable avatar components for different frameworks.
+title: "@avatar-generator"
+description: Generate unique, deterministic SVG avatars in eleven styles, for React, Vue, Svelte, Angular, a custom element, or plain JavaScript.
 template: splash
 hero:
-    tagline: Welcome to @avatar-generator documentation. This library provides tools to create customizable avatar components for different frameworks.
+    tagline: |
+        Deterministic SVG avatars in eleven styles. Give it a seed, pick a style,
+        and get the same avatar back every time — in React, Vue, Svelte, Angular,
+        a custom element, or plain JavaScript.
     actions:
-        - text: Get Started
-          link: /get-started/introduction
+        - text: Get started
+          link: /get-started/introduction/
           icon: right-arrow
-        - text: Github repo
+        - text: Browse the styles
+          link: /reference/gallery/
+          icon: open-book
+          variant: minimal
+        - text: GitHub
           link: https://github.com/hugoogb/avatar-generator
           icon: external
           variant: minimal
 ---
+
+import { Card, CardGrid } from "@astrojs/starlight/components";
+
+<CardGrid>
+    <Card title="Install it" icon="rocket">
+        `npm install @avatar-generator/core @avatar-generator/style-initials` — then call `createAvatar(initials, {seed}
+        )`. [Installation](/get-started/installation/)
+    </Card>
+    <Card title="Pick a style" icon="puzzle">
+        Eleven styles, each its own tree-shakeable package, from letter initials to anime faces. [Style
+        Gallery](/reference/gallery/)
+    </Card>
+    <Card title="Use your framework" icon="star">
+        React, Vue, Svelte, Angular and a framework-agnostic custom element. [React](/guides/react/) ·
+        [Vue](/guides/vue/) · [Svelte](/guides/svelte/) · [Angular](/guides/angular/) · [Web
+        Component](/guides/web-component/)
+    </Card>
+    <Card title="Upgrading?" icon="warning">
+        v3.0.0 is the current release and the only supported one. [Migration Guide](/reference/migration/) · [Versions &
+        Support](/reference/versioning/)
+    </Card>
+</CardGrid>

@@ -1,70 +1,101 @@
 ---
 title: Svelte Usage
-description: Learn how to use the @avatar-generator/svelte package in your Svelte app.
+description: Use the @avatar-generator/svelte component in a Svelte 4 or Svelte 5 app.
 ---
 
-import { Code } from "@astrojs/starlight/components";
+import { Aside } from "@astrojs/starlight/components";
 
-The `@avatar-generator/svelte` package provides a Svelte component for
-rendering avatars with any style. It works with Svelte 4 and Svelte 5.
+`@avatar-generator/svelte` provides an `Avatar` component that renders an
+`<img>` from any style. It works with Svelte 4 and Svelte 5; `svelte` is a peer
+dependency, so it uses whichever version your app pins.
+
+<Aside type="tip" title="Improved in v3">
+    The published component is preprocessed to plain JavaScript. In v2 it shipped
+    as `<script lang="ts">`, so it could not compile for any consumer without a
+    preprocessor configured.
+</Aside>
 
 ## Installation
 
-<Code
-    code={`pnpm add @avatar-generator/core @avatar-generator/svelte @avatar-generator/style-initials`}
-    lang="bash"
-></Code>
+```bash
+pnpm add @avatar-generator/core @avatar-generator/svelte @avatar-generator/style-initials
+```
 
-`svelte` is a peer dependency — use whichever version your app pins.
+## Basic usage
 
-## Basic Usage
+```svelte
+<script lang="ts">
+    import Avatar from "@avatar-generator/svelte/Avatar.svelte";
+    import { initials } from "@avatar-generator/style-initials";
 
-<Code code={`<script lang="ts">
-  import Avatar from "@avatar-generator/svelte/Avatar.svelte";
-  import { initials } from "@avatar-generator/style-initials";
-
-export let userId: string;
-export let userName: string;
+    export let userId: string;
+    export let userName: string;
 
 </script>
 
-<Avatar
-  style={initials}
-  options={{ seed: userId, name: userName, size: 48 }}
-  alt={userName}
-/>`} lang="svelte"></Code>
+<Avatar style={initials} options={{ seed: userId, name: userName, size: 48 }} alt={userName} />
+```
 
-You can also import the component from the package root:
+You can also import from the package root:
 
-<Code code={`import Avatar from "@avatar-generator/svelte";`} lang="ts"></Code>
+```ts
+import Avatar from "@avatar-generator/svelte";
+```
 
-Svelte's build tooling resolves the `"svelte"` export condition to the raw
-`.svelte` source, so both imports work identically.
+Svelte's build tooling resolves the `"svelte"` export condition to the component
+itself, so both imports work identically.
 
-## Using Different Styles
+## Using different styles
 
-<Code code={`<script lang="ts">
-  import Avatar from "@avatar-generator/svelte/Avatar.svelte";
-  import { initials } from "@avatar-generator/style-initials";
-  import { gradient } from "@avatar-generator/style-gradient";
-  import { emoji } from "@avatar-generator/style-emoji";
+```svelte
+<script lang="ts">
+    import Avatar from "@avatar-generator/svelte/Avatar.svelte";
+    import { initials } from "@avatar-generator/style-initials";
+    import { gradient } from "@avatar-generator/style-gradient";
+    import { emoji } from "@avatar-generator/style-emoji";
+    import { faces } from "@avatar-generator/style-faces";
 
-const common = { seed: "Hugo GB", size: 64 };
+    const common = { seed: "Hugo GB", size: 64 };
 
 </script>
 
-<Avatar style={initials} options={common} />
-<Avatar style={gradient} options={common} />
-<Avatar style={emoji} options={common} />`} lang="svelte"></Code>
+<Avatar style={initials} options={common} alt="Initials" />
+<Avatar style={gradient} options={common} alt="Gradient" />
+<Avatar style={emoji} options={common} alt="Emoji" />
+<Avatar style={faces} options={common} alt="Faces" />
+```
 
-## Component Props
+All eleven styles work the same way — see the
+[Style Gallery](/reference/gallery/).
 
-| Prop      | Type                      | Description                                    |
-| --------- | ------------------------- | ---------------------------------------------- |
-| `style`   | `Style<T>`                | The avatar style to use (required)             |
-| `options` | `T extends AvatarOptions` | Style-specific options (required)              |
-| `alt`     | `string`                  | Alt text for accessibility (default: "Avatar") |
-| `class`   | `string`                  | Additional CSS classes                         |
+## TypeScript
 
-The component uses Svelte's reactive statements, so the SVG re-renders
-automatically whenever `style` or `options` change.
+Import the option type from the style package:
+
+```ts
+import { initials, type InitialsOptions } from "@avatar-generator/style-initials";
+
+const options: InitialsOptions = { seed: "user-123", name: "Hugo GB", fontWeight: 700 };
+```
+
+<Aside type="caution" title="Option types moved in v3">
+    These types used to live in `@avatar-generator/core`. They now live in the style package that implements them. See
+    the [Migration Guide](/reference/migration/).
+</Aside>
+
+## Props
+
+| Prop      | Type                      | Default    | Description                     |
+| --------- | ------------------------- | ---------- | ------------------------------- |
+| `style`   | `Style<T>`                | (required) | The style object to render with |
+| `options` | `T extends AvatarOptions` | (required) | Seed and style-specific options |
+| `alt`     | `string`                  | `"Avatar"` | Alt text for the `<img>`        |
+| `class`   | `string`                  | `""`       | Class applied to the `<img>`    |
+
+The component regenerates reactively, so reassigning `style` or `options`
+re-renders the avatar.
+
+## Server-side rendering
+
+Safe in SvelteKit: `createAvatar` returns a string and touches no browser
+globals, so the avatar renders during SSR with nothing left to hydrate.

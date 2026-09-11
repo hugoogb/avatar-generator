@@ -1,0 +1,120 @@
+---
+title: Versions & Support
+description: Which @avatar-generator versions are supported, what the version numbers mean, and why v1 and v2 should not be installed.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Supported versions
+
+| Line | Status        | Notes                                                     |
+| ---- | ------------- | --------------------------------------------------------- |
+| 3.x  | **Supported** | Current. Install this.                                    |
+| 2.x  | Unsupported   | Only `2.0.0` reached npm, and it cannot be loaded by Node |
+| 1.x  | Unsupported   | Different API; superseded by the 2.0 rewrite              |
+
+<Aside type="danger" title="Do not install v1 or v2">
+    They are not merely old — they do not work outside a bundler that still does node10-style module resolution. Install
+    the 3.x line.
+</Aside>
+
+## Why v2 should not be used
+
+The 2.x tarballs on npm are broken in a way that a green build does not reveal:
+
+- Every package shipped ESM output without `"type": "module"`, so `require()`
+  failed on the `export` keyword.
+- `tsc` emitted extensionless relative specifiers (`from "./random"`), so
+  `import` failed with `ERR_MODULE_NOT_FOUND`.
+
+Only a bundler resolving extensionless imports could load them, which is why
+the repository's own playgrounds never caught it. Packages are now built with
+tsup and ship ESM + CommonJS with correct extensions, a conditional `exports`
+map, and per-condition type declarations.
+
+The catalogue was also incomplete. Versions 2.1.0 through 2.6.0 — which added
+the abstract, emoji, animals and gradient styles and the Vue, Svelte and web
+component wrappers — were developed but **never published**. npm only ever held
+`2.0.0` of `core`, `style-initials` and `react`. 3.0.0 is the first release that
+actually carries all seventeen packages.
+
+## Why v1 should not be used
+
+v1 had a different API altogether: `createAvatar({ name })` returned a DOM
+element with CSS-styled initials, there was one style, and nothing was
+deterministic SVG. The 2.0 rewrite replaced it, and v3 keeps that API.
+
+The v1 entry point survives in core as `createAvatarElement`, deprecated, so a
+v1 codebase can migrate incrementally. It calls `document.createElement`, so it
+throws during server-side rendering. See the
+[Migration Guide](/reference/migration/).
+
+## What the version number covers
+
+All seventeen packages — `@avatar-generator/core`, the eleven style packages and
+the five framework wrappers — are released together from one fixed version
+group. `@avatar-generator/react@3.0.0` is always meant to be used with
+`@avatar-generator/core@3.0.0` and `@avatar-generator/style-faces@3.0.0`.
+
+They had drifted to 2.0.0 / 2.4.0 / 2.5.0 before 3.0.0 aligned them, so a
+matched set is a deliberate guarantee rather than a coincidence.
+
+Releases follow [semantic versioning](https://semver.org), with one clarification
+specific to a deterministic avatar library:
+
+<Aside type="caution" title="Rendering changes are breaking changes">
+    The whole point of this library is that a given seed always yields the same avatar. A change to what a style draws
+    would silently change every existing user's avatar, so it is treated as breaking and ships only in a major. 3.0.0
+    itself changed nothing visual — the SVG snapshots are byte-identical to 2.x.
+</Aside>
+
+## Requirements
+
+| Requirement    | Value                                                                |
+| -------------- | -------------------------------------------------------------------- |
+| Node.js        | 18 or newer                                                          |
+| Module formats | ESM and CommonJS (`@avatar-generator/angular` is ESM-only)           |
+| TypeScript     | Declarations ship per condition; no `skipLibCheck` workaround needed |
+| Runtime deps   | None — core has no dependencies                                      |
+
+Framework wrappers declare their framework as a peer dependency:
+
+| Package                           | Peer range                                              |
+| --------------------------------- | ------------------------------------------------------- |
+| `@avatar-generator/react`         | `react@^18 \|\| ^19`                                    |
+| `@avatar-generator/vue`           | `vue@^3`                                                |
+| `@avatar-generator/svelte`        | `svelte@^4 \|\| ^5`                                     |
+| `@avatar-generator/angular`       | `@angular/core@^17 \|\| ^18 \|\| ^19 \|\| ^20 \|\| ^21` |
+| `@avatar-generator/web-component` | none — standard custom element                          |
+
+`@avatar-generator/angular` ships Angular Package Format (FESM2022, partial
+Ivy), which Angular has required of libraries since v13 and which is ESM-only,
+so that package has no `require()` entry point.
+
+## Pinning a matched set
+
+Because the packages move together, install them at the same version:
+
+```sh
+npm install @avatar-generator/core@3 @avatar-generator/style-initials@3 @avatar-generator/react@3
+```
+
+Style packages depend on core directly, so a package manager will pull a
+compatible core for you — but you import `createAvatar` from core yourself, so
+declare it explicitly rather than relying on a transitive install.
+
+## Verification that ships with each release
+
+Every published tarball is built and checked in CI before it goes out:
+
+- `publint --strict` on the manifest and `attw` on type resolution
+- A smoke test that packs all seventeen packages, installs the tarballs into a
+  throwaway project, loads each from real Node as both ESM and CommonJS,
+  generates an avatar from every style, and compiles the published Svelte
+  component with no preprocessor configured
+- Publication only from a version tag that matches every package's version,
+  with npm provenance
+
+These exist because 2.x shipped without them. See
+[Contributing](https://github.com/hugoogb/avatar-generator/blob/develop/CONTRIBUTING.md)
+for how to run them locally.

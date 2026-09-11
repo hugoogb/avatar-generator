@@ -1,32 +1,41 @@
 ---
 title: Playground
-description: Try out @avatar-generator styles interactively.
+description: Try every @avatar-generator style interactively, or run the six local playgrounds.
 ---
 
-import { Steps } from "@astrojs/starlight/components";
-import { Tabs, TabItem } from "@astrojs/starlight/components";
-import { Code } from "@astrojs/starlight/components";
+import { Steps, Tabs, TabItem, Code, Aside } from "@astrojs/starlight/components";
 import Playground from "../../../components/Playground.astro";
 
-Try out all avatar styles with the interactive playground below.
+Try all eleven styles below. Change the seed and watch every style change
+together — same input, eleven different deterministic outputs.
 
 <Playground />
 
-## Run Locally
+<Aside>
+    This embedded playground uses simplified renderers that match each style's shape, so the page stays dependency-free.
+    Install the real packages for the full output, or use the [Configurator](/reference/configurator/) to tweak
+    individual options and copy the matching `createAvatar()` call.
+</Aside>
 
-You can also run the playground locally with the full package:
+## Run the playgrounds locally
+
+The repository ships six Vite playgrounds — one per framework wrapper, plus one
+for the core API. They import the workspace sources directly, so changes show
+up immediately.
 
 <Steps>
 
-1. Clone the project
+1. Clone the repository
 
     <Code code={`git clone https://github.com/hugoogb/avatar-generator.git`} lang="sh"></Code>
 
-2. Install dependencies
+2. Install the playground dependencies
 
-    <Code code={`cd avatar-generator && pnpm install`} lang="sh"></Code>
+    The playgrounds are their own pnpm project, so install from that directory:
 
-3. Run the playground
+    <Code code={`cd avatar-generator/playgrounds && pnpm install`} lang="sh"></Code>
+
+3. Start the one you want
 
     <Tabs syncKey="library">
         <TabItem id="core" label="core">
@@ -35,22 +44,43 @@ You can also run the playground locally with the full package:
         <TabItem id="react" label="react">
             <Code code={`pnpm playground:react`} lang="sh"></Code>
         </TabItem>
+        <TabItem id="vue" label="vue">
+            <Code code={`pnpm playground:vue`} lang="sh"></Code>
+        </TabItem>
+        <TabItem id="svelte" label="svelte">
+            <Code code={`pnpm playground:svelte`} lang="sh"></Code>
+        </TabItem>
+        <TabItem id="angular" label="angular">
+            <Code code={`pnpm playground:angular`} lang="sh"></Code>
+        </TabItem>
+        <TabItem id="web-component" label="web component">
+            <Code code={`pnpm playground:web-component`} lang="sh"></Code>
+        </TabItem>
     </Tabs>
 
-4. Open your browser to the URL shown in the terminal
+4. Open the URL Vite prints in the terminal
 
 </Steps>
 
-## Available Styles
+To check that all six still build — which CI does on every pull request:
 
-| Style       | Package                               | Description                                     |
-| ----------- | ------------------------------------- | ----------------------------------------------- |
-| Initials    | `@avatar-generator/style-initials`    | Letter initials on colored backgrounds          |
-| Identicon   | `@avatar-generator/style-geometric`   | GitHub-style symmetrical 5x5 grid patterns      |
-| Pixel Faces | `@avatar-generator/style-pixels`      | 8-bit retro faces with eyes, mouth, and hair    |
-| Rings       | `@avatar-generator/style-rings`       | Concentric rings with segmented/dashed variants |
-| Faces       | `@avatar-generator/style-faces`       | Minimal flat geometric faces                    |
-| Illustrated | `@avatar-generator/style-illustrated` | Detailed cartoon faces with accessories         |
-| Anime       | `@avatar-generator/style-anime`       | Anime/manga-inspired faces with expressive eyes |
+<Code code={`pnpm build:all`} lang="sh"></Code>
 
-Each style produces unique, deterministic avatars based on the seed you provide.
+## Styles you can try
+
+| Style       | Package                               | Description                                      |
+| ----------- | ------------------------------------- | ------------------------------------------------ |
+| Initials    | `@avatar-generator/style-initials`    | Letter initials on colored backgrounds           |
+| Geometric   | `@avatar-generator/style-geometric`   | GitHub-style symmetrical identicon grids         |
+| Pixels      | `@avatar-generator/style-pixels`      | 8-bit retro pixel faces                          |
+| Rings       | `@avatar-generator/style-rings`       | Concentric rings, segmented and dashed variants  |
+| Faces       | `@avatar-generator/style-faces`       | Minimal flat geometric faces                     |
+| Illustrated | `@avatar-generator/style-illustrated` | Detailed cartoon faces with accessories          |
+| Anime       | `@avatar-generator/style-anime`       | Anime/manga-inspired faces with expressive eyes  |
+| Abstract    | `@avatar-generator/style-abstract`    | Mondrian/Kandinsky/Bauhaus-inspired compositions |
+| Emoji       | `@avatar-generator/style-emoji`       | Yellow emoji-style expressive faces              |
+| Animals     | `@avatar-generator/style-animals`     | Cute animal avatars (cat, dog, fox, panda, …)    |
+| Gradient    | `@avatar-generator/style-gradient`    | Smooth gradients with pattern overlays           |
+
+Every style produces a deterministic avatar from the seed you give it: the same
+seed always returns the same SVG.

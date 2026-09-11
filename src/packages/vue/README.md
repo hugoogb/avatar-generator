@@ -13,7 +13,7 @@ npm install @avatar-generator/core @avatar-generator/vue @avatar-generator/style
 
 ## Usage
 
-```svelte
+```vue
 <script setup lang="ts">
 import { Avatar } from "@avatar-generator/vue";
 import { initials } from "@avatar-generator/style-initials";

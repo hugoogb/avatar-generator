@@ -27,6 +27,19 @@ const avatar = createAvatar(initials, {
 img.src = avatar.toDataUri();
 ```
 
+## Types
+
+Core declares only the style contract — `AvatarOptions`, `Style`, `Random` and
+`AvatarResult`. Each style's own option type comes from that style's package:
+
+```ts
+import { faces, type FacesOptions } from "@avatar-generator/style-faces";
+```
+
+In 2.x these types lived here; they moved in 3.0.0 so a style published by
+anyone can be typed. See the
+[migration guide](https://avatar-generator-two.vercel.app/reference/migration/).
+
 ## Styles
 
 `@avatar-generator/style-initials`, `@avatar-generator/style-geometric`, `@avatar-generator/style-pixels`, `@avatar-generator/style-rings`, `@avatar-generator/style-faces`, `@avatar-generator/style-illustrated`, `@avatar-generator/style-anime`, `@avatar-generator/style-abstract`, `@avatar-generator/style-emoji`, `@avatar-generator/style-animals`, `@avatar-generator/style-gradient`

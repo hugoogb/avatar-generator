@@ -3,7 +3,7 @@ title: Creating Custom Styles
 description: Build your own @avatar-generator style package, from the Style<T> interface to publishing on npm.
 ---
 
-import { Code } from "@astrojs/starlight/components";
+import { Aside } from "@astrojs/starlight/components";
 
 An "avatar style" is just an object that implements the `Style<T>` contract
 from `@avatar-generator/core`. You can use styles privately in your app or
@@ -15,20 +15,22 @@ one from scratch.
 A style needs two things: a `name` and a `create(options)` method that
 returns an `AvatarResult`.
 
-<Code code={`import type { AvatarOptions, AvatarResult, Style } from "@avatar-generator/core";
+```ts
+import type { AvatarOptions, AvatarResult, Style } from "@avatar-generator/core";
 
 interface Style<T extends AvatarOptions> {
-name: string;
-create(options: T): AvatarResult;
+    name: string;
+    create(options: T): AvatarResult;
 }
 
 interface AvatarResult {
-svg: string;
-toDataUri(): string;
-}`} lang="ts"></Code>
+    svg: string;
+    toDataUri(): string;
+}
+```
 
 Your `create` function receives the merged options (defaults already
-applied by \`createAvatar\`) and must return an SVG string plus a helper
+applied by `createAvatar`) and must return an SVG string plus a helper
 that serializes it to a data URI.
 
 ## The tools core gives you
@@ -49,11 +51,12 @@ primitives every bundled style uses:
 
 This style renders a two-colour checkerboard based on the seed.
 
-<Code code={`import type { AvatarOptions, AvatarResult, Style } from "@avatar-generator/core";
+```ts
+import type { AvatarOptions, AvatarResult, Style } from "@avatar-generator/core";
 import { buildSvg, createRandom, DEFAULT_COLORS } from "@avatar-generator/core";
 
 interface CheckerOptions extends AvatarOptions {
-gridSize?: number;
+    gridSize?: number;
 }
 
 export const checker: Style<CheckerOptions> = {
@@ -72,37 +75,40 @@ export const checker: Style<CheckerOptions> = {
         for (let row = 0; row < gridSize; row++) {
             for (let col = 0; col < gridSize; col++) {
                 const fill = (row + col) % 2 === 0 ? a : b;
-                content += \`<rect x="\${col * cell}" y="\${row * cell}" width="\${cell}" height="\${cell}" fill="\${fill}"/>\`;
+                content += `<rect x="${col * cell}" y="${row * cell}" width="${cell}" height="${cell}" fill="${fill}"/>`;
             }
         }
 
         return buildSvg(content, options, a);
     },
-
-};`} lang="ts"></Code>
+};
+```
 
 Using it:
 
-<Code code={`import { createAvatar } from "@avatar-generator/core";
+```ts
+import { createAvatar } from "@avatar-generator/core";
 import { checker } from "./checker";
 
 const avatar = createAvatar(checker, { seed: "Hugo GB", gridSize: 6 });
-document.querySelector("img")!.src = avatar.toDataUri();`} lang="ts"></Code>
+document.querySelector("img")!.src = avatar.toDataUri();
+```
 
 ## Literal union options + runtime validation
 
 For categorical options, use a literal union type and the `validateOption`
 helper so both compile-time and runtime reject invalid values.
 
-<Code code={`import { buildSvg, createRandom, DEFAULT_COLORS, validateOption } from "@avatar-generator/core";
+```ts
+import { buildSvg, createRandom, DEFAULT_COLORS, validateOption } from "@avatar-generator/core";
 
 type CheckerPattern = "classic" | "diagonal" | "dotted";
 
 const PATTERNS: CheckerPattern[] = ["classic", "diagonal", "dotted"];
 
 interface CheckerOptions extends AvatarOptions {
-pattern?: CheckerPattern;
-gridSize?: number;
+    pattern?: CheckerPattern;
+    gridSize?: number;
 }
 
 export const checker: Style<CheckerOptions> = {
@@ -116,7 +122,8 @@ export const checker: Style<CheckerOptions> = {
 };
 
 // Export the array so consumers can build UI pickers off it:
-export { PATTERNS };`} lang="ts"></Code>
+export { PATTERNS };
+```
 
 ## Determinism checklist
 
@@ -128,42 +135,85 @@ seed and options must produce byte-identical SVG. Things that break that:
 - `Array.sort()` without a comparator on strings with case differences
   (sort is stable in modern engines, but compare explicitly to be sure).
 - Generating unique DOM IDs. If you need an id inside the SVG, derive it
-  from the seed — core does this for clip paths via `hashSeed(seed)`.
+  from the seed rather than from a counter or a random value — that is how
+  core keeps its clip-path ids stable. `buildSvg` already handles this for
+  the wrapper, so you only need it for ids you introduce yourself, such as a
+  `<linearGradient>` you reference by `url(#…)`.
+
+The repository's own styles are covered by a snapshot test that renders each
+one from a fixed set of seeds. If you vendor a style into a project, the
+cheapest equivalent is asserting that two calls with the same seed are equal.
 
 ## Packaging your style
 
 To publish your style as a reusable npm package, follow the structure of
 `@avatar-generator/style-initials`:
 
-<Code
-    code={`{
-  "name": "@your-scope/style-checker",
-  "version": "1.0.0",
-  "main": "dist/index.js",
-  "types": "dist/types/index.d.ts",
-  "sideEffects": false,
-  "scripts": { "build": "tsc" },
-  "peerDependencies": {
-    "@avatar-generator/core": "^2.0.0"
-  }
-}`}
-    lang="json"
-></Code>
+```json
+{
+    "name": "@your-scope/style-checker",
+    "version": "1.0.0",
+    "type": "module",
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": { "types": "./dist/index.d.ts", "default": "./dist/index.js" },
+            "require": { "types": "./dist/index.d.cts", "default": "./dist/index.cjs" }
+        },
+        "./package.json": "./package.json"
+    },
+    "files": ["dist", "LICENSE", "README.md"],
+    "sideEffects": false,
+    "engines": { "node": ">=18" },
+    "scripts": {
+        "build": "tsup src/index.ts --format esm,cjs --dts --sourcemap --clean --target es2020"
+    },
+    "dependencies": {
+        "@avatar-generator/core": "^3.0.0"
+    }
+}
+```
 
-Key choices:
+Key choices, each of which the 2.x releases got wrong and 3.0.0 fixed:
 
-- **`peerDependencies`** for `@avatar-generator/core` so consumers can't
-  accidentally duplicate it.
-- **`sideEffects: false`** to stay tree-shakeable.
-- Ship both the compiled JS and the `.d.ts` declarations so TypeScript
-  users get the right option types when they `import { checker }`.
+- **`"type": "module"` plus a conditional `exports` map.** Plain `tsc` output
+  emits ESM with extensionless relative specifiers, which `import` rejects
+  with `ERR_MODULE_NOT_FOUND` and `require` rejects on the `export` keyword.
+  Only a bundler doing node10-style resolution can load such a package — so
+  it will work in your dev app and fail for whoever installs it. Build with
+  a bundler like [tsup](https://tsup.egoist.dev) that emits real extensions
+  and both formats.
+- **`files`**, so the tarball carries `dist/` and not `src/` and tsconfigs.
+- **`sideEffects: false`**, to stay tree-shakeable.
+- **Type declarations per condition** (`.d.ts` and `.d.cts`), so TypeScript
+  resolves your option types under both `import` and `require`.
+- **`@avatar-generator/core` as a dependency**, matching the bundled styles.
+  Core is stateless — no singletons, no registry — so a duplicated copy costs
+  bundle size but never correctness. Make it a `peerDependency` instead if you
+  would rather force a single copy and let the consumer own the version.
+
+Verify before publishing rather than after. `npx publint` checks the manifest
+and `npx @arethetypeswrong/cli --pack .` checks that your types resolve under
+every condition; both are what this repository runs in CI.
+
+<Aside type="tip" title="Why this is possible in v3">
+    Until v3, `@avatar-generator/core` declared every style's option type, so a style published by anyone else could not
+    be typed. Each style now owns its own option type and core knows only the `Style` contract — which is exactly what
+    makes a third-party style a first-class one.
+</Aside>
 
 Once published, users install both packages and use your style exactly
 like the bundled ones:
 
-<Code code={`pnpm add @avatar-generator/core @your-scope/style-checker`} lang="bash"></Code>
+```bash
+pnpm add @avatar-generator/core @your-scope/style-checker
+```
 
-<Code code={`import { createAvatar } from "@avatar-generator/core";
+```ts
+import { createAvatar } from "@avatar-generator/core";
 import { checker } from "@your-scope/style-checker";
 
-createAvatar(checker, { seed: "user-42", gridSize: 8 });`} lang="ts"></Code>
+createAvatar(checker, { seed: "user-42", gridSize: 8 });
+```

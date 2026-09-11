@@ -1,45 +1,69 @@
 ---
 title: Web Component Usage
-description: Use the framework-agnostic <avatar-generator> custom element from any HTML page.
+description: Use the framework-agnostic <avatar-generator> custom element from any HTML page or framework.
 ---
 
-import { Code } from "@astrojs/starlight/components";
+import { Aside } from "@astrojs/starlight/components";
 
-The `@avatar-generator/web-component` package ships a standards-based custom
-element, so you can drop an avatar into any HTML page — no framework
-required. It works just as well inside React, Vue, Svelte, Solid, or any
-other framework that supports custom elements.
+`@avatar-generator/web-component` ships a standards-based custom element, so you
+can drop an avatar into any HTML page with no framework. It works equally well
+inside React, Vue, Svelte, Solid, or anything else that can set a DOM property.
 
 ## Installation
 
-<Code
-    code={`pnpm add @avatar-generator/core @avatar-generator/web-component @avatar-generator/style-initials`}
-    lang="bash"
-></Code>
+```bash
+pnpm add @avatar-generator/core @avatar-generator/web-component @avatar-generator/style-initials
+```
 
-## Basic Usage
+## Basic usage
 
-Importing the package auto-registers `<avatar-generator>`. Set the JS
+Importing the package auto-registers `<avatar-generator>`. Set the JavaScript
 properties `styleImpl` and `options` on the element:
 
-<Code code={`import "@avatar-generator/web-component";
+```ts
+import "@avatar-generator/web-component";
 import { initials } from "@avatar-generator/style-initials";
 
 const el = document.createElement("avatar-generator");
 el.styleImpl = initials;
 el.options = { seed: "Hugo GB", size: 64 };
 el.setAttribute("alt", "Hugo GB");
-document.body.append(el);`} lang="ts"></Code>
+document.body.append(el);
+```
 
-The property is called `styleImpl` (not `style`) to avoid clashing with
-the built-in `HTMLElement.style` CSS property.
+<Aside title="Why `styleImpl` and not `style`">
+    Every `HTMLElement` already has a `style` property for inline CSS. Overriding it would break the platform, so the
+    avatar style goes on `styleImpl`. Both it and `options` must be set as JS properties, not attributes — a `Style` is
+    an object, and objects do not survive stringification into an attribute.
+</Aside>
+
+Setting `styleImpl` or `options` triggers an immediate re-render. Nothing
+renders until both are set.
+
+## In a plain HTML page
+
+```html
+<script type="module">
+    import "@avatar-generator/web-component";
+    import { initials } from "@avatar-generator/style-initials";
+
+    customElements.whenDefined("avatar-generator").then(() => {
+        const el = document.querySelector("avatar-generator");
+        el.styleImpl = initials;
+        el.options = { seed: "Hugo GB", size: 64 };
+    });
+</script>
+
+<avatar-generator alt="Hugo GB"></avatar-generator>
+```
 
 ## Custom tag name
 
-If the default `<avatar-generator>` tag name collides with something in
-your app, register the element under a different name:
+If `<avatar-generator>` collides with something in your app, register the
+element under another name:
 
-<Code code={`import { register } from "@avatar-generator/web-component";
+```ts
+import { register } from "@avatar-generator/web-component";
 import { initials } from "@avatar-generator/style-initials";
 
 register("my-avatar");
@@ -47,34 +71,57 @@ register("my-avatar");
 const el = document.createElement("my-avatar");
 el.styleImpl = initials;
 el.options = { seed: "Hugo GB" };
-document.body.append(el);`} lang="ts"></Code>
+document.body.append(el);
+```
 
-## Using inside a framework
+The extra name is registered alongside `<avatar-generator>`, not instead of it,
+and `register` is safe to call more than once — a name that already exists is
+ignored.
 
-Because the element is a standard custom element, any framework that
-supports DOM property binding can use it. For example, in a vanilla HTML
-page:
-
-<Code code={`<script type="module">
-  import "@avatar-generator/web-component";
-  import { initials } from "@avatar-generator/style-initials";
-
-customElements.whenDefined("avatar-generator").then(() => {
-const el = document.querySelector("avatar-generator");
-el.styleImpl = initials;
-el.options = { seed: "Hugo GB", size: 64 };
-});
-
-</script>
-
-<avatar-generator alt="Hugo GB"></avatar-generator>`} lang="html"></Code>
+<Aside type="tip" title="Fixed in v3">
+    `register(tagName)` could never succeed before v3. Importing the package
+    binds `AvatarElement` to `<avatar-generator>`, and the registry allows one
+    tag name per constructor, so any custom name threw `NotSupportedError`.
+    Additional names now get their own subclass.
+</Aside>
 
 ## Properties and attributes
 
-| Name        | Kind      | Description                                                                |
-| ----------- | --------- | -------------------------------------------------------------------------- |
-| `styleImpl` | property  | The avatar `Style` object (required, must be set as a JS property)         |
-| `options`   | property  | Avatar options matching the style (required, must be set as a JS property) |
-| `alt`       | attribute | Alt text for the internal `<img>` (default: `"Avatar"`)                    |
+| Name        | Kind      | Default    | Description                                                  |
+| ----------- | --------- | ---------- | ------------------------------------------------------------ |
+| `styleImpl` | property  | (required) | The avatar `Style` object — must be set as a JS property     |
+| `options`   | property  | (required) | Avatar options for that style — must be set as a JS property |
+| `alt`       | attribute | `"Avatar"` | Alt text for the internal `<img>`                            |
 
-Setting `styleImpl` or `options` triggers an immediate re-render.
+## Styling
+
+The element renders its `<img>` inside an open shadow root, so page CSS does not
+reach inside it. Size and position the host element itself:
+
+```css
+avatar-generator {
+    display: inline-block;
+    border-radius: 50%;
+    overflow: hidden;
+}
+```
+
+The shadow root is open, so `el.shadowRoot` is reachable if you need the `<img>`
+directly.
+
+## Server-side rendering
+
+Importing this package during a server render is a no-op: the element extends a
+stand-in when there is no DOM, and `register()` returns early when there is no
+custom element registry. Importing it from a Next.js, Nuxt, Astro or SvelteKit
+server component is safe, and the element upgrades in the browser as usual.
+
+<Aside type="caution" title="Fixed in v3">
+    In v2 this package threw `ReferenceError: HTMLElement is not defined` the moment it was imported on a server —
+    before any of your own code ran. If you hit that, upgrade; see the [Migration Guide](/reference/migration/).
+</Aside>
+
+There is no declarative shadow DOM output, so the avatar itself appears on the
+client. If you need the avatar in the server-rendered HTML, call `createAvatar`
+directly and inline `avatar.svg` — see the SSR recipe in the
+[Cookbook](/guides/cookbook/).
