@@ -43,28 +43,57 @@ if (!expected) {
 
 const names = PACKAGE_DIRS.map((dir) => JSON.parse(readFileSync(join(SRC, dir, "package.json"), "utf8")).name);
 
-const missing = [];
+/**
+ * npm's write path and its read path are not instantly consistent. A package
+ * can be published and still be absent from a read seconds later — this check
+ * once reported two packages missing that were in fact already live, and they
+ * appeared a few minutes afterwards with nothing having republished them.
+ *
+ * `--prefer-online` alone is not enough, because the lag is on the registry
+ * side rather than in the local cache. So give it time before concluding a
+ * package is missing: a wrong "missing" here sends someone chasing a
+ * publishing failure that never happened.
+ */
+const ATTEMPTS = 5;
+const BACKOFF_MS = 15_000;
 
-for (const name of names) {
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+const publishedVersion = (name) => {
     try {
-        // --prefer-online, because npm caches the packument: immediately after a
-        // publish a cached copy will not list the new version and this check
-        // reports a false negative for a package that is in fact live.
-        const version = execFileSync("npm", ["view", `${name}@${expected}`, "version", "--prefer-online"], {
+        return execFileSync("npm", ["view", `${name}@${expected}`, "version", "--prefer-online"], {
             encoding: "utf8",
             stdio: ["ignore", "pipe", "pipe"],
         }).trim();
+    } catch {
+        return "";
+    }
+};
 
+let pending = [...names];
+const missing = [];
+
+for (let attempt = 1; attempt <= ATTEMPTS && pending.length > 0; attempt++) {
+    if (attempt > 1) {
+        console.log(`\n  ${pending.length} not visible yet; waiting ${BACKOFF_MS / 1000}s for the registry…\n`);
+        await sleep(BACKOFF_MS);
+    }
+
+    const stillPending = [];
+    for (const name of pending) {
+        const version = publishedVersion(name);
         if (version === expected) {
             console.log(`  ✓ ${name}@${version}`);
         } else {
-            missing.push(`${name} (registry reports ${version || "nothing"})`);
-            console.error(`  ✗ ${name} — expected ${expected}, got ${version || "nothing"}`);
+            stillPending.push(name);
         }
-    } catch {
-        missing.push(`${name} (not found)`);
-        console.error(`  ✗ ${name}@${expected} not found on the registry`);
     }
+    pending = stillPending;
+}
+
+for (const name of pending) {
+    missing.push(`${name} (not found after ${ATTEMPTS} attempts)`);
+    console.error(`  ✗ ${name}@${expected} not on the registry`);
 }
 
 if (missing.length > 0) {
