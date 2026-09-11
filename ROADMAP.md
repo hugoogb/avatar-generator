@@ -152,7 +152,7 @@ Fix synchronization issues between source, playgrounds, and documentation.
 - [x] `publint --strict` and `attw` across every package
 - [x] Smoke test: pack, install and load every package from real Node (ESM + CJS)
 - [x] CI job for packaging verification
-- [x] CI job building all five playgrounds
+- [x] CI job building all six playgrounds
 
 ### CI
 
@@ -173,7 +173,8 @@ Fix synchronization issues between source, playgrounds, and documentation.
 - [x] Changesets with a fixed version group across all 17 packages
 - [x] All packages aligned onto one version line (were 2.0.0 / 2.4.0 / 2.5.0)
 - [x] `workspace:^` cross-package ranges, resolved at publish time
-- [x] Release workflow: tag-triggered, full verification, npm provenance
+- [x] Release workflow: tag-triggered, full verification, npm provenance via
+      trusted publishing (OIDC — no long-lived token stored anywhere)
 - [x] Tag/version guard so a mismatched tag cannot publish
 - [x] Per-package README and CHANGELOG so npm pages are not blank
 
@@ -190,7 +191,9 @@ Fix synchronization issues between source, playgrounds, and documentation.
 
 ### Follow-ups
 
-- [ ] Add the `NPM_TOKEN` secret and push the `v3.0.0` tag to publish
+- [x] Trusted publishing configured per package, replacing the `NPM_TOKEN`
+      secret the pipeline was originally going to need
+- [ ] Push the `v3.0.0` tag to publish
 - [x] Angular playground — every framework wrapper now has one, and all six
       are verified to render in a real browser, not just to build
 
