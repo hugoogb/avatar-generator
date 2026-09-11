@@ -168,16 +168,23 @@ Run it from a terminal, never from CI — granting trust should not be automated
 by the thing being trusted.
 
 **A trusted publisher can only be attached to a package that already exists on
-npm.** A brand-new package therefore needs one manual publish first:
+npm** — the registry's token exchange endpoint is per package. A brand-new
+package therefore needs one manual publish before it can be trusted, which makes
+the very first release of a new package a bootstrap:
 
 ```bash
 cd src
-pnpm run verify:publish              # build + all packaging checks
-pnpm publish --recursive --access public --no-git-checks
+pnpm run verify:publish                               # build + packaging checks
+pnpm publish --recursive --access public --no-git-checks   # prompts for 2FA
+pnpm run trust:configure                              # now every package exists
 ```
 
-That prompts for your 2FA one-time password. Afterwards run `trust:configure`,
-and every release from then on is tokenless.
+Afterwards tag as usual. The release workflow treats a version that is already
+on the registry as "already published — skipped" rather than a failure, so
+tagging a bootstrap release still produces the GitHub release and the
+post-publish verification, and re-running a partially failed release is safe.
+
+From the next version onward there is nothing manual: bump, tag, push.
 
 ## Making Changes
 

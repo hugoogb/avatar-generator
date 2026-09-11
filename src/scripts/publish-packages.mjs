@@ -49,6 +49,7 @@ const run = (cmd, args, cwd) => execFileSync(cmd, args, { cwd, encoding: "utf8",
 
 const workdir = mkdtempSync(join(tmpdir(), "avatar-publish-"));
 const published = [];
+const skipped = [];
 const failures = [];
 
 try {
@@ -90,6 +91,19 @@ try {
             published.push(name);
             console.log(`  ${DRY_RUN ? "would publish" : "published"} ${name}@${version}`);
         } catch (err) {
+            // Publishing a version that is already on the registry is not a
+            // failure worth stopping for. It happens on the bootstrap release
+            // (packages published by hand so they can be granted a trusted
+            // publisher) and when re-running after a partial release. npm
+            // refuses to overwrite, which is the behaviour we want; treating it
+            // as fatal would just make the run unrepeatable.
+            const message = String(err.stderr || err.message);
+            if (/cannot publish over|EPUBLISHCONFLICT|previously published version/i.test(message)) {
+                skipped.push(name);
+                console.log(`  already published ${name}@${version} — skipped`);
+                continue;
+            }
+
             const lines = String(err.stderr || err.message)
                 .split("\n")
                 .map((l) => l.trim())
@@ -120,4 +134,6 @@ if (failures.length > 0) {
     process.exit(1);
 }
 
-console.log(`\n${DRY_RUN ? "Dry run complete" : "Published"}: ${published.length} package(s).`);
+const summary = [`${published.length} ${DRY_RUN ? "would publish" : "published"}`];
+if (skipped.length > 0) summary.push(`${skipped.length} already at this version`);
+console.log(`\n${DRY_RUN ? "Dry run complete" : "Done"}: ${summary.join(", ")}.`);
