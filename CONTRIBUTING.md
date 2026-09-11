@@ -110,7 +110,7 @@ To cut a release:
 ```bash
 cd src
 pnpm run version-packages   # applies pending changesets, updates CHANGELOGs
-pnpm run release:dry        # full verification + `pnpm publish --dry-run`
+pnpm run release:dry        # full verification + a publish dry run
 ```
 
 Commit the version bump, then tag and push:
@@ -122,18 +122,62 @@ git push origin v3.0.0
 
 The tag triggers `.github/workflows/release.yml`, which re-runs typecheck, tests,
 the build, `publint`, `attw` and the Node smoke test against the tagged tree,
-verifies the tag matches every package version, and only then publishes to npm
-with provenance and opens a GitHub release. Nothing publishes on a merge.
+verifies the tag matches every package version, publishes, and then confirms
+every package resolves from the registry at that version. Nothing publishes on a
+merge.
 
-`workflow_dispatch` runs the same workflow with `dry_run` on by default, so you
-can exercise it without releasing.
+`workflow_dispatch` runs the same workflow with `dry_run` on by default.
 
-### One-time setup
+### Trusted publishing
 
-Publishing needs an `NPM_TOKEN` repository secret — an npm **automation** token
-for an account with publish rights on the `@avatar-generator` scope
-(_Settings → Secrets and variables → Actions_). Provenance additionally requires
-the workflow's `id-token: write` permission, which is already set.
+There is no `NPM_TOKEN`. Releases authenticate with npm through
+[trusted publishing](https://docs.npmjs.com/trusted-publishers): the workflow's
+`id-token: write` permission lets the npm CLI exchange a short-lived GitHub OIDC
+token for registry credentials, against a trusted publisher each package has
+registered for this repository and workflow. Nothing long-lived is stored
+anywhere, and provenance attestations are generated automatically — no
+`--provenance` flag.
+
+Two constraints shape how the publish step is written:
+
+- **Node >= 22.14 and npm >= 11.5.1** are required by trusted publishing. Node 22
+  bundles npm 10, so the workflow upgrades npm before publishing.
+- **pnpm cannot do the OIDC exchange** (there is no OIDC code in the pnpm 10
+  bundle), but npm cannot resolve `workspace:^` ranges or
+  `publishConfig.directory`. So `scripts/publish-packages.mjs` packs each package
+  with `pnpm pack` and publishes the resulting tarball with `npm publish` — each
+  tool doing the half it can.
+
+#### Configuring it
+
+npm trusted publishing is **per package**; there is no organisation-wide
+setting that covers the whole `@avatar-generator` scope. It can be done in bulk
+from the CLI, though, which is what this script is for:
+
+```bash
+npm install -g npm@latest   # needs npm >= 11.5.1 for `npm trust`
+npm login                   # as a maintainer of the scope
+
+cd src
+pnpm run trust:configure -- --dry-run   # print the plan
+pnpm run trust:configure                # apply it to all 17 packages
+pnpm run trust:list                     # show what is configured
+```
+
+Run it from a terminal, never from CI — granting trust should not be automated
+by the thing being trusted.
+
+**A trusted publisher can only be attached to a package that already exists on
+npm.** A brand-new package therefore needs one manual publish first:
+
+```bash
+cd src
+pnpm run verify:publish              # build + all packaging checks
+pnpm publish --recursive --access public --no-git-checks
+```
+
+That prompts for your 2FA one-time password. Afterwards run `trust:configure`,
+and every release from then on is tokenless.
 
 ## Making Changes
 

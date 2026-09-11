@@ -18,7 +18,7 @@ jobs:
         runs-on: ubuntu-latest
         permissions:
             contents: write # create the GitHub release
-            id-token: write # npm provenance
+            id-token: write # OIDC trusted publishing + provenance
         steps:
             - uses: actions/checkout@v4
 
@@ -29,10 +29,18 @@ jobs:
 
             - uses: actions/setup-node@v4
               with:
-                  node-version: 20
+                  # Trusted publishing requires Node >= 22.14.
+                  node-version: 22
                   cache: pnpm
                   cache-dependency-path: "**/pnpm-lock.yaml"
                   registry-url: "https://registry.npmjs.org"
+
+            # Node 22 bundles npm 10, which has no OIDC support. Trusted
+            # publishing needs npm >= 11.5.1.
+            - name: Install an npm that can do trusted publishing
+              run: |
+                  npm install -g npm@latest
+                  npm --version
 
             - name: Install dependencies (workspace)
               run: pnpm install --frozen-lockfile
@@ -67,19 +75,29 @@ jobs:
               run: node scripts/check-release-version.mjs "${GITHUB_REF_NAME#v}"
               working-directory: src
 
-            - name: Publish
+            # No NPM_TOKEN anywhere: authentication is the OIDC exchange the npm
+            # CLI performs using the `id-token: write` permission above, against
+            # the trusted publisher each package has registered for this
+            # workflow. Provenance is generated automatically, so there is no
+            # --provenance flag.
+            - name: Publish to npm (trusted publishing)
               if: startsWith(github.ref, 'refs/tags/v') || inputs.dry_run == false
-              run: pnpm publish --recursive --access public --no-git-checks --provenance
+              run: node scripts/publish-packages.mjs
               working-directory: src
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-                  NPM_CONFIG_PROVENANCE: "true"
+
+            - name: Verify the publish resolves from the registry
+              if: startsWith(github.ref, 'refs/tags/v')
+              run: node scripts/verify-published.mjs "${GITHUB_REF_NAME#v}"
+              working-directory: src
 
             - name: Dry run summary
               if: inputs.dry_run == true
               run: |
                   echo "Dry run: every check passed and the packages built." >> "$GITHUB_STEP_SUMMARY"
                   echo "Nothing was published. Push a v* tag to release." >> "$GITHUB_STEP_SUMMARY"
+                  echo "" >> "$GITHUB_STEP_SUMMARY"
+                  echo "Note: a dry run does not exercise the OIDC exchange, so it cannot" >> "$GITHUB_STEP_SUMMARY"
+                  echo "confirm that each package has a trusted publisher registered." >> "$GITHUB_STEP_SUMMARY"
 
             - name: Create GitHub release
               if: startsWith(github.ref, 'refs/tags/v')

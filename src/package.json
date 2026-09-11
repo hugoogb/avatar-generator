@@ -19,7 +19,12 @@
         "changeset": "changeset",
         "version-packages": "changeset version && pnpm install --lockfile-only",
         "check:version": "node scripts/check-release-version.mjs",
-        "release:dry": "pnpm run verify:publish && pnpm publish --recursive --access public --no-git-checks --dry-run"
+        "release:dry": "pnpm run verify:publish && pnpm run publish:dry",
+        "publish:packages": "node scripts/publish-packages.mjs",
+        "publish:dry": "node scripts/publish-packages.mjs --dry-run",
+        "verify:published": "node scripts/verify-published.mjs",
+        "trust:configure": "node scripts/configure-trusted-publishing.mjs",
+        "trust:list": "node scripts/configure-trusted-publishing.mjs --list"
     },
     "devDependencies": {
         "@angular/core": "^19.2.25",

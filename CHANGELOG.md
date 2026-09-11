@@ -65,6 +65,18 @@ rather than the 2.6.1 originally prepared.
 
 ### Tooling
 
+- Releases publish with [npm trusted publishing](https://docs.npmjs.com/trusted-publishers)
+  (OIDC) rather than a long-lived `NPM_TOKEN`. No publish secret is stored in the
+  repository, and provenance is generated automatically. The publish step packs
+  with `pnpm` — which resolves `workspace:^` and `publishConfig.directory` — and
+  publishes with `npm`, which is the side that performs the OIDC exchange
+- `scripts/configure-trusted-publishing.mjs` configures all 17 packages in one
+  run; npm trusted publishing is per-package with no organisation-wide setting
+- `scripts/verify-published.mjs` confirms after a release that every package
+  really resolves from the registry at the expected version
+- CI and the release workflow both run Node 22, so what CI tests is what ships
+  (trusted publishing requires Node >= 22.14 and npm >= 11.5.1)
+
 - Angular playground, the last framework wrapper without one. It needs the
   Angular compiler rather than plain esbuild, and `resolve.dedupe` for
   `@angular/*` — the playground and the package are separate pnpm projects, so
