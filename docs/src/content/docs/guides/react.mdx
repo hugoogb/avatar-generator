@@ -1,33 +1,31 @@
 ---
 title: React Usage
-description: Learn how to use the @avatar-generator/react package in your React application.
+description: Use the @avatar-generator/react component, with correct memoization and typed per-style options.
 ---
 
-import { Code } from "@astrojs/starlight/components";
+import { Aside } from "@astrojs/starlight/components";
 
-The `@avatar-generator/react` package provides a React component for rendering avatars with any style.
+`@avatar-generator/react` wraps `createAvatar` in a component that renders an
+`<img>` whose `src` is the generated SVG as a data URI. It works with React 18
+and 19.
 
-## Basic Usage
+## Basic usage
 
-<Code code={`
+```tsx
 import { Avatar } from "@avatar-generator/react";
 import { initials } from "@avatar-generator/style-initials";
 
 function UserProfile({ user }) {
-return (
-
-<Avatar
-style={initials}
-options={{ seed: user.id, name: user.name, size: 48 }}
-alt={user.name}
-/>
-);
+    return <Avatar style={initials} options={{ seed: user.id, name: user.name, size: 48 }} alt={user.name} />;
 }
-`} lang="tsx"></Code>
+```
 
-## Using Different Styles
+## Using different styles
 
-<Code code={`
+The `style` prop takes the style object itself, so a gallery is just a list of
+imports:
+
+```tsx
 import { Avatar } from "@avatar-generator/react";
 import { initials } from "@avatar-generator/style-initials";
 import { geometric } from "@avatar-generator/style-geometric";
@@ -36,111 +34,162 @@ import { rings } from "@avatar-generator/style-rings";
 import { faces } from "@avatar-generator/style-faces";
 import { illustrated } from "@avatar-generator/style-illustrated";
 import { anime } from "@avatar-generator/style-anime";
+import { abstract } from "@avatar-generator/style-abstract";
+import { emoji } from "@avatar-generator/style-emoji";
+import { animals } from "@avatar-generator/style-animals";
+import { gradient } from "@avatar-generator/style-gradient";
+
+const STYLES = [
+    { style: initials, label: "Initials" },
+    { style: geometric, label: "Geometric" },
+    { style: pixels, label: "Pixels" },
+    { style: rings, label: "Rings" },
+    { style: faces, label: "Faces" },
+    { style: illustrated, label: "Illustrated" },
+    { style: anime, label: "Anime" },
+    { style: abstract, label: "Abstract" },
+    { style: emoji, label: "Emoji" },
+    { style: animals, label: "Animals" },
+    { style: gradient, label: "Gradient" },
+];
 
 function AvatarGallery({ userId }) {
-const commonOptions = { seed: userId, size: 64 };
+    const options = { seed: userId, size: 64 };
 
-return (
-
-<div className="avatar-gallery">
-<Avatar style={initials} options={commonOptions} alt="Initials" />
-<Avatar style={geometric} options={commonOptions} alt="Identicon" />
-<Avatar style={pixels} options={commonOptions} alt="Pixel Faces" />
-<Avatar style={rings} options={commonOptions} alt="Rings" />
-<Avatar style={faces} options={commonOptions} alt="Faces" />
-<Avatar style={illustrated} options={commonOptions} alt="Illustrated" />
-<Avatar style={anime} options={commonOptions} alt="Anime" />
-</div>
-);
+    return (
+        <div className="avatar-gallery">
+            {STYLES.map(({ style, label }) => (
+                <Avatar key={label} style={style} options={options} alt={label} />
+            ))}
+        </div>
+    );
 }
-`} lang="tsx"></Code>
+```
 
-## With Custom Options
+## With custom options
 
-<Code code={`
+```tsx
 import { Avatar } from "@avatar-generator/react";
 import { geometric } from "@avatar-generator/style-geometric";
 
 function CustomAvatar({ userId }) {
-return (
-
-<Avatar
-style={geometric}
-options={{
-        seed: userId,
-        size: 96,
-        square: true,
-        colors: ["#FF6B6B", "#4ECDC4", "#45B7D1"],
-        border: { width: 2, color: "#333" },
-      }}
-className="custom-avatar"
-alt="User avatar"
-/>
-);
+    return (
+        <Avatar
+            style={geometric}
+            options={{
+                seed: userId,
+                size: 96,
+                square: true,
+                colors: ["#FF6B6B", "#4ECDC4", "#45B7D1"],
+                border: { width: 2, color: "#333" },
+            }}
+            className="custom-avatar"
+            alt="User avatar"
+        />
+    );
 }
-`} lang="tsx"></Code>
+```
 
-## TypeScript Support
+## TypeScript
 
-The component is fully typed. Options are validated based on the style you pass:
+Import the option type from the style package — in v3 the style owns its own
+types, not core:
 
-<Code code={`
+```tsx
 import { Avatar } from "@avatar-generator/react";
 import { initials, type InitialsOptions } from "@avatar-generator/style-initials";
 
 interface UserAvatarProps {
-userId: string;
-userName: string;
+    userId: string;
+    userName: string;
 }
 
 function UserAvatar({ userId, userName }: UserAvatarProps) {
-const options: InitialsOptions = {
-seed: userId,
-name: userName,
-size: 48,
-fontWeight: 700,
-};
+    const options: InitialsOptions = {
+        seed: userId,
+        name: userName,
+        size: 48,
+        fontWeight: 700,
+    };
 
-return <Avatar style={initials} options={options} alt={userName} />;
+    return <Avatar style={initials} options={options} alt={userName} />;
 }
-`} lang="tsx"></Code>
+```
 
-## Component Props
+<Aside type="caution" title="Option types moved in v3">
+    `InitialsOptions` and its siblings used to come from `@avatar-generator/core`. They now come from the style package.
+    See the [Migration Guide](/reference/migration/).
+</Aside>
 
-| Prop        | Type                      | Description                                    |
-| ----------- | ------------------------- | ---------------------------------------------- |
-| `style`     | `Style<T>`                | The avatar style to use (required)             |
-| `options`   | `T extends AvatarOptions` | Style-specific options (required)              |
-| `className` | `string`                  | Additional CSS classes                         |
-| `alt`       | `string`                  | Alt text for accessibility (default: "Avatar") |
+`AvatarProps<T>` is exported too, if you need to wrap the component:
 
-## Performance
+```ts
+import type { AvatarProps } from "@avatar-generator/react";
+```
 
-The Avatar component uses `useMemo` to memoize SVG generation. The avatar is only regenerated when the style or options change.
+## Props
 
-<Code code={`
+| Prop        | Type                      | Default    | Description                       |
+| ----------- | ------------------------- | ---------- | --------------------------------- |
+| `style`     | `Style<T>`                | (required) | The style object to render with   |
+| `options`   | `T extends AvatarOptions` | (required) | Seed and style-specific options   |
+| `alt`       | `string`                  | `"Avatar"` | Alt text for the rendered `<img>` |
+| `className` | `string`                  | —          | Class applied to the `<img>`      |
+
+The rendered element is an `<img>` sized from `options.size` (default `64`), so
+give it a meaningful `alt` — or `alt=""` if the avatar is decorative and the
+name is already shown as text next to it.
+
+## Memoization
+
+The component memoizes generation with `useMemo(…, [style, options])`. Because
+that compares by identity, an inline object literal creates a new `options` on
+every render and defeats the memo:
+
+```tsx
+// Regenerates on every parent render — the object is new each time
+<Avatar style={initials} options={{ seed: user.id, size: 48 }} alt={user.name} />
+```
+
+Usually that is fine: generating an avatar is a little string building, not a
+network call. For a long list, give each row a stable `options` object by
+memoizing inside the row component — never inside a `.map()` callback, which
+would break the rules of hooks:
+
+```tsx
 import { Avatar } from "@avatar-generator/react";
 import { initials } from "@avatar-generator/style-initials";
 import { useMemo } from "react";
 
-function UserList({ users }) {
-return (
+function UserRow({ user }) {
+    const options = useMemo(() => ({ seed: user.id, name: user.name, size: 32 }), [user.id, user.name]);
 
-<ul>
-{users.map((user) => (
-<li key={user.id}>
-<Avatar
-style={initials}
-options={useMemo(
-() => ({ seed: user.id, name: user.name }),
-[user.id, user.name]
-)}
-alt={user.name}
-/>
-<span>{user.name}</span>
-</li>
-))}
-</ul>
-);
+    return (
+        <li>
+            <Avatar style={initials} options={options} alt="" />
+            <span>{user.name}</span>
+        </li>
+    );
 }
-`} lang="tsx"></Code>
+
+function UserList({ users }) {
+    return (
+        <ul>
+            {users.map((user) => (
+                <UserRow key={user.id} user={user} />
+            ))}
+        </ul>
+    );
+}
+```
+
+If you would rather cache across components entirely, see the caching recipe in
+the [Cookbook](/guides/cookbook/).
+
+## Server-side rendering
+
+The component is safe in a React Server Component or during `renderToString`:
+`createAvatar` touches no browser globals, and the output is an `<img>` with a
+data URI, so there is nothing to hydrate. If you would rather inline the SVG
+markup than embed a data URI, call `createAvatar` directly — see the SSR recipe
+in the [Cookbook](/guides/cookbook/).

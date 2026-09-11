@@ -12,16 +12,23 @@ Thank you for your interest in contributing! This guide will help you get set up
 ```
 avatar-generator/
 ├── src/                    # Source packages (pnpm workspace root)
-│   ├── lib/                # @avatar-generator/core + style packages
-│   └── packages/           # Framework wrappers (React, Angular)
-├── playgrounds/            # Development playgrounds (Vite)
-│   ├── core/               # Core playground
-│   └── react/              # React playground
-├── docs/                   # Documentation site (Astro + Starlight)
+│   ├── lib/core/           # @avatar-generator/core
+│   ├── lib/styles/         # The eleven style packages
+│   ├── packages/           # Framework wrappers: react, vue, svelte, angular, web-component
+│   └── scripts/            # Packaging smoke test, export checks, release version guard
+├── playgrounds/            # Six Vite playgrounds (own pnpm project)
+│   ├── core/               # Core API
+│   ├── react/ vue/ svelte/ angular/ web-component/
+│   └── consts.ts           # Shared seeds and per-style option fixtures
+├── docs/                   # Documentation site (Astro + Starlight, own pnpm project)
 ├── eslint.config.js        # ESLint flat config
 ├── .prettierrc             # Prettier config
 └── .editorconfig           # Editor formatting config
 ```
+
+Four separate pnpm projects, each with its own lockfile: the repository root
+(tooling only), `src/` (the published workspace), `playgrounds/`, and `docs/`.
+Install in whichever one you are working in.
 
 ## Getting Started
 
@@ -65,6 +72,37 @@ pnpm run check         # Run both lint and format check
 ```
 
 These checks run automatically on staged files when you commit (via Husky + lint-staged).
+
+## Documentation
+
+The site in `docs/` is the reference users read; the per-package `README.md`
+files are what npm shows. Both are part of a change, not follow-up work.
+
+```bash
+cd docs
+pnpm install
+pnpm dev      # http://localhost:4321
+pnpm build    # what CI runs
+```
+
+When you change the public API, update these in the same pull request:
+
+- `docs/src/content/docs/reference/avatar.mdx` — options, defaults and types.
+  Option tables must match the source; a documented value that is not in the
+  style's `validateOption` list now throws for the reader who copies it.
+- The relevant guide under `docs/src/content/docs/guides/`
+- The package's own `README.md`, if the change is visible from npm
+- `docs/src/content/docs/reference/migration.mdx` and
+  `.../versioning.mdx` for anything breaking
+
+Adding a style also means: a row in the style tables (introduction,
+installation, playground, gallery, and the root `README.md`), a section in the
+manual guide, an option table in the API reference, and a card in
+`docs/src/components/Gallery.astro` and `Playground.astro`.
+
+Only the 3.x line is supported. Documentation should show v3 usage and should
+not present v1 or v2 as an option — the migration and versioning pages are the
+one place they are discussed.
 
 ## Packaging
 

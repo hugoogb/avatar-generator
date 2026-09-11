@@ -1,160 +1,237 @@
 ---
-title: Migration Guide (v1 to v2)
-description: How to upgrade from @avatar-generator v1 to v2.
+title: Migration Guide
+description: Upgrade to @avatar-generator v3 from v2 or from the original v1 element API.
 ---
 
-import { Code } from "@astrojs/starlight/components";
+import { Aside } from "@astrojs/starlight/components";
 
-Version 2.0 introduces a new style-based architecture with SVG output. This guide covers the breaking changes and how to update your code.
+**v3.0.0 is the current release and the only one you should install.** This
+page covers both upgrade paths: from v2 (the style-based API, unchanged in
+shape) and from v1 (the original DOM-element API).
 
-## Key Changes
+<Aside type="caution" title="Do not install v1 or v2">
+    Neither line is supported. v2.0.0 is on npm, but its tarballs cannot be loaded by Node at all — they ship ESM
+    without `"type": "module"` and with extensionless relative imports, so only a bundler doing node10-style resolution
+    can resolve them. Versions 2.1.0 through 2.6.0 were never published. See [Versions &
+    Support](/reference/versioning/) for the full picture.
+</Aside>
 
-| v1                     | v2                      |
-| ---------------------- | ----------------------- |
-| HTML element output    | SVG string output       |
-| Single initials style  | 7 pluggable styles      |
-| `name` prop            | `seed` prop             |
-| Styles bundled in core | Separate style packages |
+## Which path applies to you
 
-## Installation Changes
+| You are on                            | Effort                                                           |
+| ------------------------------------- | ---------------------------------------------------------------- |
+| v2.x (`createAvatar(style, options)`) | [Small](#upgrading-from-v2) — two import changes at most         |
+| v1.x (`createAvatar({ name })`)       | [Larger](#upgrading-from-v1) — the whole API changed             |
+| Nothing yet                           | Skip this page, go to [Installation](/get-started/installation/) |
+
+## Upgrading from v2
+
+Avatar output is byte-identical between 2.x and 3.0.0 — no avatar your users
+already have will change. Only two things moved, and both are compile-time.
+
+### 1. Style option types moved into their style packages
+
+In v2, `@avatar-generator/core` declared every style's option type —
+`FacesOptions`, `AnimeOptions`, `GradientOptions` and 26 more. Core therefore
+had to know about all eleven styles, and a style published by anyone else could
+not be typed at all. Each style now owns and exports its own option type.
+
+```diff
+- import type { FacesOptions } from "@avatar-generator/core";
++ import type { FacesOptions } from "@avatar-generator/style-faces";
+```
+
+The types themselves are unchanged, and the style packages already re-exported
+them in v2 — so if you were already importing from the style package, there is
+nothing to do. Core now declares only `AvatarOptions`, `Style`, `Random`,
+`AvatarResult` and the deprecated `LegacyAvatarOptions`.
+
+This is what lets you publish a style of your own; see
+[Creating Custom Styles](/guides/custom-styles/).
+
+### 2. The Angular component is standalone
+
+`@avatar-generator/angular` is now built with ng-packagr as a real Angular
+Package Format library (FESM2022, partial Ivy), so AOT builds can consume it.
+Previously it shipped plain `tsc` output, which made a consumer's AOT build fall
+back to the JIT compiler and fail with _"needs to be compiled using the JIT
+compiler, but '@angular/compiler' is not available"_.
+
+`AvatarComponent` is also `standalone: true`, because components have been
+standalone by default since Angular 19 and declaring one in an NgModule is an
+error:
+
+```diff
+  @Component({
++   imports: [AvatarComponent],
+    template: `<avatar-generator [style]="style" [options]="options" />`,
+  })
+```
+
+`AvatarModule` still works and now re-exports the standalone component, so
+existing `imports: [AvatarModule]` code needs no change. Supported Angular
+versions widen to `^17 || ^18 || ^19 || ^20 || ^21`.
+
+<Aside>
+    Angular Package Format is ESM-only — Angular dropped CommonJS and UMD output in v13 — so `@avatar-generator/angular`
+    has no `require()` entry point. Every other package ships both ESM and CommonJS.
+</Aside>
+
+### Everything else in 3.0.0 is a fix
+
+These need no action from you, but they are why upgrading is worth it:
+
+- Published packages are loadable from Node at all, as both ESM and CommonJS
+- `@avatar-generator/web-component` no longer throws
+  `ReferenceError: HTMLElement is not defined` when imported during a Next.js,
+  Nuxt, Astro or SvelteKit server render
+- `register(tagName)` in the web component works; it previously always threw
+  `NotSupportedError`
+- `@avatar-generator/svelte` ships a preprocessed component, so it compiles
+  without a preprocessor configured
+- Tarballs contain only `dist/` and the licence, not `src/` and tsconfigs
+
+## Upgrading from v1
+
+v1 generated an HTML `<div>` with CSS-styled initials. v2 replaced it with
+deterministic SVG and pluggable styles, and v3 keeps that API unchanged. If you
+are still on v1, you are moving to the current API in one step.
+
+| v1                     | v3                                |
+| ---------------------- | --------------------------------- |
+| HTML element output    | SVG string output                 |
+| Single initials style  | 11 pluggable style packages       |
+| `name` prop            | `seed` prop                       |
+| Styles bundled in core | Separate, tree-shakeable packages |
+
+### Installation
+
+A style package is no longer optional — core renders nothing on its own.
+
+```sh
+npm install @avatar-generator/core @avatar-generator/style-initials
+```
+
+### Core package
 
 **v1:**
 
-<Code code={`npm install @avatar-generator/react`} lang="sh"></Code>
-
-**v2:**
-
-<Code code={`npm install @avatar-generator/react @avatar-generator/style-initials`} lang="sh"></Code>
-
-## Core Package
-
-**v1:**
-
-<Code code={`
+```ts
 import { createAvatar } from "@avatar-generator/core";
 
 const element = createAvatar({
-name: "Hugo GB",
-backgroundColor: "#4CAF50",
-textColor: "#fff",
-fontSize: "48px",
-shape: "circle",
+    name: "Hugo GB",
+    backgroundColor: "#4CAF50",
+    textColor: "#fff",
+    fontSize: "48px",
+    shape: "circle",
 });
 
 document.body.appendChild(element);
-`} lang="ts"></Code>
+```
 
-**v2:**
+**v3:**
 
-<Code code={`
+```ts
 import { createAvatar } from "@avatar-generator/core";
 import { initials } from "@avatar-generator/style-initials";
 
 const avatar = createAvatar(initials, {
-seed: "Hugo GB",
-size: 100,
-textColor: "#fff",
+    seed: "Hugo GB",
+    size: 100,
+    textColor: "#fff",
 });
 
-// SVG output - use as image src
+// SVG output — use as an image src
 const img = document.createElement("img");
 img.src = avatar.toDataUri();
 document.body.appendChild(img);
 
-// Or insert SVG directly
+// …or insert the SVG markup directly
 const div = document.createElement("div");
 div.insertAdjacentHTML("beforeend", avatar.svg);
 document.body.appendChild(div);
-`} lang="ts"></Code>
+```
 
-## React
-
-**v1:**
-
-<Code code={`
-import { Avatar } from "@avatar-generator/react";
-
-<Avatar
-  name="Hugo GB"
-  backgroundColor="#4CAF50"
-  textColor="#fff"
-  shape="circle"
-/>
-`} lang="tsx"></Code>
-
-**v2:**
-
-<Code code={`
-import { Avatar } from "@avatar-generator/react";
-import { initials } from "@avatar-generator/style-initials";
-
-<Avatar
-  style={initials}
-  options={{
-    seed: "Hugo GB",
-    size: 64,
-    textColor: "#fff",
-  }}
-  alt="Hugo GB"
-/>
-`} lang="tsx"></Code>
-
-## Angular
+### React
 
 **v1:**
 
-<Code
-    code={`
-<avatar-generator
-  [name]="'Hugo GB'"
-  [backgroundColor]="'#4CAF50'"
-  [textColor]="'#fff'"
-  [shape]="'circle'"
-/>
-`}
-    lang="html"
-></Code>
+```tsx
+import { Avatar } from "@avatar-generator/react";
 
-**v2:**
+<Avatar name="Hugo GB" backgroundColor="#4CAF50" textColor="#fff" shape="circle" />;
+```
 
-<Code code={`
-// In component:
+**v3:**
+
+```tsx
+import { Avatar } from "@avatar-generator/react";
 import { initials } from "@avatar-generator/style-initials";
-initialsStyle = initials;
 
-// In template:
-<avatar-generator
-[style]="initialsStyle"
-[options]="{ seed: 'Hugo GB', size: 64 }"
-alt="Hugo GB"
-/>
-`} lang="ts"></Code>
+<Avatar style={initials} options={{ seed: "Hugo GB", size: 64, textColor: "#fff" }} alt="Hugo GB" />;
+```
 
-## Option Mapping
+### Angular
 
-| v1 Option         | v2 Option           | Notes                                      |
-| ----------------- | ------------------- | ------------------------------------------ |
-| `name`            | `seed`              | Used for generation                        |
-| `name`            | `options.name`      | For initials display (initials style only) |
-| `backgroundColor` | `colors`            | Now an array for palette                   |
-| `textColor`       | `options.textColor` | Initials style only                        |
-| `fontSize`        | -                   | Calculated from `size`                     |
-| `shape: "circle"` | `square: false`     | Default is circle                          |
-| `shape: "square"` | `square: true`      |                                            |
-| `width`/`height`  | `size`              | Single dimension (square)                  |
+**v1:**
 
-## Legacy Support
+```html
+<avatar-generator [name]="'Hugo GB'" [backgroundColor]="'#4CAF50'" [textColor]="'#fff'" [shape]="'circle'" />
+```
 
-The v1 API is still available as `createAvatarElement` for gradual migration:
+**v3** — note the `imports: [AvatarComponent]`, which v1 and v2 did not need:
 
-<Code code={`
+```ts
+import { Component } from "@angular/core";
+import { AvatarComponent } from "@avatar-generator/angular";
+import { initials } from "@avatar-generator/style-initials";
+
+@Component({
+    selector: "app-user-avatar",
+    imports: [AvatarComponent],
+    template: `<avatar-generator [style]="initialsStyle" [options]="options" alt="Hugo GB" />`,
+})
+export class UserAvatarComponent {
+    initialsStyle = initials;
+    options = { seed: "Hugo GB", size: 64 };
+}
+```
+
+### Option mapping
+
+| v1 option         | v3 equivalent       | Notes                                       |
+| ----------------- | ------------------- | ------------------------------------------- |
+| `name`            | `seed`              | Drives generation                           |
+| `name`            | `options.name`      | For the displayed initials (initials style) |
+| `backgroundColor` | `colors`            | Now an array — a palette to pick from       |
+| `textColor`       | `options.textColor` | Initials style only                         |
+| `fontSize`        | —                   | Derived from `size`                         |
+| `shape: "circle"` | `square: false`     | The default                                 |
+| `shape: "square"` | `square: true`      |                                             |
+| `width`/`height`  | `size`              | Single dimension; avatars are square        |
+| `tooltip`         | —                   | Set `title` on your own wrapper element     |
+
+### The v1 API is still present, but deprecated
+
+`createAvatarElement` is the original v1 function, kept so you can migrate
+incrementally rather than in one commit:
+
+```ts
 import { createAvatarElement } from "@avatar-generator/core";
 
-// Still works, but deprecated
-const element = createAvatarElement({
-name: "Hugo GB",
-backgroundColor: "#4CAF50",
-});
-`} lang="ts"></Code>
+// Still works. Deprecated — DOM-only, not deterministic SVG, and will be
+// removed in a future major.
+const element = createAvatarElement({ name: "Hugo GB", backgroundColor: "#4CAF50" });
+```
 
-We recommend migrating to the new API for access to all styles and features.
+<Aside type="caution">
+    `createAvatarElement` calls `document.createElement`, so it throws during server-side rendering. `createAvatar`
+    returns a plain string and runs anywhere. Treat the legacy function as a temporary bridge, not a supported path.
+</Aside>
+
+## After upgrading
+
+- Skim the [API Reference](/reference/avatar/) — every base and style option
+- Compare the eleven styles in the [Style Gallery](/reference/gallery/)
+- Check the [Cookbook](/guides/cookbook/) for groups, fallbacks, theming, SSR

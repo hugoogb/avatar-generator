@@ -1,79 +1,96 @@
 ---
 title: Angular Usage
-description: Learn how to use the @avatar-generator/angular package in your Angular application.
+description: Use the standalone @avatar-generator/angular component in Angular 17 through 21.
 ---
 
-import { Code } from "@astrojs/starlight/components";
+import { Aside } from "@astrojs/starlight/components";
 
-The `@avatar-generator/angular` package provides an Angular component for rendering avatars with any style.
+`@avatar-generator/angular` provides `<avatar-generator>`, a standalone
+component that renders an `<img>` from any style. It supports Angular 17
+through 21 and ships as an Angular Package Format library (FESM2022, partial
+Ivy), so AOT builds consume it directly.
+
+<Aside type="caution" title="Changed in v3">
+    `AvatarComponent` is now `standalone: true`, and the package is built with ng-packagr. Earlier versions shipped
+    plain `tsc` output, which made AOT builds fall back to the JIT compiler and fail. See the [Migration
+    Guide](/reference/migration/).
+</Aside>
 
 ## Import the component
 
-`AvatarComponent` is standalone, so add it to the `imports` of whichever
-component uses it:
+Add `AvatarComponent` to the `imports` of whichever component uses it:
 
-<Code code={`
+```ts
 import { Component } from "@angular/core";
 import { AvatarComponent } from "@avatar-generator/angular";
 import { initials } from "@avatar-generator/style-initials";
 
 @Component({
-selector: "app-user-profile",
-imports: [AvatarComponent],
-template: \`<avatar-generator [style]="initialsStyle" [options]="{ seed: 'user-123' }" />\`,
+    selector: "app-user-profile",
+    imports: [AvatarComponent],
+    template: `<avatar-generator [style]="initialsStyle" [options]="{ seed: 'user-123' }" />`,
 })
 export class UserProfileComponent {
-initialsStyle = initials;
+    initialsStyle = initials;
 }
-`} lang="ts"></Code>
+```
+
+A style is a plain object, so expose it as a field on the component rather than
+importing it into the template.
 
 ### NgModule applications
 
-If your application still uses NgModules, import `AvatarModule`, which
-re-exports the standalone component:
+If your application still uses NgModules, import `AvatarModule`, which imports
+and re-exports the standalone component:
 
-<Code code={`
+```ts
 import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
-import { AppComponent } from "./app.component";
 import { AvatarModule } from "@avatar-generator/angular";
+import { AppComponent } from "./app.component";
 
 @NgModule({
-declarations: [AppComponent],
-imports: [BrowserModule, AvatarModule],
-bootstrap: [AppComponent],
+    declarations: [AppComponent],
+    imports: [BrowserModule, AvatarModule],
+    bootstrap: [AppComponent],
 })
 export class AppModule {}
-`} lang="ts"></Code>
+```
 
-## Basic Usage
+Existing `imports: [AvatarModule]` code needs no change. Do not add
+`AvatarComponent` to `declarations` — declaring a standalone component is an
+error.
 
-<Code code={`
+## Basic usage
+
+```ts
 import { Component } from "@angular/core";
 import { AvatarComponent } from "@avatar-generator/angular";
 import { initials } from "@avatar-generator/style-initials";
 
 @Component({
-selector: "app-user-profile",
-imports: [AvatarComponent],
-template: \`
-<avatar-generator
-[style]="initialsStyle"
-[options]="{ seed: user.id, name: user.name, size: 48 }"
-[alt]="user.name"
-/>
-\`,
+    selector: "app-user-profile",
+    imports: [AvatarComponent],
+    template: `
+        <avatar-generator
+            [style]="initialsStyle"
+            [options]="{ seed: user.id, name: user.name, size: 48 }"
+            [alt]="user.name"
+        />
+    `,
 })
 export class UserProfileComponent {
-initialsStyle = initials;
-user = { id: "user-123", name: "Hugo GB" };
+    initialsStyle = initials;
+    user = { id: "user-123", name: "Hugo GB" };
 }
-`} lang="ts"></Code>
+```
 
-## Using Different Styles
+## Using different styles
 
-<Code code={`
+```ts
 import { Component } from "@angular/core";
+import { AvatarComponent } from "@avatar-generator/angular";
+import type { AvatarOptions, Style } from "@avatar-generator/core";
 import { initials } from "@avatar-generator/style-initials";
 import { geometric } from "@avatar-generator/style-geometric";
 import { pixels } from "@avatar-generator/style-pixels";
@@ -81,68 +98,100 @@ import { rings } from "@avatar-generator/style-rings";
 import { faces } from "@avatar-generator/style-faces";
 import { illustrated } from "@avatar-generator/style-illustrated";
 import { anime } from "@avatar-generator/style-anime";
+import { abstract } from "@avatar-generator/style-abstract";
+import { emoji } from "@avatar-generator/style-emoji";
+import { animals } from "@avatar-generator/style-animals";
+import { gradient } from "@avatar-generator/style-gradient";
 
 @Component({
-selector: "app-avatar-gallery",
-template: \`
-
-<div class="avatar-gallery">
-<avatar-generator [style]="initialsStyle" [options]="options" alt="Initials" />
-<avatar-generator [style]="geometricStyle" [options]="options" alt="Identicon" />
-<avatar-generator [style]="pixelsStyle" [options]="options" alt="Pixel Faces" />
-<avatar-generator [style]="ringsStyle" [options]="options" alt="Rings" />
-<avatar-generator [style]="facesStyle" [options]="options" alt="Faces" />
-<avatar-generator [style]="illustratedStyle" [options]="options" alt="Illustrated" />
-<avatar-generator [style]="animeStyle" [options]="options" alt="Anime" />
-</div>
-\`,
+    selector: "app-avatar-gallery",
+    imports: [AvatarComponent],
+    template: `
+        <div class="avatar-gallery">
+            @for (entry of styles; track entry.label) {
+                <avatar-generator [style]="entry.style" [options]="options" [alt]="entry.label" />
+            }
+        </div>
+    `,
 })
 export class AvatarGalleryComponent {
-initialsStyle = initials;
-geometricStyle = geometric;
-pixelsStyle = pixels;
-ringsStyle = rings;
-facesStyle = faces;
-illustratedStyle = illustrated;
-animeStyle = anime;
+    styles: Array<{ style: Style<AvatarOptions>; label: string }> = [
+        { style: initials, label: "Initials" },
+        { style: geometric, label: "Geometric" },
+        { style: pixels, label: "Pixels" },
+        { style: rings, label: "Rings" },
+        { style: faces, label: "Faces" },
+        { style: illustrated, label: "Illustrated" },
+        { style: anime, label: "Anime" },
+        { style: abstract, label: "Abstract" },
+        { style: emoji, label: "Emoji" },
+        { style: animals, label: "Animals" },
+        { style: gradient, label: "Gradient" },
+    ];
 
-options = { seed: "user-123", size: 64 };
+    options = { seed: "user-123", size: 64 };
 }
-`} lang="ts"></Code>
+```
 
-## With Custom Options
+<Aside>
+    `@for` is Angular 17+ control flow. On an older template style use `*ngFor="let entry of styles"` with
+    `CommonModule` imported.
+</Aside>
 
-<Code code={`
+## With custom options
+
+```ts
 import { Component } from "@angular/core";
-import { geometric } from "@avatar-generator/style-geometric";
+import { AvatarComponent } from "@avatar-generator/angular";
+import { geometric, type GeometricOptions } from "@avatar-generator/style-geometric";
 
 @Component({
-selector: "app-custom-avatar",
-template: \`
-<avatar-generator
-[style]="geometricStyle"
-[options]="avatarOptions"
-alt="User avatar"
-/>
-\`,
+    selector: "app-custom-avatar",
+    imports: [AvatarComponent],
+    template: `<avatar-generator [style]="geometricStyle" [options]="avatarOptions" alt="User avatar" />`,
 })
 export class CustomAvatarComponent {
-geometricStyle = geometric;
+    geometricStyle = geometric;
 
-avatarOptions = {
-seed: "user-123",
-size: 96,
-square: true,
-colors: ["#FF6B6B", "#4ECDC4", "#45B7D1"],
-border: { width: 2, color: "#333" },
-};
+    avatarOptions: GeometricOptions = {
+        seed: "user-123",
+        size: 96,
+        square: true,
+        colors: ["#FF6B6B", "#4ECDC4", "#45B7D1"],
+        border: { width: 2, color: "#333" },
+    };
 }
-`} lang="ts"></Code>
+```
 
-## Component Inputs
+Import the option type from the style package; in v3 core no longer declares
+style-specific types.
 
-| Input     | Type                      | Description                                    |
-| --------- | ------------------------- | ---------------------------------------------- |
-| `style`   | `Style<T>`                | The avatar style to use (required)             |
-| `options` | `T extends AvatarOptions` | Style-specific options (required)              |
-| `alt`     | `string`                  | Alt text for accessibility (default: "Avatar") |
+## Inputs
+
+| Input     | Type                      | Default    | Description                     |
+| --------- | ------------------------- | ---------- | ------------------------------- |
+| `style`   | `Style<T>`                | (required) | The style object to render with |
+| `options` | `T extends AvatarOptions` | (required) | Seed and style-specific options |
+| `alt`     | `string`                  | `"Avatar"` | Alt text for the `<img>`        |
+
+## Change detection
+
+The component uses `OnPush` and regenerates in `ngOnChanges`, so it re-renders
+when the `style` or `options` **reference** changes. Mutating the existing
+options object in place will not trigger an update:
+
+```ts
+// Does not re-render
+this.avatarOptions.size = 128;
+
+// Re-renders
+this.avatarOptions = { ...this.avatarOptions, size: 128 };
+```
+
+## ESM only
+
+Angular Package Format has been ESM-only since Angular v13, so this package has
+no `require()` entry point. Every other `@avatar-generator` package ships both
+ESM and CommonJS. If you need CommonJS in an Angular project — in a script run
+under plain Node, say — use `@avatar-generator/core` and the style package
+directly rather than this wrapper.

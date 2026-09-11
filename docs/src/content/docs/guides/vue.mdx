@@ -1,69 +1,120 @@
 ---
 title: Vue Usage
-description: Learn how to use the @avatar-generator/vue package in your Vue 3 application.
+description: Use the @avatar-generator/vue component in a Vue 3 application.
 ---
 
-import { Code } from "@astrojs/starlight/components";
+import { Aside } from "@astrojs/starlight/components";
 
-The `@avatar-generator/vue` package provides a Vue 3 component for rendering
-avatars with any style.
+`@avatar-generator/vue` provides an `Avatar` component that renders an `<img>`
+from any style. `vue` is a peer dependency, so it uses the Vue 3 version your
+app already pins.
 
 ## Installation
 
-<Code
-    code={`pnpm add @avatar-generator/core @avatar-generator/vue @avatar-generator/style-initials`}
-    lang="bash"
-></Code>
+```bash
+pnpm add @avatar-generator/core @avatar-generator/vue @avatar-generator/style-initials
+```
 
-`vue` is a peer dependency — use whichever version your app pins.
+## Basic usage
 
-## Basic Usage
-
-<Code code={`<script setup lang="ts">
+```vue
+<script setup lang="ts">
 import { Avatar } from "@avatar-generator/vue";
 import { initials } from "@avatar-generator/style-initials";
 
 defineProps<{ userId: string; userName: string }>();
-
 </script>
 
 <template>
-  <Avatar
-    :style="initials"
-    :options="{ seed: userId, name: userName, size: 48 }"
-    :alt="userName"
-  />
-</template>`} lang="vue"></Code>
+    <Avatar :style="initials" :options="{ seed: userId, name: userName, size: 48 }" :alt="userName" />
+</template>
+```
 
-## Using Different Styles
+The `style` prop takes the style object itself, so import it into the script
+block and bind it — it is not a string name.
 
-<Code code={`<script setup lang="ts">
+## Using different styles
+
+```vue
+<script setup lang="ts">
 import { Avatar } from "@avatar-generator/vue";
 import { initials } from "@avatar-generator/style-initials";
 import { anime } from "@avatar-generator/style-anime";
 import { animals } from "@avatar-generator/style-animals";
+import { gradient } from "@avatar-generator/style-gradient";
 
 const common = { seed: "Hugo GB", size: 64 };
-
 </script>
 
 <template>
-  <Avatar :style="initials" :options="common" />
-  <Avatar :style="anime" :options="common" />
-  <Avatar :style="animals" :options="common" />
-</template>`} lang="vue"></Code>
+    <Avatar :style="initials" :options="common" alt="Initials" />
+    <Avatar :style="anime" :options="common" alt="Anime" />
+    <Avatar :style="animals" :options="common" alt="Animals" />
+    <Avatar :style="gradient" :options="common" alt="Gradient" />
+</template>
+```
 
-## Component Props
+All eleven styles work the same way — see the
+[Style Gallery](/reference/gallery/).
 
-| Prop      | Type                      | Description                                    |
-| --------- | ------------------------- | ---------------------------------------------- |
-| `style`   | `Style<T>`                | The avatar style to use (required)             |
-| `options` | `T extends AvatarOptions` | Style-specific options (required)              |
-| `alt`     | `string`                  | Alt text for accessibility (default: "Avatar") |
-| `class`   | `string`                  | Additional CSS classes                         |
+## TypeScript
 
-## Performance
+Import the option type from the style package:
 
-The component uses `computed` so the SVG is only re-generated when `style`
-or `options` actually change. Pass options reactively to get automatic
-updates.
+```vue
+<script setup lang="ts">
+import { Avatar } from "@avatar-generator/vue";
+import { initials, type InitialsOptions } from "@avatar-generator/style-initials";
+
+const options: InitialsOptions = { seed: "user-123", name: "Hugo GB", size: 48, fontWeight: 700 };
+</script>
+
+<template>
+    <Avatar :style="initials" :options="options" alt="Hugo GB" />
+</template>
+```
+
+<Aside type="caution" title="Option types moved in v3">
+    These types used to live in `@avatar-generator/core`. They now live in the style package that implements them. See
+    the [Migration Guide](/reference/migration/).
+</Aside>
+
+## Props
+
+| Prop      | Type                      | Default    | Description                     |
+| --------- | ------------------------- | ---------- | ------------------------------- |
+| `style`   | `Style<T>`                | (required) | The style object to render with |
+| `options` | `T extends AvatarOptions` | (required) | Seed and style-specific options |
+| `alt`     | `string`                  | `"Avatar"` | Alt text for the `<img>`        |
+| `class`   | `string`                  | `""`       | Class applied to the `<img>`    |
+
+## Reactivity
+
+The SVG is generated inside a `computed`, so it is recalculated only when
+`style` or `options` change. Passing a `ref` or a `reactive` object gives you
+automatic updates:
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import { Avatar } from "@avatar-generator/vue";
+import { initials } from "@avatar-generator/style-initials";
+
+const options = ref({ seed: "user-123", size: 48 });
+
+function grow() {
+    options.value = { ...options.value, size: 96 };
+}
+</script>
+
+<template>
+    <Avatar :style="initials" :options="options" alt="Hugo GB" />
+    <button @click="grow">Bigger</button>
+</template>
+```
+
+## Server-side rendering
+
+Safe in Nuxt and any other Vue SSR setup — `createAvatar` returns a string and
+touches no browser globals, and the component renders a plain `<img>` with a
+data URI, so there is nothing to hydrate.

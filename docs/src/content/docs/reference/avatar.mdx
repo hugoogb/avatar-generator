@@ -3,18 +3,21 @@ title: API Reference
 description: Complete reference for all @avatar-generator options and types.
 ---
 
-import { Code } from "@astrojs/starlight/components";
+import { Aside } from "@astrojs/starlight/components";
+
+Everything on this page describes **v3.x**, the current and only supported
+release line. See [Versions & Support](/reference/versioning/).
 
 ## createAvatar
 
 The main function for generating avatars.
 
-<Code code={`
+```ts
 import { createAvatar } from "@avatar-generator/core";
 import { initials } from "@avatar-generator/style-initials";
 
 const avatar = createAvatar(initials, { seed: "Hugo GB" });
-`} lang="ts"></Code>
+```
 
 ### Parameters
 
@@ -49,13 +52,31 @@ All styles accept these base options:
 ## Style-Specific Options
 
 Each style owns its option type and exports it from its own package — not from
-`@avatar-generator/core`, which knows only about `AvatarOptions`, `Style`,
-`Random` and `AvatarResult`:
+`@avatar-generator/core`, which declares only the style contract itself:
+`AvatarOptions`, `Style`, `Random`, `AvatarResult`, and the deprecated
+`LegacyAvatarOptions`.
 
-<Code code={`import { faces, type FacesOptions } from "@avatar-generator/style-faces";`} lang="ts"></Code>
+```ts
+import { faces, type FacesOptions } from "@avatar-generator/style-faces";
+```
 
 That is what lets you publish a style of your own without core needing to know
 it exists. See [Creating Custom Styles](/guides/custom-styles/).
+
+<Aside type="caution" title="Changed in v3">
+    In v2 these types were declared by `@avatar-generator/core`. Update the import path when you upgrade — the types
+    themselves are unchanged. See the [Migration Guide](/reference/migration/).
+</Aside>
+
+Options you leave unset are chosen deterministically from the seed. Options
+listed with a fixed set of values are validated at runtime: passing anything
+else throws an `Error` naming the style, the option and the accepted values,
+rather than silently falling back to a random choice.
+
+Each style also exports the arrays behind its literal unions —
+`HAIR_STYLES`, `EYE_STYLES`, `MOUTH_STYLES`, `CENTER_STYLES`, `COMPOSITIONS`,
+`EXPRESSIONS`, `ANIMALS`, `DIRECTIONS`, `PATTERNS` — so a picker UI can be
+generated from them instead of hand-maintained.
 
 ### InitialsOptions
 
@@ -146,7 +167,7 @@ For `@avatar-generator/style-anime`:
 | `eyeStyle`    | `string`   | (random)      | Override eyes (8 styles): `"normal"`, `"sparkly"`, `"determined"`, `"gentle"`, `"cat"`, `"half-closed"`, `"closed-happy"`, `"surprised"`                                   |
 | `mouthStyle`  | `string`   | (random)      | Override mouth (6 styles): `"small-smile"`, `"open-small"`, `"cat-mouth"`, `"line"`, `"pout"`, `"grin"`                                                                    |
 | `noseStyle`   | `string`   | (random)      | Override nose (3 styles): `"dot"`, `"line"`, `"shadow"`                                                                                                                    |
-| `expression`  | `string`   | (random)      | Override expression                                                                                                                                                        |
+| `expression`  | `string`   | —             | Reserved for future expression overrides; currently has no effect                                                                                                          |
 | `bangs`       | `boolean`  | (random, 60%) | Enable bangs over forehead                                                                                                                                                 |
 | `ahoge`       | `boolean`  | (random, 40%) | Enable ahoge hair strand on top                                                                                                                                            |
 | `blush`       | `boolean`  | (random, 35%) | Enable blush on cheeks                                                                                                                                                     |
@@ -195,7 +216,7 @@ For `@avatar-generator/style-gradient`:
 
 Creates a deterministic random number generator from a seed string.
 
-<Code code={`
+```ts
 import { createRandom } from "@avatar-generator/core";
 
 const random = createRandom("my-seed");
@@ -204,100 +225,160 @@ random.next(); // Float between 0 and 1
 random.int(0, 10); // Integer between 0 and 9
 random.pick(["a", "b"]); // Random item from array
 random.bool(0.7); // Boolean with 70% true probability
-random.shuffle([1,2,3]); // Shuffle array in place
-`} lang="ts"></Code>
+random.shuffle([1, 2, 3]); // Shuffle array in place
+```
 
 ### DEFAULT_COLORS
 
 The default color palette used by styles:
 
-<Code code={`
+```ts
 import { DEFAULT_COLORS } from "@avatar-generator/core";
 
 // ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7",
 // "#DDA0DD", "#98D8C8", "#F7DC6F", "#BB8FCE", "#85C1E9"]
-`} lang="ts"></Code>
+```
 
 ### SKIN_TONES
 
 Skin tone palette for face-based styles (Pixel Faces, Faces, Illustrated, Anime):
 
-<Code code={`
+```ts
 import { SKIN_TONES } from "@avatar-generator/core";
 
 // ["#FFDBB4", "#EAC086", "#C68B59", "#A0674B", "#8D5524", "#613915"]
-`} lang="ts"></Code>
+```
 
 ### EYE_COLORS
 
 Eye color palette for the Illustrated and Anime styles:
 
-<Code code={`
+```ts
 import { EYE_COLORS } from "@avatar-generator/core";
 
 // ["#634E34", "#2E536F", "#3D6B45", "#89724B", "#3B3024"]
-`} lang="ts"></Code>
+```
 
-### SVG Utilities
+### validateOption
 
-Low-level SVG building functions:
+Throws if a categorical option is not one of the accepted values. Does nothing
+when the value is `undefined`, since absence means "pick from the seed". Style
+packages call it on every literal-union option; custom styles should too.
 
-<Code code={`
+```ts
+import { validateOption } from "@avatar-generator/core";
+
+validateOption("checker", "pattern", options.pattern, PATTERNS);
+// Error: [@avatar-generator/style-checker] Invalid pattern: "wobbly".
+// Expected one of: "classic", "diagonal", "dotted".
+```
+
+### SVG utilities
+
+Low-level building blocks. `buildSvg` is the only one most styles need; the
+rest are exported for styles that assemble their own wrapper.
+
+```ts
 import {
-  escapeXml,
-  createSvgOpen,
-  createBackground,
-  createBorder,
-  buildSvg,
+    buildSvg,
+    buildTransform,
+    createBackground,
+    createBorder,
+    createCircleClip,
+    createSquareClip,
+    createSvgOpen,
+    escapeXml,
+    wrapWithTransform,
 } from "@avatar-generator/core";
 
-// escapeXml(text) - Escapes XML special characters
-// createSvgOpen(size) - Creates opening SVG tag
-// createBackground(size, color, transparent) - Creates background rect
-// createBorder(size, width, color, square) - Creates border
-// buildSvg(content, options, backgroundColor) - Builds complete SVG
-`} lang="ts"></Code>
+// buildSvg(content, options, backgroundColor) Complete SVG: viewBox, clip, background, border, transform
+// buildTransform(options) The transform attribute for rotate/flip/scale
+// createBackground(size, color, transparent) Background rect
+// createBorder(size, width, color, square) Border element
+// createCircleClip(id, size) Circular clip path
+// createSquareClip(id, size) Square clip path
+// createSvgOpen(size) Opening <svg> tag
+// escapeXml(text) Escapes text for SVG <text> nodes
+// wrapWithTransform(content, options) Wraps content in a transform group
+```
+
+<Aside>
+    Together with `createAvatar` and the deprecated `createAvatarElement`, the utilities above are everything
+    `@avatar-generator/core` exports at runtime. Anything not listed — the seed hash behind clip-path ids, for instance
+    — is internal and may change in a minor release.
+</Aside>
 
 ## Types
 
-These are the only types `@avatar-generator/core` declares. Everything
-style-specific lives in the style's own package.
+`@avatar-generator/core` declares five types and no more: `AvatarOptions`
+(the [common options](#common-options) above), `Style`, `AvatarResult`,
+`Random`, and the deprecated `LegacyAvatarOptions`. Everything style-specific
+lives in the style's own package.
 
 ### Style Interface
 
-<Code
-    code={`
+```ts
 interface Style<T extends AvatarOptions = AvatarOptions> {
-  name: string;
-  create(options: T): AvatarResult;
+    name: string;
+    create(options: T): AvatarResult;
 }
-`}
-    lang="ts"
-></Code>
+```
 
 ### AvatarResult
 
-<Code
-    code={`
+```ts
 interface AvatarResult {
-  svg: string;
-  toDataUri(): string;
+    svg: string;
+    toDataUri(): string;
 }
-`}
-    lang="ts"
-></Code>
+```
 
 ### Random
 
-<Code
-    code={`
+```ts
 interface Random {
-  next(): number;
-  int(min: number, max: number): number;
-  pick<T>(array: T[]): T;
-  bool(probability?: number): boolean;
-  shuffle<T>(array: T[]): T[];
+    next(): number;
+    int(min: number, max: number): number;
+    pick<T>(array: T[]): T;
+    bool(probability?: number): boolean;
+    shuffle<T>(array: T[]): T[];
 }
-`}
-    lang="ts"
-></Code>
+```
+
+### LegacyAvatarOptions
+
+The v1 options shape, kept only for `createAvatarElement` below.
+
+```ts
+interface LegacyAvatarOptions {
+    name: string;
+    backgroundColor?: string | string[];
+    gradientDirection?: "vertical" | "horizontal";
+    textColor?: string;
+    fontSize?: string;
+    shape?: "circle" | "square";
+    width?: string;
+    height?: string;
+    tooltip?: boolean;
+    additionalClasses?: string;
+}
+```
+
+## Deprecated: the v1 element API
+
+`createAvatarElement` is the original v1 function. It builds a DOM `<div>` with
+CSS-styled initials — not deterministic SVG, and not a style. It survives so a
+v1 codebase can migrate incrementally.
+
+```ts
+import { createAvatarElement } from "@avatar-generator/core";
+
+const element = createAvatarElement({ name: "Hugo GB", backgroundColor: "#4CAF50" });
+document.body.appendChild(element);
+```
+
+<Aside type="caution">
+    Deprecated, and not a supported path for new code. It calls `document.createElement`, so it throws during
+    server-side rendering; it ignores every style and every option on this page; and it will be removed in a future
+    major. Use `createAvatar` with a style instead — see the [Migration Guide](/reference/migration/).
+</Aside>

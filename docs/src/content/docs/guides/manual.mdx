@@ -1,63 +1,48 @@
 ---
 title: Manual Usage
-description: Learn how to use @avatar-generator with the core package directly.
+description: Use @avatar-generator directly through the core package — createAvatar, the shared options, and every style's own options.
 ---
 
-import { Tabs, TabItem } from "@astrojs/starlight/components";
-import { Code } from "@astrojs/starlight/components";
+import { Aside } from "@astrojs/starlight/components";
 
-The core package provides a simple API to generate SVG avatars. Choose a style and pass options to create deterministic avatars.
+`@avatar-generator/core` gives you one function, `createAvatar(style, options)`,
+which returns an SVG string. No framework, no DOM, no build step required.
 
-## Basic Usage
+## Basic usage
 
-<Tabs syncKey="language">
-  <TabItem id="typescript" label="TypeScript">
-<Code code={`
+```ts
 import { createAvatar } from "@avatar-generator/core";
 import { initials } from "@avatar-generator/style-initials";
 
 const avatar = createAvatar(initials, {
-seed: "Hugo GB",
-size: 64,
+    seed: "Hugo GB",
+    size: 64,
 });
 
-// Get the SVG string
+// The raw SVG markup
 console.log(avatar.svg);
 
-// Or use as an image src
+// …or a data URI for an <img>
 const img = document.createElement("img");
 img.src = avatar.toDataUri();
 document.body.appendChild(img);
-`} lang="ts"></Code>
+```
 
-  </TabItem>
-  <TabItem id="javascript" label="JavaScript">
-<Code code={`
-import { createAvatar } from "@avatar-generator/core";
-import { initials } from "@avatar-generator/style-initials";
+The package is plain JavaScript with type declarations alongside it, so the
+same code works unchanged in a `.js` file — drop the type imports and nothing
+else changes.
 
-const avatar = createAvatar(initials, {
-seed: "Hugo GB",
-size: 64,
-});
+`avatar.svg` is a complete `<svg>` element as a string. Inline it when you
+control the surrounding markup — it is smaller than a data URI and styleable
+with CSS. Use `toDataUri()` when you need something that fits in an `src`
+attribute.
 
-// Get the SVG string
-console.log(avatar.svg);
+## Using different styles
 
-// Or use as an image src
-const img = document.createElement("img");
-img.src = avatar.toDataUri();
-document.body.appendChild(img);
-`} lang="js"></Code>
+A style is just an object you pass as the first argument, so switching styles
+means switching imports.
 
-  </TabItem>
-</Tabs>
-
-## Using Different Styles
-
-Each style creates a unique visual representation:
-
-<Code code={`
+```ts
 import { createAvatar } from "@avatar-generator/core";
 import { initials } from "@avatar-generator/style-initials";
 import { geometric } from "@avatar-generator/style-geometric";
@@ -66,170 +51,267 @@ import { rings } from "@avatar-generator/style-rings";
 import { faces } from "@avatar-generator/style-faces";
 import { illustrated } from "@avatar-generator/style-illustrated";
 import { anime } from "@avatar-generator/style-anime";
+import { abstract } from "@avatar-generator/style-abstract";
+import { emoji } from "@avatar-generator/style-emoji";
+import { animals } from "@avatar-generator/style-animals";
+import { gradient } from "@avatar-generator/style-gradient";
 
-// Same seed generates consistent avatars across styles
+// One seed, eleven different deterministic results
 const seed = "user-123";
 
-const initialsAvatar = createAvatar(initials, { seed });
-const geometricAvatar = createAvatar(geometric, { seed });
-const pixelsAvatar = createAvatar(pixels, { seed });
-const ringsAvatar = createAvatar(rings, { seed });
-const facesAvatar = createAvatar(faces, { seed });
-const illustratedAvatar = createAvatar(illustrated, { seed });
-const animeAvatar = createAvatar(anime, { seed });
-`} lang="ts"></Code>
+const all = [initials, geometric, pixels, rings, faces, illustrated, anime, abstract, emoji, animals, gradient].map(
+    (style) => createAvatar(style, { seed }),
+);
+```
 
-## Customization Options
+## Shared options
 
-All styles share common options:
+Every style accepts these, whatever it draws:
 
-<Code code={`
+```ts
 import { createAvatar } from "@avatar-generator/core";
 import { geometric } from "@avatar-generator/style-geometric";
 
 const avatar = createAvatar(geometric, {
-seed: "unique-id",
-size: 128, // Avatar size in pixels
-square: true, // Use square shape instead of circle
-transparent: false, // Transparent background
-colors: ["#FF6B6B", "#4ECDC4", "#45B7D1"], // Custom color palette
-border: {
-width: 2,
-color: "#333",
-},
-rotate: 45, // Rotation in degrees
-flip: false, // Horizontal flip
-scale: 0.9, // Scale factor
+    seed: "unique-id", // required — drives every choice
+    size: 128, // pixels (default: 64)
+    square: true, // square instead of circle (default: false)
+    transparent: false, // transparent background (default: false)
+    colors: ["#FF6B6B", "#4ECDC4", "#45B7D1"], // palette to pick from
+    border: { width: 2, color: "#333" }, // optional border
+    rotate: 45, // degrees (default: 0)
+    flip: false, // horizontal flip (default: false)
+    scale: 0.9, // scale factor (default: 1)
 });
-`} lang="ts"></Code>
+```
 
-## Style-Specific Options
+`colors` is a palette, not a single background: the style picks from it using
+the seed, so two users with the same palette still get different colors.
 
-### Initials Style
+## Style-specific options
 
-<Code code={`
-import { createAvatar } from "@avatar-generator/core";
+Each style also owns its own option type, exported from its own package:
+
+```ts
+import { faces, type FacesOptions } from "@avatar-generator/style-faces";
+```
+
+<Aside type="caution" title="Option types moved in v3">
+    In v2 these types lived in `@avatar-generator/core`. They now live in the style that implements them. If you are
+    upgrading, see the [Migration Guide](/reference/migration/).
+</Aside>
+
+Anything you leave unset is chosen deterministically from the seed. Setting a
+value pins it for every seed — useful for a themed set, but it removes that
+dimension of variety.
+
+<Aside>
+    Categorical options are validated at runtime. Passing a value that is not in the list throws immediately, naming the
+    option and the accepted values, rather than silently rendering something unexpected.
+</Aside>
+
+### Initials
+
+```ts
 import { initials } from "@avatar-generator/style-initials";
 
-const avatar = createAvatar(initials, {
-seed: "john.doe@example.com",
-name: "Hugo GB", // Name to extract initials from (defaults to seed)
-fontFamily: "Arial", // Font family
-fontWeight: 700, // Font weight
-textColor: "#ffffff", // Text color
+createAvatar(initials, {
+    seed: "john.doe@example.com",
+    name: "Hugo GB", // name to take initials from (default: the seed)
+    fontFamily: "Arial", // default: "sans-serif"
+    fontWeight: 700, // default: 600
+    textColor: "#ffffff", // default: "#fff"
 });
-`} lang="ts"></Code>
+```
 
-### Geometric Style (Identicon)
+Splitting `seed` from `name` is the point of this style: seed on the stable user
+ID so the color never changes, and display whatever name you currently have.
 
-<Code code={`
-import { createAvatar } from "@avatar-generator/core";
+### Geometric
+
+```ts
 import { geometric } from "@avatar-generator/style-geometric";
 
-const avatar = createAvatar(geometric, {
-seed: "unique-id",
-gridSize: 5, // Grid size (default: 5, odd recommended)
-padding: 1, // Padding cells around pattern (default: 1)
-foregroundColor: "#2C3E50", // Override foreground color
+createAvatar(geometric, {
+    seed: "unique-id",
+    gridSize: 5, // default: 5; odd values stay symmetrical
+    padding: 1, // cells of padding around the pattern (default: 1)
+    foregroundColor: "#2C3E50", // default: picked from the palette
 });
-`} lang="ts"></Code>
+```
 
-### Pixels Style (Pixel Faces)
+### Pixels
 
-<Code code={`
-import { createAvatar } from "@avatar-generator/core";
+```ts
 import { pixels } from "@avatar-generator/style-pixels";
 
-const avatar = createAvatar(pixels, {
-seed: "unique-id",
-pixelSize: 8, // Pixel grid size (default: 8)
-accessories: true, // Enable glasses (default: true, 15% chance)
-featureColor: "#2C1810", // Override eye/mouth color
+createAvatar(pixels, {
+    seed: "unique-id",
+    pixelSize: 8, // grid resolution (default: 8)
+    skinTones: ["#FFDBB4"], // default: the SKIN_TONES palette
+    accessories: true, // allow glasses (default: true, 15% chance)
+    featureColor: "#2C1810", // eyes and mouth
 });
-`} lang="ts"></Code>
+```
 
-### Rings Style
+### Rings
 
-<Code code={`
-import { createAvatar } from "@avatar-generator/core";
+```ts
 import { rings } from "@avatar-generator/style-rings";
 
-const avatar = createAvatar(rings, {
-seed: "unique-id",
-ringCount: 5, // Number of rings (default: 4)
-ringGap: 3, // Gap between rings (default: 2)
-segmented: true, // Allow segmented pie-slice rings (default: true)
-dashed: true, // Allow dashed rings (default: true)
-centerStyle: "diamond", // Center decoration: solid, dot, ring, diamond, none
+createAvatar(rings, {
+    seed: "unique-id",
+    ringCount: 5, // default: 4
+    ringGap: 3, // default: 2
+    segmented: true, // allow pie-slice rings (default: true)
+    dashed: true, // allow dashed rings (default: true)
+    centerStyle: "diamond", // "solid" | "dot" | "ring" | "diamond" | "none"
 });
-`} lang="ts"></Code>
+```
 
-### Faces Style
+### Faces
 
-<Code code={`
-import { createAvatar } from "@avatar-generator/core";
+```ts
 import { faces } from "@avatar-generator/style-faces";
 
-const avatar = createAvatar(faces, {
-seed: "unique-id",
-featureColor: "#2C1810", // Override feature color
-eyebrows: true, // Enable eyebrows (default: true, 50% chance)
-ears: true, // Enable ears (default: true, 40% chance)
-nose: true, // Enable nose (default: true, 30% chance)
-hairStyle: "curly", // Override hair style
-eyeStyle: "happy", // Override eye style
-mouthStyle: "smile", // Override mouth style
+createAvatar(faces, {
+    seed: "unique-id",
+    skinTones: ["#FFDBB4"], // default: the SKIN_TONES palette
+    featureColor: "#2C1810", // eyes, mouth, eyebrows
+    eyebrows: true, // default: true (50% chance)
+    ears: true, // default: true (40% chance)
+    nose: true, // default: true (30% chance)
+    hairStyle: "side-swept", // "none" | "flat-top" | "cap" | "side-swept" | "spiky" | "round-top" | "mohawk" | "beanie"
+    eyeStyle: "round", // "dots" | "rectangles" | "lines" | "round"
+    mouthStyle: "rect-smile", // "line" | "rect-smile" | "open-rect" | "zigzag" | "dot"
 });
-`} lang="ts"></Code>
+```
 
-### Illustrated Style
+<Aside type="caution">
+    Faces has its own vocabulary — `"curly"`, `"happy"` and `"smile"` belong to other styles and will throw here. The
+    values above are the complete lists.
+</Aside>
 
-<Code code={`
-import { createAvatar } from "@avatar-generator/core";
+### Illustrated
+
+```ts
 import { illustrated } from "@avatar-generator/style-illustrated";
 
-const avatar = createAvatar(illustrated, {
-seed: "unique-id",
-hairStyle: "afro", // Override hair (12 styles)
-eyeStyle: "round", // Override eyes (8 styles)
-eyebrowStyle: "natural", // Override eyebrows (6 styles)
-noseStyle: "button", // Override nose (5 styles)
-mouthStyle: "bigSmile", // Override mouth (8 styles)
-glasses: true, // Enable glasses (default: true, 20% chance)
-hat: true, // Enable hat (default: true, 10% chance)
-earrings: true, // Enable earrings (default: true, 8% chance)
-facialHair: true, // Enable facial hair (default: true, 15% chance)
+createAvatar(illustrated, {
+    seed: "unique-id",
+    hairStyle: "afro", // 12 styles
+    eyeStyle: "round", // 8 styles
+    eyebrowStyle: "natural", // 6 styles
+    noseStyle: "button", // 5 styles
+    mouthStyle: "bigSmile", // 8 styles
+    glasses: true, // default: true (20% chance)
+    hat: true, // default: true (10% chance)
+    earrings: true, // default: true (8% chance)
+    facialHair: true, // default: true (15% chance)
 });
-`} lang="ts"></Code>
+```
 
-### Anime Style
+### Anime
 
-<Code code={`
-import { createAvatar } from "@avatar-generator/core";
+```ts
 import { anime } from "@avatar-generator/style-anime";
 
-const avatar = createAvatar(anime, {
-seed: "unique-id",
-hairStyle: "twin-tails", // Override hair (10 styles)
-eyeStyle: "sparkly", // Override eyes (8 styles)
-mouthStyle: "cat-mouth", // Override mouth (6 styles)
-noseStyle: "dot", // Override nose (3 styles)
-bangs: true, // Enable bangs over forehead
-ahoge: true, // Enable ahoge hair strand (default: 40% chance)
-blush: true, // Enable blush on cheeks (default: 35% chance)
-accessories: true, // Enable accessories (bandaid, headband)
+createAvatar(anime, {
+    seed: "unique-id",
+    hairStyle: "twin-tails", // 10 styles
+    eyeStyle: "sparkly", // 8 styles
+    mouthStyle: "cat-mouth", // 6 styles
+    noseStyle: "dot", // "dot" | "line" | "shadow"
+    bangs: true, // default: random (60% chance)
+    ahoge: true, // the stray hair strand (default: random, 40%)
+    blush: true, // default: random (35% chance)
+    accessories: true, // bandaid, headband (default: true)
 });
-`} lang="ts"></Code>
+```
 
-## Deterministic Generation
+### Abstract
 
-Avatars are deterministic - the same seed and options always produce the same result:
+```ts
+import { abstract } from "@avatar-generator/style-abstract";
 
-<Code code={`
-const avatar1 = createAvatar(initials, { seed: "user-123" });
-const avatar2 = createAvatar(initials, { seed: "user-123" });
+createAvatar(abstract, {
+    seed: "unique-id",
+    composition: "bauhaus", // "mondrian" | "kandinsky" | "bauhaus"
+    shapeCount: 3, // accent shapes in the Kandinsky composition (default: 3)
+});
+```
 
-// avatar1.svg === avatar2.svg (always true)
-`} lang="ts"></Code>
+### Emoji
 
-This makes avatars perfect for user profiles, as each user gets a unique but consistent avatar based on their ID.
+```ts
+import { emoji } from "@avatar-generator/style-emoji";
+
+createAvatar(emoji, {
+    seed: "unique-id",
+    expression: "laughing", // "happy" | "laughing" | "cool" | "wink" | "love"
+    // | "sad" | "angry" | "surprised" | "sleepy" | "neutral"
+    faceColor: "#FFD93D", // default: the yellow emoji palette
+});
+```
+
+### Animals
+
+```ts
+import { animals } from "@avatar-generator/style-animals";
+
+createAvatar(animals, {
+    seed: "unique-id",
+    animal: "fox", // "cat" | "dog" | "bear" | "fox" | "panda" | "bunny" | "frog" | "monkey"
+    furTones: ["#C68B59"], // default: earth tones
+});
+```
+
+### Gradient
+
+```ts
+import { gradient } from "@avatar-generator/style-gradient";
+
+createAvatar(gradient, {
+    seed: "unique-id",
+    direction: "radial", // "linear" | "radial" | "diagonal"
+    pattern: "waves", // "none" | "dots" | "stripes" | "waves" | "grid"
+    colorStops: 3, // 2 or 3 (default: 2)
+});
+```
+
+## Building option pickers
+
+Each style exports the arrays behind its literal unions, so a settings UI can be
+generated rather than hand-maintained:
+
+```ts
+import { faces, HAIR_STYLES, EYE_STYLES, MOUTH_STYLES } from "@avatar-generator/style-faces";
+
+for (const hairStyle of HAIR_STYLES) {
+    renderOption(hairStyle, createAvatar(faces, { seed: "preview", hairStyle }));
+}
+```
+
+## Determinism
+
+The same seed and options always produce the same result:
+
+```ts
+const a = createAvatar(initials, { seed: "user-123" });
+const b = createAvatar(initials, { seed: "user-123" });
+
+a.svg === b.svg; // always true
+```
+
+That holds across processes and platforms, not just within one page — a Node
+server render and a browser render of the same seed produce identical bytes. So
+you never need to store a generated avatar: the seed is the storage.
+
+Seed on something stable, like a user ID. Seeding on an email or display name
+means the avatar changes when the user does.
+
+## Next
+
+- [API Reference](/reference/avatar/) — every option, type and exported helper
+- [Cookbook](/guides/cookbook/) — groups, image fallbacks, theming, caching, SSR
+- [Creating Custom Styles](/guides/custom-styles/) — write and publish your own
