@@ -75,8 +75,14 @@ try {
     console.log(`Packed ${packed.length} package(s) at ${version}\n`);
 
     // ---- 2. Publish each tarball ------------------------------------------
+    // npm's OIDC helper is explicitly written never to throw: if the token
+    // exchange fails — most often because the package has no trusted publisher
+    // registered — it logs the reason and returns, and npm then falls back to
+    // ordinary credentials that deliberately do not exist. The publish fails as
+    // a plain auth error with no hint of the real cause, so run verbose and
+    // keep the output to print if something goes wrong.
     for (const { name, tarball } of packed) {
-        const args = ["publish", tarball, "--access", "public"];
+        const args = ["publish", tarball, "--access", "public", "--loglevel", "verbose"];
         if (DRY_RUN) args.push("--dry-run");
 
         try {
@@ -84,12 +90,17 @@ try {
             published.push(name);
             console.log(`  ${DRY_RUN ? "would publish" : "published"} ${name}@${version}`);
         } catch (err) {
-            const detail = String(err.stderr || err.message)
+            const lines = String(err.stderr || err.message)
                 .split("\n")
                 .map((l) => l.trim())
-                .filter((l) => l.startsWith("npm error") || /Error|error:/.test(l))
-                .slice(0, 3)
-                .join(" | ");
+                .filter(Boolean);
+
+            // The `oidc` lines are the ones that say why trusted publishing
+            // did not take, which the error itself never mentions.
+            const oidc = lines.filter((l) => /\boidc\b/i.test(l)).slice(0, 3);
+            const errors = lines.filter((l) => l.startsWith("npm error")).slice(0, 3);
+            const detail = [...oidc, ...errors].join(" | ") || "unknown failure";
+
             failures.push({ name, detail });
             console.error(`  FAILED ${name}@${version} — ${detail}`);
         }
