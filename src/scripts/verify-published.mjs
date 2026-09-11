@@ -47,7 +47,10 @@ const missing = [];
 
 for (const name of names) {
     try {
-        const version = execFileSync("npm", ["view", `${name}@${expected}`, "version"], {
+        // --prefer-online, because npm caches the packument: immediately after a
+        // publish a cached copy will not list the new version and this check
+        // reports a false negative for a package that is in fact live.
+        const version = execFileSync("npm", ["view", `${name}@${expected}`, "version", "--prefer-online"], {
             encoding: "utf8",
             stdio: ["ignore", "pipe", "pipe"],
         }).trim();
