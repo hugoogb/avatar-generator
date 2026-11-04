@@ -1,6 +1,6 @@
 ---
-title: Introduction
-description: Generate unique, deterministic SVG avatars with eleven styles, in any framework.
+title: "What Is @avatar-generator?"
+description: An open-source JavaScript library that generates deterministic SVG avatars from any seed, with eleven styles, no runtime dependencies and SSR support.
 ---
 
 **@avatar-generator** generates unique, deterministic SVG avatars. Give it a

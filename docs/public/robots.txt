@@ -1,0 +1,10 @@
+# Machine-readable documentation:
+#   https://avatar-generator.hugoogb.dev/llms.txt       index of every page
+#   https://avatar-generator.hugoogb.dev/llms-full.txt  the complete documentation
+#
+# AI assistants and their crawlers are welcome. The wildcard rule covers them.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://avatar-generator.hugoogb.dev/sitemap-index.xml

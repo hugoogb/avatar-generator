@@ -1,0 +1,21 @@
+---
+/**
+ * Starlight's footer plus an author credit, so every page links back to the
+ * portfolio on the apex domain.
+ */
+import Default from "@astrojs/starlight/components/Footer.astro";
+---
+
+<Default {...Astro.props} />
+<p class="credit">
+    Built by <a href="https://hugoogb.dev/" rel="author">Hugo García Benjumea</a> · MIT licensed
+</p>
+
+<style>
+    .credit {
+        margin-top: 2rem;
+        text-align: center;
+        font-size: var(--sl-text-sm);
+        color: var(--sl-color-gray-3);
+    }
+</style>
