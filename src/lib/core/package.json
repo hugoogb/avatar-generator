@@ -1,7 +1,7 @@
 {
     "name": "@avatar-generator/core",
     "version": "3.0.0",
-    "description": "Core logic for multi-style SVG avatar generation",
+    "description": "Generate deterministic SVG avatars from any seed, in eleven styles, with no runtime dependencies",
     "keywords": [
         "avatar",
         "svg",
@@ -14,7 +14,7 @@
         "url": "git+https://github.com/hugoogb/avatar-generator.git",
         "directory": "src/lib/core"
     },
-    "homepage": "https://github.com/hugoogb/avatar-generator#readme",
+    "homepage": "https://avatar-generator.hugoogb.dev/",
     "bugs": {
         "url": "https://github.com/hugoogb/avatar-generator/issues"
     },

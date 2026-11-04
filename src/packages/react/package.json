@@ -1,6 +1,7 @@
 {
     "name": "@avatar-generator/react",
     "version": "3.0.0",
+    "description": "Deterministic SVG avatar component for React 18 and 19, in eleven styles",
     "keywords": [
         "avatar",
         "react",
@@ -13,7 +14,7 @@
         "url": "git+https://github.com/hugoogb/avatar-generator.git",
         "directory": "src/packages/react"
     },
-    "homepage": "https://github.com/hugoogb/avatar-generator#readme",
+    "homepage": "https://avatar-generator.hugoogb.dev/",
     "bugs": {
         "url": "https://github.com/hugoogb/avatar-generator/issues"
     },

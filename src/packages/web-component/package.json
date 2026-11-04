@@ -1,6 +1,7 @@
 {
     "name": "@avatar-generator/web-component",
     "version": "3.0.0",
+    "description": "Framework-agnostic <avatar-generator> custom element for deterministic SVG avatars",
     "keywords": [
         "avatar",
         "web-component",
@@ -13,7 +14,7 @@
         "url": "git+https://github.com/hugoogb/avatar-generator.git",
         "directory": "src/packages/web-component"
     },
-    "homepage": "https://github.com/hugoogb/avatar-generator#readme",
+    "homepage": "https://avatar-generator.hugoogb.dev/",
     "bugs": {
         "url": "https://github.com/hugoogb/avatar-generator/issues"
     },

@@ -1,6 +1,7 @@
 {
     "name": "@avatar-generator/vue",
     "version": "3.0.0",
+    "description": "Deterministic SVG avatar component for Vue 3, in eleven styles",
     "keywords": [
         "avatar",
         "vue",
@@ -13,7 +14,7 @@
         "url": "git+https://github.com/hugoogb/avatar-generator.git",
         "directory": "src/packages/vue"
     },
-    "homepage": "https://github.com/hugoogb/avatar-generator#readme",
+    "homepage": "https://avatar-generator.hugoogb.dev/",
     "bugs": {
         "url": "https://github.com/hugoogb/avatar-generator/issues"
     },
