@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/svelte",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "description": "Deterministic SVG avatar component for Svelte 4 and 5, in eleven styles",
     "keywords": [
         "avatar",

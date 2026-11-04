@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com).
 
+## [3.0.1] — Package Metadata & Release Verification
+
+No code changes to any package.
+
+### Changed
+
+- Added missing descriptions to the framework packages, pointed `homepage` at the
+  documentation site, and updated README links to the custom domain
+
+### Tooling
+
+- `scripts/verify-published.mjs` now fails a release when a package has no
+  provenance attestation, which also catches a version published by hand
+- `scripts/configure-trusted-publishing.mjs` lets npm prompt for 2FA, and `--list`
+  no longer hides npm's error or exits 0 when it could read nothing
+
 ## [3.0.0] — Distribution, Release Pipeline & CI Repair
 
 ### Breaking
