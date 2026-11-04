@@ -193,7 +193,10 @@ Fix synchronization issues between source, playgrounds, and documentation.
 
 - [x] Trusted publishing configured per package, replacing the `NPM_TOKEN`
       secret the pipeline was originally going to need
-- [ ] Push the `v3.0.0` tag to publish
+- [x] Push the `v3.0.0` tag to publish — the tag run published nothing, because
+      all 17 packages were published by hand, so 3.0.0 has no provenance
+- [ ] Publish a release through the workflow and confirm its packages carry
+      provenance attestations
 - [x] Angular playground — every framework wrapper now has one, and all six
       are verified to render in a real browser, not just to build
 

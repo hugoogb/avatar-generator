@@ -69,7 +69,9 @@ rather than the 2.6.1 originally prepared.
   (OIDC) rather than a long-lived `NPM_TOKEN`. No publish secret is stored in the
   repository, and provenance is generated automatically. The publish step packs
   with `pnpm` — which resolves `workspace:^` and `publishConfig.directory` — and
-  publishes with `npm`, which is the side that performs the OIDC exchange
+  publishes with `npm`, which is the side that performs the OIDC exchange.
+  The 3.0.0 packages themselves were published by hand, so they carry no
+  provenance attestation
 - `scripts/configure-trusted-publishing.mjs` configures all 17 packages in one
   run; npm trusted publishing is per-package with no organisation-wide setting
 - `scripts/verify-published.mjs` confirms after a release that every package
