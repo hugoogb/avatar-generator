@@ -59,6 +59,13 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const npm = (args) => execFileSync("npm", args, { encoding: "utf8", stdio: ["inherit", "pipe", "pipe"] });
 
+/**
+ * `npm trust` needs a 2FA approval on accounts that have 2FA, and npm only
+ * offers one when it is attached to a terminal. Capturing its output turns that
+ * prompt into an EOTP failure, so these calls hand it the terminal directly.
+ */
+const npmInTerminal = (args) => execFileSync("npm", args, { stdio: "inherit" });
+
 const version = npm(["--version"]).trim();
 const [major, minor, patch] = version.split(".").map(Number);
 const supported = major > 11 || (major === 11 && (minor > 5 || (minor === 5 && patch >= 1)));
@@ -69,20 +76,21 @@ if (!supported) {
 }
 
 if (LIST) {
+    const unreadable = [];
     for (const name of names) {
+        console.log(`\n=== ${name} ===`);
         try {
-            const out = npm(["trust", "list", name]).trim();
-            console.log(`\n=== ${name} ===\n${out || "(no trusted publishers)"}`);
-        } catch (err) {
-            console.log(
-                `\n=== ${name} ===\n  could not read: ${
-                    String(err.stderr || err.message)
-                        .trim()
-                        .split("\n")[0]
-                }`,
-            );
+            npmInTerminal(["trust", "list", name]);
+        } catch {
+            unreadable.push(name);
+            console.error("  could not read — see npm's error above");
         }
         await sleep(2000);
+    }
+    console.log("\nA package with nothing listed under its heading has no trusted publisher.");
+    if (unreadable.length > 0) {
+        console.error(`Could not read ${unreadable.length} of ${names.length} package(s).`);
+        process.exit(1);
     }
     process.exit(0);
 }
@@ -104,17 +112,12 @@ for (const name of names) {
     }
 
     try {
-        npm(args);
+        npmInTerminal(args);
         configured++;
         console.log(`  ✓ ${name}`);
-    } catch (err) {
-        const detail =
-            String(err.stderr || err.message)
-                .trim()
-                .split("\n")
-                .find((l) => l.includes("npm error")) ?? "failed";
-        failures.push({ name, detail });
-        console.error(`  ✗ ${name} — ${detail}`);
+    } catch {
+        failures.push(name);
+        console.error(`  ✗ ${name} — see npm's error above`);
     }
 
     // Rate limiting: npm's docs suggest ~2s between calls.
@@ -125,7 +128,7 @@ if (DRY_RUN) process.exit(0);
 
 if (failures.length > 0) {
     console.error(`\n${configured} configured, ${failures.length} failed:`);
-    for (const { name, detail } of failures) console.error(`  ${name}: ${detail}`);
+    for (const name of failures) console.error(`  ${name}`);
     console.error("\nA package must already exist on npm before a trusted publisher can be attached to it.");
     process.exit(1);
 }

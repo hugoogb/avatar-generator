@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/style-pixels",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "description": "Pixel art avatar style for @avatar-generator/core",
     "keywords": [
         "avatar",

@@ -1,6 +1,6 @@
 /**
  * Confirms every package actually landed on the registry at the expected
- * version, after publishing.
+ * version with a provenance attestation, after publishing.
  *
  * A publish loop that reports success still leaves room for a half-released
  * scope — a rate limit, a missing trusted publisher on one package, a registry
@@ -59,9 +59,9 @@ const BACKOFF_MS = 15_000;
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-const publishedVersion = (name) => {
+const registryField = (name, field) => {
     try {
-        return execFileSync("npm", ["view", `${name}@${expected}`, "version", "--prefer-online"], {
+        return execFileSync("npm", ["view", `${name}@${expected}`, field, "--prefer-online"], {
             encoding: "utf8",
             stdio: ["ignore", "pipe", "pipe"],
         }).trim();
@@ -70,36 +70,45 @@ const publishedVersion = (name) => {
     }
 };
 
+/**
+ * Being on the registry does not show the release workflow put it there. The
+ * publish step skips any version that already exists, so a version published by
+ * hand passes it having published nothing, which is how 3.0.0 shipped without
+ * provenance. An attestation exists only if the workflow really did publish.
+ */
+const problemWith = (name) => {
+    if (registryField(name, "version") !== expected) return "not on the registry";
+    if (!registryField(name, "dist.attestations.url")) return "no provenance attestation";
+    return null;
+};
+
 let pending = [...names];
-const missing = [];
+const problems = new Map();
 
 for (let attempt = 1; attempt <= ATTEMPTS && pending.length > 0; attempt++) {
     if (attempt > 1) {
-        console.log(`\n  ${pending.length} not visible yet; waiting ${BACKOFF_MS / 1000}s for the registry…\n`);
+        console.log(`\n  ${pending.length} not verified yet; waiting ${BACKOFF_MS / 1000}s for the registry…\n`);
         await sleep(BACKOFF_MS);
     }
 
     const stillPending = [];
     for (const name of pending) {
-        const version = publishedVersion(name);
-        if (version === expected) {
-            console.log(`  ✓ ${name}@${version}`);
-        } else {
+        const problem = problemWith(name);
+        if (problem) {
+            problems.set(name, problem);
             stillPending.push(name);
+        } else {
+            problems.delete(name);
+            console.log(`  ✓ ${name}@${expected}`);
         }
     }
     pending = stillPending;
 }
 
-for (const name of pending) {
-    missing.push(`${name} (not found after ${ATTEMPTS} attempts)`);
-    console.error(`  ✗ ${name}@${expected} not on the registry`);
-}
-
-if (missing.length > 0) {
-    console.error(`\n${names.length - missing.length}/${names.length} published. Missing:`);
-    for (const m of missing) console.error(`  ${m}`);
+if (problems.size > 0) {
+    console.error(`\n${names.length - problems.size}/${names.length} verified after ${ATTEMPTS} attempts. Failed:`);
+    for (const [name, problem] of problems) console.error(`  ✗ ${name}@${expected} — ${problem}`);
     process.exit(1);
 }
 
-console.log(`\nAll ${names.length} packages are live at ${expected}.`);
+console.log(`\nAll ${names.length} packages are live at ${expected} with provenance attestations.`);
