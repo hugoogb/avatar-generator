@@ -27,11 +27,11 @@ el.options = { seed: "john.doe@example.com", size: 64 };
 Any of the eleven style packages works here:
 `@avatar-generator/style-initials`, `@avatar-generator/style-geometric`, `@avatar-generator/style-pixels`, `@avatar-generator/style-rings`, `@avatar-generator/style-faces`, `@avatar-generator/style-illustrated`, `@avatar-generator/style-anime`, `@avatar-generator/style-abstract`, `@avatar-generator/style-emoji`, `@avatar-generator/style-animals`, `@avatar-generator/style-gradient`
 
-See the [Web Component guide](https://avatar-generator-two.vercel.app/guides/web-component/) for the full prop list.
+See the [Web Component guide](https://avatar-generator.hugoogb.dev/guides/web-component/) for the full prop list.
 
 ## Documentation
 
-Full documentation: [avatar-generator-two.vercel.app](https://avatar-generator-two.vercel.app)
+Full documentation: [avatar-generator.hugoogb.dev](https://avatar-generator.hugoogb.dev)
 
 ## License
 

@@ -1,6 +1,7 @@
 {
     "name": "@avatar-generator/svelte",
     "version": "3.0.0",
+    "description": "Deterministic SVG avatar component for Svelte 4 and 5, in eleven styles",
     "keywords": [
         "avatar",
         "svelte",
@@ -13,7 +14,7 @@
         "url": "git+https://github.com/hugoogb/avatar-generator.git",
         "directory": "src/packages/svelte"
     },
-    "homepage": "https://github.com/hugoogb/avatar-generator#readme",
+    "homepage": "https://avatar-generator.hugoogb.dev/",
     "bugs": {
         "url": "https://github.com/hugoogb/avatar-generator/issues"
     },

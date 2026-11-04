@@ -1,6 +1,7 @@
 {
     "name": "@avatar-generator/angular",
     "version": "3.0.0",
+    "description": "Deterministic SVG avatar component for Angular 17 through 21, in eleven styles",
     "keywords": [
         "avatar",
         "angular",
@@ -13,7 +14,7 @@
         "url": "git+https://github.com/hugoogb/avatar-generator.git",
         "directory": "src/packages/angular"
     },
-    "homepage": "https://github.com/hugoogb/avatar-generator#readme",
+    "homepage": "https://avatar-generator.hugoogb.dev/",
     "bugs": {
         "url": "https://github.com/hugoogb/avatar-generator/issues"
     },

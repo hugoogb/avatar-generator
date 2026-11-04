@@ -24,12 +24,12 @@ img.src = avatar.toDataUri();
 ```
 
 Options left unset are chosen deterministically from the seed. See the
-[API reference](https://avatar-generator-two.vercel.app/reference/avatar/) for every option this style accepts,
-or the [configurator](https://avatar-generator-two.vercel.app/reference/configurator/) to try them interactively.
+[API reference](https://avatar-generator.hugoogb.dev/reference/avatar/) for every option this style accepts,
+or the [configurator](https://avatar-generator.hugoogb.dev/reference/configurator/) to try them interactively.
 
 ## Documentation
 
-Full documentation: [avatar-generator-two.vercel.app](https://avatar-generator-two.vercel.app)
+Full documentation: [avatar-generator.hugoogb.dev](https://avatar-generator.hugoogb.dev)
 
 ## License
 

@@ -38,7 +38,7 @@ import { faces, type FacesOptions } from "@avatar-generator/style-faces";
 
 In 2.x these types lived here; they moved in 3.0.0 so a style published by
 anyone can be typed. See the
-[migration guide](https://avatar-generator-two.vercel.app/reference/migration/).
+[migration guide](https://avatar-generator.hugoogb.dev/reference/migration/).
 
 ## Styles
 
@@ -50,7 +50,7 @@ anyone can be typed. See the
 
 ## Documentation
 
-Full documentation: [avatar-generator-two.vercel.app](https://avatar-generator-two.vercel.app)
+Full documentation: [avatar-generator.hugoogb.dev](https://avatar-generator.hugoogb.dev)
 
 ## License
 

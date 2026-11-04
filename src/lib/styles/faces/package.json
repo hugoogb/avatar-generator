@@ -15,7 +15,7 @@
         "url": "git+https://github.com/hugoogb/avatar-generator.git",
         "directory": "src/lib/styles/faces"
     },
-    "homepage": "https://github.com/hugoogb/avatar-generator#readme",
+    "homepage": "https://avatar-generator.hugoogb.dev/",
     "bugs": {
         "url": "https://github.com/hugoogb/avatar-generator/issues"
     },

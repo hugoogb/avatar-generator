@@ -27,11 +27,11 @@ npm install @avatar-generator/core @avatar-generator/svelte @avatar-generator/st
 Any of the eleven style packages works here:
 `@avatar-generator/style-initials`, `@avatar-generator/style-geometric`, `@avatar-generator/style-pixels`, `@avatar-generator/style-rings`, `@avatar-generator/style-faces`, `@avatar-generator/style-illustrated`, `@avatar-generator/style-anime`, `@avatar-generator/style-abstract`, `@avatar-generator/style-emoji`, `@avatar-generator/style-animals`, `@avatar-generator/style-gradient`
 
-See the [Svelte guide](https://avatar-generator-two.vercel.app/guides/svelte/) for the full prop list.
+See the [Svelte guide](https://avatar-generator.hugoogb.dev/guides/svelte/) for the full prop list.
 
 ## Documentation
 
-Full documentation: [avatar-generator-two.vercel.app](https://avatar-generator-two.vercel.app)
+Full documentation: [avatar-generator.hugoogb.dev](https://avatar-generator.hugoogb.dev)
 
 ## License
 
