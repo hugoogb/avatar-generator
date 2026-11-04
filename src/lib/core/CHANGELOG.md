@@ -1,5 +1,15 @@
 # @avatar-generator/core
 
+## 3.0.1
+
+### Patch Changes
+
+- 503836b: Improve package metadata: add missing descriptions to the framework packages, point `homepage` at the documentation site, and update README links to the custom domain. No code changes.
+- 49847f8: Releases now publish with npm trusted publishing (OIDC) instead of a long-lived
+  `NPM_TOKEN`. Nothing secret is stored in the repository: the workflow exchanges a
+  short-lived GitHub OIDC token for registry credentials, and provenance
+  attestations are generated automatically.
+
 ## 3.0.0
 
 ### Major Changes

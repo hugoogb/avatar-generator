@@ -1,5 +1,13 @@
 # @avatar-generator/react
 
+## 3.0.1
+
+### Patch Changes
+
+- Updated dependencies [503836b]
+- Updated dependencies [49847f8]
+    - @avatar-generator/core@3.0.1
+
 ## 3.0.0
 
 ### Patch Changes

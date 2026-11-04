@@ -115,6 +115,9 @@ Every published tarball is built and checked in CI before it goes out:
 - Publication only from a version tag that matches every package's version,
   with npm provenance
 
+The 3.0.0 packages are an exception: they were published by hand rather than by
+the release workflow, so they have no npm provenance attestation.
+
 These exist because 2.x shipped without them. See
 [Contributing](https://github.com/hugoogb/avatar-generator/blob/develop/CONTRIBUTING.md)
 for how to run them locally.

@@ -161,7 +161,8 @@ git push origin v3.0.0
 The tag triggers `.github/workflows/release.yml`, which re-runs typecheck, tests,
 the build, `publint`, `attw` and the Node smoke test against the tagged tree,
 verifies the tag matches every package version, publishes, and then confirms
-every package resolves from the registry at that version. Nothing publishes on a
+every package resolves from the registry at that version with a provenance
+attestation, so a version published by hand fails the run. Nothing publishes on a
 merge.
 
 `workflow_dispatch` runs the same workflow with `dry_run` on by default.
