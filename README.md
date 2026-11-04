@@ -5,12 +5,18 @@
 [![npm downloads](https://img.shields.io/npm/dm/@avatar-generator/core?style=flat-square)](https://www.npmjs.com/package/@avatar-generator/core)
 [![license](https://img.shields.io/npm/l/@avatar-generator/core?style=flat-square&color=blue)](./LICENSE)
 
-Generate unique, deterministic SVG avatars in eleven styles, from any framework
-or none.
+**@avatar-generator** is an open-source JavaScript and TypeScript library that
+generates deterministic SVG avatars from any seed string, such as a username or
+email address. It has eleven styles and no runtime dependencies, and works with
+React, Vue, Svelte, Angular, a custom element, or plain JavaScript.
+
+[Documentation](https://avatar-generator.hugoogb.dev/) ·
+[Style gallery](https://avatar-generator.hugoogb.dev/reference/gallery/) ·
+[Comparison with DiceBear, Boring Avatars and Jdenticon](https://avatar-generator.hugoogb.dev/get-started/comparison/)
 
 > **Install the 3.x line.** v3.0.0 is the current release and the only supported
 > one — 1.x and 2.x should not be used. See
-> [Versions & Support](https://avatar-generator-two.vercel.app/reference/versioning/).
+> [Versions & Support](https://avatar-generator.hugoogb.dev/reference/versioning/).
 
 ## Features
 
@@ -68,28 +74,28 @@ it together with at least one style.
 
 ## Framework packages
 
-| Package                           | For                                           | Guide                                                                          |
-| --------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------ |
-| `@avatar-generator/react`         | React 18 and 19                               | [React](https://avatar-generator-two.vercel.app/guides/react/)                 |
-| `@avatar-generator/vue`           | Vue 3                                         | [Vue](https://avatar-generator-two.vercel.app/guides/vue/)                     |
-| `@avatar-generator/svelte`        | Svelte 4 and 5                                | [Svelte](https://avatar-generator-two.vercel.app/guides/svelte/)               |
-| `@avatar-generator/angular`       | Angular 17 through 21, standalone or NgModule | [Angular](https://avatar-generator-two.vercel.app/guides/angular/)             |
-| `@avatar-generator/web-component` | Any framework, or none                        | [Web Component](https://avatar-generator-two.vercel.app/guides/web-component/) |
+| Package                           | For                                           | Guide                                                                       |
+| --------------------------------- | --------------------------------------------- | --------------------------------------------------------------------------- |
+| `@avatar-generator/react`         | React 18 and 19                               | [React](https://avatar-generator.hugoogb.dev/guides/react/)                 |
+| `@avatar-generator/vue`           | Vue 3                                         | [Vue](https://avatar-generator.hugoogb.dev/guides/vue/)                     |
+| `@avatar-generator/svelte`        | Svelte 4 and 5                                | [Svelte](https://avatar-generator.hugoogb.dev/guides/svelte/)               |
+| `@avatar-generator/angular`       | Angular 17 through 21, standalone or NgModule | [Angular](https://avatar-generator.hugoogb.dev/guides/angular/)             |
+| `@avatar-generator/web-component` | Any framework, or none                        | [Web Component](https://avatar-generator.hugoogb.dev/guides/web-component/) |
 
 All seventeen packages are released together at one version — mixing majors is
 not supported.
 
 ## Documentation
 
-Full documentation: [avatar-generator-two.vercel.app](https://avatar-generator-two.vercel.app/)
+Full documentation: [avatar-generator.hugoogb.dev](https://avatar-generator.hugoogb.dev/)
 
-- [Installation](https://avatar-generator-two.vercel.app/get-started/installation/)
-- [Manual usage](https://avatar-generator-two.vercel.app/guides/manual/) — the core API
-- [Cookbook](https://avatar-generator-two.vercel.app/guides/cookbook/) — groups, fallbacks, theming, caching, SSR
-- [Creating custom styles](https://avatar-generator-two.vercel.app/guides/custom-styles/)
-- [API reference](https://avatar-generator-two.vercel.app/reference/avatar/)
-- [Style gallery](https://avatar-generator-two.vercel.app/reference/gallery/)
-- [Migration guide](https://avatar-generator-two.vercel.app/reference/migration/) — upgrading from v1 or v2
+- [Installation](https://avatar-generator.hugoogb.dev/get-started/installation/)
+- [Manual usage](https://avatar-generator.hugoogb.dev/guides/manual/) — the core API
+- [Cookbook](https://avatar-generator.hugoogb.dev/guides/cookbook/) — groups, fallbacks, theming, caching, SSR
+- [Creating custom styles](https://avatar-generator.hugoogb.dev/guides/custom-styles/)
+- [API reference](https://avatar-generator.hugoogb.dev/reference/avatar/)
+- [Style gallery](https://avatar-generator.hugoogb.dev/reference/gallery/)
+- [Migration guide](https://avatar-generator.hugoogb.dev/reference/migration/) — upgrading from v1 or v2
 
 ## Playgrounds
 

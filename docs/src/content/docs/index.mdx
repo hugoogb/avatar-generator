@@ -1,5 +1,5 @@
 ---
-title: "@avatar-generator"
+title: SVG Avatar Generator for JavaScript
 description: Generate unique, deterministic SVG avatars in eleven styles, for React, Vue, Svelte, Angular, a custom element, or plain JavaScript.
 template: splash
 hero:
@@ -42,3 +42,76 @@ import { Card, CardGrid } from "@astrojs/starlight/components";
         Support](/reference/versioning/)
     </Card>
 </CardGrid>
+
+## Generate an avatar from any seed
+
+`@avatar-generator` is an open-source JavaScript and TypeScript library that turns any string, such as a username, an email address or a user ID, into an SVG avatar. The same seed always produces byte-identical SVG, so you don't need to store avatar images, and a user's avatar looks the same on the server, in the browser and across deploys.
+
+```typescript
+import { createAvatar } from "@avatar-generator/core";
+import { initials } from "@avatar-generator/style-initials";
+
+const avatar = createAvatar(initials, { seed: "john.doe@example.com", size: 64 });
+
+img.src = avatar.toDataUri(); // or use avatar.svg directly
+```
+
+## Why use a deterministic avatar generator?
+
+- **Nothing to store:** the avatar is computed from the seed, so there are no uploads or image hosting to manage.
+- **Small bundles:** each style is its own tree-shakeable package, so you only ship the styles you import.
+- **No runtime dependencies:** the core package ships ESM and CommonJS and depends on nothing.
+- **Safe for server-side rendering:** `createAvatar` returns a string and needs no DOM or browser globals.
+
+## Eleven avatar styles
+
+Compare them in the [Style Gallery](/reference/gallery/), or adjust their options in the [Configurator](/reference/configurator/).
+
+| Style       | What it generates                                     |
+| ----------- | ----------------------------------------------------- |
+| Initials    | Letter initials on colored backgrounds                |
+| Geometric   | GitHub-style symmetrical identicon grids              |
+| Pixels      | 8-bit retro pixel faces                               |
+| Rings       | Concentric rings, segmented and dashed variants       |
+| Faces       | Minimal flat geometric faces                          |
+| Illustrated | Detailed cartoon faces with accessories               |
+| Anime       | Anime and manga-inspired faces with expressive eyes   |
+| Abstract    | Mondrian, Kandinsky and Bauhaus-inspired compositions |
+| Emoji       | Yellow emoji-style expressive faces                   |
+| Animals     | Cute animal avatars, such as a cat, dog, fox or panda |
+| Gradient    | Smooth gradients with pattern overlays                |
+
+## Avatar components for your framework
+
+- [React avatar component](/guides/react/) for React 18 and 19
+- [Vue avatar component](/guides/vue/) for Vue 3
+- [Svelte avatar component](/guides/svelte/) for Svelte 4 and 5
+- [Angular avatar component](/guides/angular/) for Angular 17 through 21
+- [Avatar web component](/guides/web-component/) for any framework, or none
+- [Plain JavaScript and TypeScript](/guides/manual/) with the core package
+
+## Frequently asked questions
+
+### What is a deterministic avatar?
+
+A deterministic avatar is generated from an input, called a seed, so the same seed always gives the same image. With `@avatar-generator`, the output is byte-identical SVG, which means you can regenerate an avatar whenever you need it instead of storing it.
+
+### How do I generate an avatar from a username or email in JavaScript?
+
+Install `@avatar-generator/core` and a style package, then call `createAvatar` with the username or email as the `seed`. It returns an object with the SVG string in `svg` and a data URI from `toDataUri()`. The [installation guide](/get-started/installation/) has the full steps.
+
+### Does it work with server-side rendering?
+
+Yes. `createAvatar` returns a string and doesn't use the DOM or browser globals, so it runs in Node.js 18 or newer and produces the same result on the server and in the browser.
+
+### Is it free for commercial use?
+
+Yes. Every package is MIT licensed.
+
+### How does it compare with DiceBear or Boring Avatars?
+
+DiceBear has more styles and a hosted API, and Boring Avatars is a small React component with gradient styles. `@avatar-generator` offers official components for several frameworks and one MIT license across all its styles. See the [full comparison](/get-started/comparison/).
+
+### Can AI coding assistants read these docs?
+
+Yes. The docs are available as plain text at [`/llms.txt`](/llms.txt) for an index and [`/llms-full.txt`](/llms-full.txt) for everything in one file.
