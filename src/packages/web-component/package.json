@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/web-component",
-    "version": "3.0.1",
+    "version": "3.0.2",
     "description": "Framework-agnostic <avatar-generator> custom element for deterministic SVG avatars",
     "keywords": [
         "avatar",

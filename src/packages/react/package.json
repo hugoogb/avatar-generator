@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/react",
-    "version": "3.0.1",
+    "version": "3.0.2",
     "description": "Deterministic SVG avatar component for React 18 and 19, in eleven styles",
     "keywords": [
         "avatar",

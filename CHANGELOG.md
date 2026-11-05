@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com).
 
+## [3.0.2] — Release Workflow Order
+
+No code changes to any package.
+
+### Tooling
+
+- The release workflow creates the GitHub release before verifying the registry,
+  so npm taking minutes to show a package no longer blocks it. Verification runs
+  last, waits up to nine and a half minutes, and acts as an alarm
+- `scripts/publish-packages.mjs` fails on a run's first attempt when a version is
+  already on the registry, which catches a version published by hand. A re-run
+  still treats it as recovery from a partial release
+
 ## [3.0.1] — Package Metadata & Release Verification
 
 No code changes to any package.
