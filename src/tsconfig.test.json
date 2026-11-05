@@ -4,6 +4,7 @@
         "types": ["node"],
         "baseUrl": ".",
         "paths": {
+            "create-avatar-style": ["./packages/create-avatar-style/src/index.ts"],
             "@avatar-generator/core": ["./lib/core/src/index.ts"],
             "@avatar-generator/style-initials": ["./lib/styles/initials/src/index.ts"],
             "@avatar-generator/style-geometric": ["./lib/styles/geometric/src/index.ts"],
