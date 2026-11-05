@@ -4,6 +4,59 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com).
 
+## [3.1.0] — Platform
+
+Everything here is opt-in. Across 222,000 renders of the eleven styles with no new
+options set, the output is byte-identical to 3.0.2.
+
+### Added
+
+#### Custom styles
+
+- `defineStyle` builds a style from composable feature functions. Each layer has
+  a private generator, so changing one does not disturb what a seed picks for another
+- `create-avatar-style`, a new package: `npm create avatar-style my-style`, with
+  `minimal`, `pattern` and `face` templates
+
+#### Style combining
+
+- `mixStyles` takes features across styles, as in Illustrated hair with Faces eyes,
+  replaces one with your own function, or removes it. Features are aligned to the
+  base style's head
+- Faces, Illustrated and Anime are now layered, so they can be mixed
+
+#### Animation
+
+- `animation` option: `blink` and `breathe`, as CSS inside the SVG, so they run in `<img>`
+- `createAvatarTransition` cross-fades between two seeds
+- `classes` option adds stable class names for your own CSS
+
+#### Themes and accessibility
+
+- `theme` option: `light`, `dark`, `high-contrast`, your own with `defineTheme`, or
+  `auto` to follow `prefers-color-scheme` and `prefers-contrast`
+- `title` and `description` options for accessible names on inlined SVG
+- All motion honours `prefers-reduced-motion`. Browsers do not reliably pass it or
+  `prefers-contrast` to an SVG inside `<img>`, so every framework wrapper applies
+  them from the page. `adaptForImage` does the same for hand-written `<img>` tags
+
+#### Rendering
+
+- `renderToString` renders to HTML with no DOM, as `<img>` or inline SVG
+- `AvatarGroup` in React, Vue, Svelte and Angular, `<avatar-generator-group>` as a
+  custom element, and `createAvatarGroup` in core
+
+### Fixed
+
+- `toDataUri()` threw on characters beyond Latin-1, such as `李`, and produced a
+  broken image for ones within it, such as `é`. It now encodes UTF-8. ASCII output
+  is unchanged, so existing data URIs do not change
+- The Initials style split an emoji in half when using it as an initial
+
+### Changed
+
+- All packages now name their author in `package.json`
+
 ## [3.0.2] — Release Workflow Order
 
 No code changes to any package.

@@ -1,5 +1,12 @@
 # @avatar-generator/angular
 
+## 3.1.0
+
+### Patch Changes
+
+- Updated dependencies
+    - @avatar-generator/core@3.1.0
+
 ## 3.0.2
 
 ### Patch Changes

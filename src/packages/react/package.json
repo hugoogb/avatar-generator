@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/react",
-    "version": "3.0.2",
+    "version": "3.1.0",
     "description": "Deterministic SVG avatar component for React 18 and 19, in eleven styles",
     "keywords": [
         "avatar",
@@ -9,6 +9,10 @@
         "component"
     ],
     "license": "MIT",
+    "author": {
+        "name": "Hugo García Benjumea",
+        "url": "https://hugoogb.dev/"
+    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/hugoogb/avatar-generator.git",

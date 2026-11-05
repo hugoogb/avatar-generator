@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/web-component",
-    "version": "3.0.2",
+    "version": "3.1.0",
     "description": "Framework-agnostic <avatar-generator> custom element for deterministic SVG avatars",
     "keywords": [
         "avatar",
@@ -9,6 +9,10 @@
         "svg"
     ],
     "license": "MIT",
+    "author": {
+        "name": "Hugo García Benjumea",
+        "url": "https://hugoogb.dev/"
+    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/hugoogb/avatar-generator.git",
