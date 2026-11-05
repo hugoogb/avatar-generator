@@ -14,7 +14,7 @@ React, Vue, Svelte, Angular, a custom element, or plain JavaScript.
 [Style gallery](https://avatar-generator.hugoogb.dev/reference/gallery/) ·
 [Comparison with DiceBear, Boring Avatars and Jdenticon](https://avatar-generator.hugoogb.dev/get-started/comparison/)
 
-> **Install the 3.x line.** v3.0.0 is the current release and the only supported
+> **Install the 3.x line.** v3.1.0 is the current release and the only supported
 > one — 1.x and 2.x should not be used. See
 > [Versions & Support](https://avatar-generator.hugoogb.dev/reference/versioning/).
 
@@ -25,7 +25,10 @@ React, Vue, Svelte, Angular, a custom element, or plain JavaScript.
 - **Tree-shakeable** — each style is its own package; you bundle only what you import
 - **Works anywhere** — React, Vue, Svelte, Angular, a custom element, or plain JS
 - **No runtime dependencies** — core ships ESM and CommonJS and depends on nothing
-- **SSR-safe** — `createAvatar` returns a string; no DOM, no browser globals
+- **SSR-safe** — `createAvatar` and `renderToString` return strings; no DOM, no browser globals
+- **Build your own** — `defineStyle`, `mixStyles` to trade features across styles, and `npm create avatar-style`
+- **Alive and accessible** — idle animation, light, dark and high-contrast themes, and `prefers-*` support
+- **Avatar groups** — overlapping avatars with a `+N` badge, in every framework
 
 ## Quick start
 
@@ -82,7 +85,7 @@ it together with at least one style.
 | `@avatar-generator/angular`       | Angular 17 through 21, standalone or NgModule | [Angular](https://avatar-generator.hugoogb.dev/guides/angular/)             |
 | `@avatar-generator/web-component` | Any framework, or none                        | [Web Component](https://avatar-generator.hugoogb.dev/guides/web-component/) |
 
-All seventeen packages are released together at one version — mixing majors is
+All eighteen packages are released together at one version — mixing majors is
 not supported.
 
 ## Documentation

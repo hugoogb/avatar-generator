@@ -1,5 +1,6 @@
 <script lang="ts">
     import Avatar from "@avatar-svelte/src/Avatar.svelte";
+    import AvatarGroup from "@avatar-svelte/src/AvatarGroup.svelte";
     import { initials } from "@avatar-style-initials/src";
     import { geometric } from "@avatar-style-geometric/src";
     import { pixels } from "@avatar-style-pixels/src";
@@ -23,6 +24,8 @@
         EMOJI_OPTIONS,
         ANIMALS_OPTIONS,
         GRADIENT_OPTIONS,
+        GROUP_OPTIONS,
+        GROUP_SEEDS,
     } from "../consts";
 
     const sections = [
@@ -50,3 +53,8 @@
         </div>
     </section>
 {/each}
+
+<section>
+    <h2>Avatar group</h2>
+    <AvatarGroup style={faces} items={GROUP_SEEDS} options={GROUP_OPTIONS} alt="Project team" />
+</section>

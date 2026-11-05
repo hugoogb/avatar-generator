@@ -1,0 +1,46 @@
+---
+title: Server-Side Rendering
+description: "Render SVG avatars to an HTML string with no DOM, no framework and no hydration mismatch, using renderToString from @avatar-generator/core."
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+`renderToString` turns an avatar into HTML anywhere JavaScript runs. Its output
+depends only on its inputs, so server and client markup match.
+
+```ts
+import { renderToString } from "@avatar-generator/core";
+
+renderToString(faces, { seed: user.id, size: 48 }, { alt: user.name, loading: "lazy" });
+// <img src="data:image/svg+xml,..." alt="Ana Li" width="48" height="48" loading="lazy">
+
+renderToString(faces, { seed: user.id, size: 48 }, { mode: "inline", alt: user.name });
+// <svg role="img" aria-label="Ana Li" ...>...</svg>
+```
+
+## Which mode
+
+|                                                | `img` (default) | `inline`                     |
+| ---------------------------------------------- | --------------- | ---------------------------- |
+| Sandboxed from your page                       | Yes             | No                           |
+| Reachable by your CSS                          | No              | Yes                          |
+| `animation` and `theme: "auto"` on first paint | See below       | Fully honour viewer settings |
+| Safe with untrusted `colors`                   | Yes             | **No**                       |
+
+`img` mode URL-encodes the SVG, which is smaller than the base64 `toDataUri()`
+produces. Inline mode writes no data URI at all, and gives each avatar ids derived
+from its content, so several on a page cannot collide and renders stay stable.
+
+A server cannot know the viewer's settings, and `<img>` may not see them. For
+`animation` or `theme: "auto"` in server-rendered HTML, use `inline`. The framework
+wrappers render `<img>`, then apply the viewer's settings once in the browser.
+
+<Aside type="caution">
+    Inline mode makes the SVG part of your page. Seeds and names are escaped, but `colors` and similar options are
+    written into attributes unchanged. Never pass untrusted values for them in `inline` mode.
+</Aside>
+
+## Importing on a server
+
+Core and every style use no browser globals, and the web component package imports
+safely. Only the deprecated `createAvatarElement` needs a DOM.

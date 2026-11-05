@@ -1,0 +1,83 @@
+---
+title: Animate Avatars
+description: "Add idle blinking and breathing to SVG avatars, cross-fade between seeds, and hook your own CSS, all while respecting prefers-reduced-motion."
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Idle animations
+
+```ts
+createAvatar(faces, { seed: "user-42", animation: true }); // everything
+createAvatar(faces, { seed: "user-42", animation: "blink" });
+createAvatar(faces, { seed: "user-42", animation: ["blink", "breathe"] });
+```
+
+The animation is CSS embedded in the SVG, so it needs no JavaScript and no
+stylesheet, and it runs inside `<img>`. Output stays deterministic. Each seed
+gets its own delay, so a page of avatars does not blink in unison.
+
+`breathe` works in every style. `blink` works in the styles with eyes: Faces,
+Illustrated, Anime, Emoji, Pixels and Animals.
+
+## Reduced motion
+
+Viewers who ask for reduced motion see no animation. How that happens depends on
+how the SVG reaches the page:
+
+| Rendering                        | Who handles `prefers-reduced-motion`                                 |
+| -------------------------------- | -------------------------------------------------------------------- |
+| Framework wrappers               | The wrapper. Nothing to do                                           |
+| Inlined SVG                      | The CSS inside the SVG. Nothing to do                                |
+| Your own `<img>` + `toDataUri()` | You: pass the options through [`adaptForImage`](#using-your-own-img) |
+
+### Using your own `<img>`
+
+An SVG inside `<img>` is its own document, and browsers do not reliably tell it
+about the viewer's motion or contrast settings. Chromium, for one, keeps animating.
+The page can read them, so apply them before creating the avatar:
+
+```ts
+import { adaptForImage, createAvatar } from "@avatar-generator/core";
+
+img.src = createAvatar(faces, adaptForImage({ seed: "user-42", animation: true })).toDataUri();
+```
+
+`adaptGroupForImage` does the same for `createAvatarGroup`. Angular reads the
+setting when its inputs change; the other wrappers also follow it live.
+
+## Transitions between seeds
+
+`createAvatarTransition` renders one SVG that cross-fades from one avatar to
+another, once, when it loads. The two drawings have unrelated shapes, so they
+fade rather than morph.
+
+```ts
+import { createAvatarTransition, viewerPreferences } from "@avatar-generator/core";
+
+const to = { seed: nextUser, size: 64 };
+img.src = viewerPreferences().reducedMotion
+    ? createAvatar(faces, to).toDataUri()
+    : createAvatarTransition(faces, { seed: currentUser, size: 64 }, to, { duration: 400 }).toDataUri();
+```
+
+The check is for `<img>`. Inlined, the SVG shows only `to` by itself.
+
+## Your own CSS
+
+`classes` adds stable hooks: `ag-avatar` on the root, `ag-content` on the artwork,
+and `ag-layer-<name>` on each layer. A string is also added to the root.
+
+```ts
+const html = renderToString(faces, { seed: "user-42", classes: "wobbly" }, { mode: "inline" });
+```
+
+```css
+@media (prefers-reduced-motion: no-preference) {
+    .wobbly:hover .ag-layer-hair-front {
+        transform: translateY(-2px);
+    }
+}
+```
+
+<Aside>Page CSS cannot reach inside `<img>`, so these hooks need [inline rendering](/guides/ssr/).</Aside>

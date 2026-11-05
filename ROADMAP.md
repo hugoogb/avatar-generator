@@ -210,24 +210,33 @@ Fix synchronization issues between source, playgrounds, and documentation.
 
 - [x] Style packages own their option types, so a third-party style is typeable
       without core knowing it exists (prerequisite, shipped above)
-- [ ] Public API for creating custom avatar styles with composable feature functions
-- [ ] Style template system for scaffolding new styles
-- [ ] CLI tool (`create-avatar-style`) for generating style packages
+- [x] Public API for creating custom avatar styles with composable feature functions
+- [x] Style template system for scaffolding new styles
+- [x] CLI tool (`create-avatar-style`) for generating style packages
 
 ### Animation Support
 
-- [ ] Idle animations (blinking, breathing)
-- [ ] Animated SVG transitions between seeds
-- [ ] CSS animation class integration
+- [x] Idle animations (blinking, breathing)
+- [x] Animated SVG transitions between seeds
+- [x] CSS animation class integration
 
 ### Style Combining
 
-- [ ] Mix features across styles (e.g., Illustrated hair + Faces eyes)
-- [ ] Feature override API across styles
+- [x] Mix features across styles (e.g., Illustrated hair + Faces eyes)
+- [x] Feature override API across styles
 
 ### Advanced Features
 
-- [ ] Accessibility (ARIA labels, high-contrast mode, `prefers-reduced-motion`)
-- [ ] SSR-optimized rendering path
-- [ ] Avatar group component (overlapping circles)
-- [ ] Theme system (light/dark mode color palettes)
+- [x] Accessibility (ARIA labels, high-contrast mode, `prefers-reduced-motion`)
+- [x] SSR-optimized rendering path
+- [x] Avatar group component (overlapping circles)
+- [x] Theme system (light/dark mode color palettes)
+
+### Follow-ups
+
+- [ ] Publish `create-avatar-style` by hand once, then configure trusted publishing
+      for it — npm cannot hold trust settings for a package that does not exist yet
+- [ ] Check `prefers-reduced-motion` and `prefers-contrast` inside `<img>` on Firefox
+      and Safari — only Chromium has been tested, where neither reaches the image
+- [ ] Make fixed-pixel face features scale with `size`. They look right near 64px
+      only; fixing it changes output, so it belongs in a major

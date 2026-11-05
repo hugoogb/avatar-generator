@@ -10,6 +10,65 @@ from `@avatar-generator/core`. You can use styles privately in your app or
 publish them as reusable npm packages. This guide walks through building
 one from scratch.
 
+## Quick start
+
+Scaffold a complete package, with a build and tests:
+
+```bash
+npm create avatar-style@latest my-style -- --template face
+```
+
+| Template  | What you get                                                      |
+| --------- | ----------------------------------------------------------------- |
+| `minimal` | One layer. The smallest style that works                          |
+| `pattern` | A seeded grid with its own option, for abstract styles            |
+| `face`    | Head, hair, eyes and mouth layers, mixable with the bundled faces |
+
+## Compose a style from features
+
+`defineStyle` builds a style from an ordered list of layers, each drawing one
+feature. You get mixing, per-layer class hooks and the `blink` animation for free.
+
+```ts
+import { defineStyle, DEFAULT_COLORS, SKIN_TONES, type AvatarOptions } from "@avatar-generator/core";
+
+export const blob = defineStyle<AvatarOptions, { skin: string }>({
+    name: "blob",
+
+    // Choices that more than one layer depends on.
+    prepare: (options, random) => ({ skin: random.pick(SKIN_TONES) }),
+
+    // Painted bottom first.
+    layers: [
+        {
+            name: "head",
+            render: ({ cx, cy, size, traits }) =>
+                `<circle cx="${cx}" cy="${cy}" r="${size * 0.3}" fill="${traits.skin}"/>`,
+        },
+        {
+            name: "eyes",
+            render: ({ cx, cy, size }) =>
+                `<circle cx="${cx - size * 0.1}" cy="${cy}" r="2"/><circle cx="${cx + size * 0.1}" cy="${cy}" r="2"/>`,
+        },
+        {
+            name: "spots",
+            // Each layer gets a private generator, so adding this one does not
+            // change what the seed picked for the others.
+            render: ({ cx, cy, size, random, options }) =>
+                `<circle cx="${cx + random.int(-8, 8)}" cy="${cy + size * 0.2}" r="2" fill="${random.pick(options.colors ?? DEFAULT_COLORS)}"/>`,
+        },
+    ],
+});
+```
+
+Other options are `validate` to reject bad options, `background` to pick the
+background colour, and `head`, which tells [`mixStyles`](/guides/mixing-styles/)
+where your head is so traded features line up. Layers sharing a `feature` name are
+swapped together, like hair drawn both behind and in front of a head.
+
+The rest of this guide builds a style by hand, which is still the right choice
+when your drawing does not divide into layers.
+
 ## The Style\<T\> contract
 
 A style needs two things: a `name` and a `create(options)` method that
@@ -46,6 +105,8 @@ primitives every bundled style uses:
 | `DEFAULT_COLORS`              | Vivid 10-color palette used as a fallback                               |
 | `SKIN_TONES`, `EYE_COLORS`    | Curated palettes for face-based styles                                  |
 | `validateOption(...)`         | Throws a descriptive error if a string option is not in a known list    |
+| `layerGroup(name, svg, opts)` | Marks a part of your drawing, such as eyes, so `blink` can reach it     |
+| `resolveTheme(opts.theme)`    | Reads the theme, so anything you draw over the palette can follow it    |
 
 ## Minimal example — a "checker" style
 
@@ -171,7 +232,7 @@ To publish your style as a reusable npm package, follow the structure of
         "build": "tsup src/index.ts --format esm,cjs --dts --sourcemap --clean --target es2020"
     },
     "dependencies": {
-        "@avatar-generator/core": "^3.0.0"
+        "@avatar-generator/core": "^3.1.0"
     }
 }
 ```

@@ -39,17 +39,24 @@ const avatar = createAvatar(initials, { seed: "Hugo GB" });
 
 All styles accept these base options:
 
-| Option        | Type                               | Default         | Description                        |
-| ------------- | ---------------------------------- | --------------- | ---------------------------------- |
-| `seed`        | `string`                           | (required)      | Seed for deterministic generation  |
-| `size`        | `number`                           | `64`            | Avatar size in pixels              |
-| `colors`      | `string[]`                         | (style default) | Custom color palette               |
-| `square`      | `boolean`                          | `false`         | Use square shape instead of circle |
-| `transparent` | `boolean`                          | `false`         | Make background transparent        |
-| `border`      | `{ width: number, color: string }` | -               | Border configuration               |
-| `rotate`      | `number`                           | `0`             | Rotation in degrees                |
-| `flip`        | `boolean`                          | `false`         | Horizontal flip                    |
-| `scale`       | `number`                           | `1`             | Scale factor                       |
+| Option        | Type                                                            | Default         | Description                                    |
+| ------------- | --------------------------------------------------------------- | --------------- | ---------------------------------------------- |
+| `seed`        | `string`                                                        | (required)      | Seed for deterministic generation              |
+| `size`        | `number`                                                        | `64`            | Avatar size in pixels                          |
+| `colors`      | `string[]`                                                      | (style default) | Custom color palette                           |
+| `square`      | `boolean`                                                       | `false`         | Use square shape instead of circle             |
+| `transparent` | `boolean`                                                       | `false`         | Make background transparent                    |
+| `border`      | `{ width: number, color: string }`                              | -               | Border configuration                           |
+| `rotate`      | `number`                                                        | `0`             | Rotation in degrees                            |
+| `flip`        | `boolean`                                                       | `false`         | Horizontal flip                                |
+| `scale`       | `number`                                                        | `1`             | Scale factor                                   |
+| `theme`       | `"light" \| "dark" \| "high-contrast" \| "auto" \| AvatarTheme` | -               | [Colour theme](/guides/theming-accessibility/) |
+| `animation`   | `boolean \| "blink" \| "breathe" \| array`                      | `false`         | [Idle animation](/guides/animation/)           |
+| `classes`     | `boolean \| string`                                             | `false`         | [CSS hooks](/guides/animation/#your-own-css)   |
+| `title`       | `string`                                                        | -               | Accessible name for inlined SVG                |
+| `description` | `string`                                                        | -               | Accessible description                         |
+
+Leaving all of these unset produces exactly the output of earlier 3.x releases.
 
 ## Style-Specific Options
 
@@ -211,6 +218,19 @@ For `@avatar-generator/style-gradient`:
 | `direction`  | `string` | (random) | Override direction: `"linear"`, `"radial"`, `"diagonal"`              |
 | `pattern`    | `string` | (random) | Overlay pattern: `"none"`, `"dots"`, `"stripes"`, `"waves"`, `"grid"` |
 | `colorStops` | `number` | `2`      | Number of color stops in the gradient (2 or 3)                        |
+
+## Platform API
+
+| Function                                              | Guide                                              |
+| ----------------------------------------------------- | -------------------------------------------------- |
+| `defineStyle(definition)`                             | [Custom styles](/guides/custom-styles/)            |
+| `mixStyles(base, features, options?)`                 | [Mixing styles](/guides/mixing-styles/)            |
+| `createAvatarTransition(style, from, to, options?)`   | [Animation](/guides/animation/)                    |
+| `adaptForImage(options)`, `adaptGroupForImage(...)`   | [Animation](/guides/animation/#using-your-own-img) |
+| `viewerPreferences()`, `subscribeViewerPreferences()` | [Animation](/guides/animation/)                    |
+| `defineTheme(theme)`, `resolveTheme(theme)`           | [Themes](/guides/theming-accessibility/)           |
+| `createAvatarGroup(style, items, options?)`           | [Avatar groups](/guides/avatar-group/)             |
+| `renderToString(style, options, render?)`             | [Server-side rendering](/guides/ssr/)              |
 
 ## Utilities
 

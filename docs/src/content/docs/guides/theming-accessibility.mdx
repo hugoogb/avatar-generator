@@ -1,0 +1,73 @@
+---
+title: Themes and Accessibility
+description: "Light, dark and high-contrast avatar palettes, automatic switching with prefers-color-scheme, and accessible names for SVG avatars."
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Themes
+
+```ts
+createAvatar(faces, { seed: "user-42", theme: "light" });
+createAvatar(faces, { seed: "user-42", theme: "dark" });
+createAvatar(faces, { seed: "user-42", theme: "high-contrast" });
+createAvatar(faces, { seed: "user-42", theme: "auto" });
+```
+
+A theme sets the palette, the colour of anything drawn over it (such as initials
+text), and optionally a border. An explicit `colors`, `border` or `textColor`
+wins over the theme. The built-in palettes are the same length, so a seed keeps
+its palette slot and the avatar stays recognisable when the theme changes.
+
+### Following the viewer
+
+`theme: "auto"` follows `prefers-color-scheme` and `prefers-contrast` with no
+JavaScript, including inside `<img>` for colour scheme. It works by carrying one
+drawing per theme, so the SVG is roughly three to four times larger. If you
+already know the theme, pass it directly instead.
+
+`prefers-contrast` does not reliably reach an SVG inside `<img>`. The framework
+wrappers handle that, and by hand you can use
+[`adaptForImage`](/guides/animation/#using-your-own-img).
+
+### Your own theme
+
+```ts
+import { defineTheme } from "@avatar-generator/core";
+
+const brand = defineTheme({
+    name: "brand",
+    colors: ["#0B3D91", "#FC3D21", "#1A1A2E"],
+    foreground: "#FFFFFF",
+    border: { width: 2, color: "#FFFFFF" },
+});
+
+createAvatar(initials, { seed: "user-42", theme: brand });
+```
+
+### What the high-contrast theme guarantees
+
+White text on every background clears 7:1 (WCAG AAA), and in Light and Dark the
+text clears 4.5:1. A test asserts these ratios. That covers text and
+foreground shapes in Initials and Geometric.
+
+It does not recolour everything. Faces keep their skin tones, so features on the
+darkest tones remain lower contrast, and decorative styles such as Rings use the
+dark palette for shapes that sit on one another.
+
+## Accessible names
+
+Framework wrappers render an `<img>`, so use their `alt` prop. An empty `alt`
+marks an avatar as decorative, which is right when a name sits beside it.
+
+For inlined SVG, `title` adds `<title>`, `role="img"` and `aria-label`, and
+`description` adds `<desc>`:
+
+```ts
+createAvatar(faces, { seed: "user-42", title: "Ana Li", description: "Profile picture" });
+```
+
+<Aside>
+    Avoid using a seed as a label. Seeds are often email addresses or user ids, which is why `AvatarGroup` defaults to a
+    count.
+</Aside>
