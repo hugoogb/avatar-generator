@@ -1,5 +1,5 @@
 import type { AvatarOptions, AvatarResult, Random, Style } from "@avatar-generator/core";
-import { buildSvg, createRandom, DEFAULT_COLORS, validateOption } from "@avatar-generator/core";
+import { buildSvg, createRandom, DEFAULT_COLORS, pickContrasting, validateOption } from "@avatar-generator/core";
 
 // ============================================================================
 // Options
@@ -8,9 +8,9 @@ import { buildSvg, createRandom, DEFAULT_COLORS, validateOption } from "@avatar-
 export type RingsCenterStyle = "solid" | "dot" | "ring" | "diamond" | "none";
 
 export interface RingsOptions extends AvatarOptions {
-    /** Number of rings (default: 4) */
+    /** Number of rings (default: 3) */
     ringCount?: number;
-    /** Gap between rings (default: 2) */
+    /** Gap between rings, on a 64-unit canvas (default: 2) */
     ringGap?: number;
     /** Allow segmented rings (default: true) */
     segmented?: boolean;
@@ -65,73 +65,55 @@ function arcSegment(
 /**
  * Draws a segmented ring with alternating colors
  */
+/** Drawn in this coordinate space and scaled, so gaps stay in proportion. */
+const CANVAS = 64;
+/** Keeps the outer ring off the avatar's edge, where a clip would cut it. */
+const EDGE_INSET = 4;
+
 function drawSegmentedRing(
     cx: number,
     cy: number,
     innerR: number,
     outerR: number,
     random: Random,
-    colors: string[],
-    rotationOffset: number,
+    color1: string,
+    color2: string,
 ): string {
-    const segmentCounts = [2, 3, 4, 6];
-    const segments = random.pick(segmentCounts);
-    const color1 = random.pick(colors);
-    const color2 = random.pick(colors);
+    const segments = random.pick([2, 4]);
+    const rotationOffset = random.int(0, 360);
     const angleStep = 360 / segments;
     let content = "";
 
     for (let i = 0; i < segments; i++) {
         const start = rotationOffset + i * angleStep;
-        const end = start + angleStep;
-        const color = i % 2 === 0 ? color1 : color2;
-        content += arcSegment(cx, cy, innerR, outerR, start, end, color);
+        content += arcSegment(cx, cy, innerR, outerR, start, start + angleStep, i % 2 === 0 ? color1 : color2);
     }
 
     return content;
 }
 
-/**
- * Draws a dashed ring
- */
-function drawDashedRing(
-    cx: number,
-    cy: number,
-    innerR: number,
-    outerR: number,
-    random: Random,
-    colors: string[],
-): string {
-    const dashCounts = [8, 12, 16];
-    const dashes = random.pick(dashCounts);
-    const color = random.pick(colors);
+function drawDashedRing(cx: number, cy: number, innerR: number, outerR: number, random: Random, color: string): string {
+    const dashes = random.pick([6, 8]);
     const angleStep = 360 / dashes;
     const dashAngle = angleStep * 0.6; // 60% dash, 40% gap
     let content = "";
 
     for (let i = 0; i < dashes; i++) {
         const start = i * angleStep;
-        const end = start + dashAngle;
-        content += arcSegment(cx, cy, innerR, outerR, start, end, color);
+        content += arcSegment(cx, cy, innerR, outerR, start, start + dashAngle, color);
     }
 
     return content;
 }
 
-/**
- * Draws a center decoration
- */
 function drawCenterDecoration(cx: number, cy: number, radius: number, style: string, color: string): string {
     switch (style) {
         case "dot":
-            return `<circle cx="${cx}" cy="${cy}" r="${radius * 0.4}" fill="${color}"/>`;
-        case "ring": {
-            const outer = radius;
-            const inner = radius * 0.5;
-            return `<circle cx="${cx}" cy="${cy}" r="${outer}" fill="${color}"/><circle cx="${cx}" cy="${cy}" r="${inner}" fill="none" stroke="${color}" stroke-width="1"/>`;
-        }
+            return `<circle cx="${cx}" cy="${cy}" r="${radius * 0.5}" fill="${color}"/>`;
+        case "ring":
+            return `<circle cx="${cx}" cy="${cy}" r="${radius * 0.7}" fill="none" stroke="${color}" stroke-width="${radius * 0.5}"/>`;
         case "diamond": {
-            const d = radius * 0.7;
+            const d = radius * 0.95;
             return `<polygon points="${cx},${cy - d} ${cx + d},${cy} ${cx},${cy + d} ${cx - d},${cy}" fill="${color}"/>`;
         }
         case "none":
@@ -141,67 +123,63 @@ function drawCenterDecoration(cx: number, cy: number, radius: number, style: str
     }
 }
 
-/**
- * Creates concentric rings style avatar content with segmented/dashed variants
- */
-function createRingsContent(options: RingsOptions): string {
-    const size = options.size ?? 64;
-    const ringCount = options.ringCount ?? 4;
+function createRingsContent(options: RingsOptions, backgroundColor: string): string {
+    const ringCount = Math.max(options.ringCount ?? 3, 1);
     const ringGap = options.ringGap ?? 2;
-    const colors = options.colors ?? DEFAULT_COLORS;
     const allowSegmented = options.segmented !== false;
     const allowDashed = options.dashed !== false;
     const centerStyle = options.centerStyle ?? "solid";
     const random = createRandom(options.seed);
 
-    const cx = size / 2;
-    const cy = size / 2;
-    const maxRadius = size / 2;
+    // A few colours per avatar. One for each ring read as noise at small sizes.
+    const source = options.colors ?? [...DEFAULT_COLORS, "#FFFFFF"];
+    const others = source.filter((color) => color !== backgroundColor);
+    const palette = random.shuffle(others.length > 0 ? others : [...source]).slice(0, 3);
 
-    // Calculate ring widths accounting for gaps
-    const totalGap = ringGap * (ringCount - 1);
-    const availableSpace = maxRadius - totalGap;
-    const ringWidth = availableSpace / ringCount;
+    const center = CANVAS / 2;
+    const maxRadius = center - EDGE_INSET;
+
+    // The rings and the centre share the radius evenly, less the gaps between them.
+    const ringWidth = Math.max((maxRadius - ringGap * ringCount) / (ringCount + 0.6), 1);
+
+    const types: RingType[] = ["solid"];
+    if (allowSegmented) types.push("segmented");
+    if (allowDashed) types.push("dashed");
 
     let content = "";
+    // Each colour stands out from the ring outside it, the first from the background.
+    let previous = backgroundColor;
+    let outerRadius = maxRadius;
 
-    // Draw rings from outside to inside so inner rings overlay outer
-    for (let i = ringCount - 1; i >= 0; i--) {
-        const outerRadius = maxRadius - i * (ringWidth + ringGap);
+    for (let i = 0; i < ringCount && outerRadius - ringWidth > 0; i++) {
         const innerRadius = outerRadius - ringWidth;
+        const color = pickContrasting(random, palette, previous, 1.8);
 
-        if (innerRadius > 0) {
-            // Decide ring type
-            let ringType: RingType = "solid";
-            if (allowSegmented && allowDashed) {
-                ringType = random.pick(["solid", "segmented", "dashed"]);
-            } else if (allowSegmented) {
-                ringType = random.pick(["solid", "segmented"]);
-            } else if (allowDashed) {
-                ringType = random.pick(["solid", "dashed"]);
+        switch (random.pick(types)) {
+            case "segmented": {
+                const second = pickContrasting(random, palette, color, 1.5);
+                content += drawSegmentedRing(center, center, innerRadius, outerRadius, random, color, second);
+                break;
             }
-
-            switch (ringType) {
-                case "segmented": {
-                    const rotationOffset = random.int(0, 360);
-                    content += drawSegmentedRing(cx, cy, innerRadius, outerRadius, random, colors, rotationOffset);
-                    break;
-                }
-                case "dashed":
-                    content += drawDashedRing(cx, cy, innerRadius, outerRadius, random, colors);
-                    break;
-                default: {
-                    // Solid ring (original behavior)
-                    const color = random.pick(colors);
-                    content += `<path d="M ${cx} ${cy - outerRadius} A ${outerRadius} ${outerRadius} 0 1 1 ${cx} ${cy + outerRadius} A ${outerRadius} ${outerRadius} 0 1 1 ${cx} ${cy - outerRadius} M ${cx} ${cy - innerRadius} A ${innerRadius} ${innerRadius} 0 1 0 ${cx} ${cy + innerRadius} A ${innerRadius} ${innerRadius} 0 1 0 ${cx} ${cy - innerRadius}" fill="${color}" fill-rule="evenodd"/>`;
-                    break;
-                }
-            }
-        } else {
-            // Innermost — use center decoration
-            const color = random.pick(colors);
-            content += drawCenterDecoration(cx, cy, outerRadius, centerStyle, color);
+            case "dashed":
+                content += drawDashedRing(center, center, innerRadius, outerRadius, random, color);
+                break;
+            default:
+                content += `<circle cx="${center}" cy="${center}" r="${(innerRadius + outerRadius) / 2}" fill="none" stroke="${color}" stroke-width="${ringWidth}"/>`;
         }
+
+        previous = color;
+        outerRadius = innerRadius - ringGap;
+    }
+
+    if (outerRadius > 0) {
+        content += drawCenterDecoration(
+            center,
+            center,
+            outerRadius,
+            centerStyle,
+            pickContrasting(random, palette, backgroundColor, 1.8),
+        );
     }
 
     return content;
@@ -232,13 +210,13 @@ export const rings: Style<RingsOptions> = {
     create(options: RingsOptions): AvatarResult {
         validateOption("rings", "centerStyle", options.centerStyle, CENTER_STYLES);
 
-        const random = createRandom(options.seed);
+        const random = createRandom(`${options.seed}:background`);
         const colors = options.colors ?? DEFAULT_COLORS;
         const backgroundColor = random.pick(colors);
 
-        const content = createRingsContent(options);
+        const content = createRingsContent(options, backgroundColor);
 
-        return buildSvg(content, options, backgroundColor);
+        return buildSvg(content, options, backgroundColor, { canvas: CANVAS });
     },
 };
 

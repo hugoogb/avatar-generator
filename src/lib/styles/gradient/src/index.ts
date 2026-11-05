@@ -24,24 +24,24 @@ export const DIRECTIONS: GradientDirection[] = ["linear", "radial", "diagonal"];
 /** All valid pattern overlays */
 export const PATTERNS: GradientPattern[] = ["none", "dots", "stripes", "waves", "grid"];
 
-// Curated gradient-friendly palette (vivid + pastel).
-const GRADIENT_PALETTE = [
-    "#FF6B9D",
-    "#C644FC",
-    "#5A17EE",
-    "#2196F3",
-    "#00BCD4",
-    "#00E676",
-    "#FFD600",
-    "#FF9800",
-    "#FF5722",
-    "#E91E63",
-    "#9C27B0",
-    "#3F51B5",
-    "#4FC3F7",
-    "#A5D6A7",
-    "#FFB74D",
-    "#F48FB1",
+/** Drawn in this coordinate space and scaled, so pattern weights stay in proportion. */
+const CANVAS = 64;
+
+// Curated, because two colours picked at random usually meet in mud. Each runs
+// between neighbouring hues, and the middle stop is only used with `colorStops: 3`.
+const GRADIENTS: [string, string, string][] = [
+    ["#FF6B9D", "#C644FC", "#5A17EE"],
+    ["#5A17EE", "#2196F3", "#00BCD4"],
+    ["#00BCD4", "#00C9A7", "#7BE495"],
+    ["#FF9800", "#FF5722", "#E91E63"],
+    ["#FFD54F", "#FF9800", "#FF5722"],
+    ["#E91E63", "#9C27B0", "#3F51B5"],
+    ["#3F51B5", "#2196F3", "#4FC3F7"],
+    ["#F48FB1", "#FF8A65", "#FFD54F"],
+    ["#7C4DFF", "#E040FB", "#FF6B9D"],
+    ["#00897B", "#00BCD4", "#4FC3F7"],
+    ["#1E3C72", "#2A5298", "#4FC3F7"],
+    ["#FF5F6D", "#FF8A65", "#FFC371"],
 ];
 
 // ============================================================================
@@ -73,8 +73,8 @@ function gradientDefs(id: string, direction: GradientDirection, stops: string[])
 function patternOverlay(pattern: GradientPattern, size: number, random: Random): string {
     if (pattern === "none") return "";
 
-    const overlayColor = "rgba(255,255,255,0.18)";
-    const strokeColor = "rgba(255,255,255,0.25)";
+    const overlayColor = "rgba(255,255,255,0.16)";
+    const strokeColor = "rgba(255,255,255,0.16)";
 
     switch (pattern) {
         case "dots": {
@@ -141,32 +141,41 @@ export const gradient: Style<GradientOptions> = {
         validateOption("gradient", "direction", options.direction, DIRECTIONS);
         validateOption("gradient", "pattern", options.pattern, PATTERNS);
 
-        const size = options.size ?? 64;
+        const size = CANVAS;
         const random = createRandom(options.seed);
-        const palette = options.colors && options.colors.length > 0 ? options.colors : GRADIENT_PALETTE;
         const direction: GradientDirection = options.direction ?? random.pick(DIRECTIONS);
         const pattern: GradientPattern = options.pattern ?? random.pick(PATTERNS);
         const stopCount = options.colorStops === 3 ? 3 : 2;
 
-        const stops: string[] = [];
-        for (let i = 0; i < stopCount; i++) {
-            stops.push(random.pick(palette));
+        const curated = random.pick(GRADIENTS);
+        let stops: string[];
+        if (options.colors && options.colors.length > 0) {
+            // A shuffled copy gives distinct stops whenever the palette has them.
+            const shuffled = random.shuffle([...options.colors]);
+            stops = Array.from({ length: stopCount }, (_, i) => shuffled[i % shuffled.length]);
+        } else {
+            stops = stopCount === 3 ? curated : [curated[0], curated[2]];
         }
 
-        // Embed the gradient definition inline in the content. SVG allows
-        // additional <defs> blocks inside the document, so buildSvg's own
-        // <defs> for the clip path coexists with ours.
-        const gradId = `g-${direction}-${stops.join("-").replace(/#/g, "")}`;
-        const localDefs = `<defs>${gradientDefs(gradId, direction, stops)}</defs>`;
+        // Embed the gradient definitions inline in the content. SVG allows
+        // additional <defs> blocks, so buildSvg's own clip path coexists with ours.
+        const key = `${direction}-${stops.join("-").replace(/[^a-zA-Z0-9-]/g, "")}`;
+        const gradId = `g-${key}`;
+        const glowId = `glow-${key}`;
+        const glow =
+            `<radialGradient id="${glowId}" cx="30%" cy="25%" r="75%">` +
+            `<stop offset="0%" stop-color="#fff" stop-opacity="0.3"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/>` +
+            `</radialGradient>`;
+        const localDefs = `<defs>${gradientDefs(gradId, direction, stops)}${glow}</defs>`;
         const gradientFill = `<rect x="0" y="0" width="${size}" height="${size}" fill="url(#${gradId})"/>`;
+        // A soft light in one corner gives the flat gradient some depth.
+        const glowFill = `<rect x="0" y="0" width="${size}" height="${size}" fill="url(#${glowId})"/>`;
         const overlay = patternOverlay(pattern, size, random);
 
-        // We pass an arbitrary backgroundColor to buildSvg; we immediately
-        // paint over it with the gradient rect inside `content`, so the
-        // caller-visible SVG is the gradient. For transparent avatars
-        // buildSvg already skips the background rect.
-        const content = localDefs + gradientFill + overlay;
-        return buildSvg(content, options, stops[0]);
+        // buildSvg's background is painted over by the gradient, and for a
+        // transparent avatar it skips it altogether.
+        const content = localDefs + gradientFill + glowFill + overlay;
+        return buildSvg(content, options, stops[0], { canvas: CANVAS });
     },
 };
 

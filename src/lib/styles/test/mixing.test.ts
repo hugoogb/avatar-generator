@@ -176,8 +176,9 @@ describe("options stay opt-in for every style", () => {
     it("gradient keeps a distinct gradient per auto-theme drawing", () => {
         const { svg } = createAvatar(gradient, { seed: "x", theme: "auto" });
         const ids = [...svg.matchAll(/<(?:linear|radial)Gradient id="([^"]+)"/g)].map((m) => m[1]);
-        expect(ids).toHaveLength(3);
-        expect(new Set(ids).size).toBe(3);
+        // A colour gradient and a soft highlight, per drawing.
+        expect(ids).toHaveLength(6);
+        expect(new Set(ids).size).toBe(6);
     });
 });
 

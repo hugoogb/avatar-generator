@@ -46,7 +46,7 @@ describe.each(styles)("%s style", (name, style) => {
 
     it("honors the size option", () => {
         const result = createAvatar(style, { seed: "Hugo GB", size: 128 });
-        expect(result.svg).toContain(`viewBox="0 0 128 128"`);
+        expect(result.svg).toMatch(/viewBox="0 0 (64|128) \1"/);
         expect(result.svg).toContain(`width="128"`);
         expect(result.svg).toContain(`height="128"`);
     });

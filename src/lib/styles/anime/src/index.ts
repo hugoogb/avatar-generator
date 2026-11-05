@@ -1,5 +1,5 @@
 import type { AvatarOptions, ComposableStyle, Random } from "@avatar-generator/core";
-import { defineStyle, EYE_COLORS, SKIN_TONES, validateOption } from "@avatar-generator/core";
+import { defineStyle, SKIN_TONES, validateOption } from "@avatar-generator/core";
 
 // ============================================================================
 // Options
@@ -93,7 +93,12 @@ export const MOUTH_STYLES: MouthStyle[] = ["small-smile", "open-small", "cat-mou
 /** All valid nose style values for the anime style */
 export const NOSE_STYLES: NoseStyle[] = ["dot", "line", "shadow"];
 
-const EYEBROW_STYLES: EyebrowStyle[] = ["natural", "furrowed", "raised", "thin"];
+// A profile picture should not look upset by accident.
+const EYEBROW_STYLES: EyebrowStyle[] = ["natural", "raised", "thin"];
+const FRIENDLY_EYES = EYE_STYLES.filter((style) => style !== "half-closed");
+// Smiling twice over, as a dark open mouth on a third of avatars looks like a gasp.
+const FRIENDLY_MOUTHS: MouthStyle[] = [...MOUTH_STYLES.filter((style) => style !== "pout"), "small-smile"];
+const EYE_TONES = ["#3B82C4", "#2E9E7E", "#7C5CD6", "#B8691F", "#C2477F", "#2F6FB0"];
 
 // Anime-typical hair colors (includes unnatural colors)
 const ANIME_HAIR_COLORS = [
@@ -133,12 +138,16 @@ interface AnimeGeo {
     mouthY: number;
 }
 
+/** Drawn in this coordinate space and scaled, so details stay in proportion. */
+const CANVAS = 64;
+const COLLARS = ["#1F2937", "#F3F4F6", "#374151", "#1D4ED8", "#B91C1C"];
+
 function computeGeo(size: number): AnimeGeo {
     const cx = size / 2;
-    const cy = size * 0.5;
-    const headW = size * 0.56;
-    const headH = size * 0.72;
-    const eyeRy = headH * 0.115;
+    const cy = size * 0.45;
+    const headW = size * 0.55;
+    const headH = size * 0.53;
+    const eyeRy = headH * 0.15;
     return {
         size,
         cx,
@@ -147,14 +156,15 @@ function computeGeo(size: number): AnimeGeo {
         headH,
         faceTop: cy - headH * 0.52,
         chinY: cy + headH * 0.5,
-        eyeY: cy - headH * 0.08,
-        eyeSpacing: headW * 0.24,
-        eyeRx: headW * 0.115,
+        // Low on the face and wide apart, which is what reads as anime and as young.
+        eyeY: cy + headH * 0.05,
+        eyeSpacing: headW * 0.25,
+        eyeRx: headW * 0.13,
         eyeRy,
-        irisR: eyeRy * 0.82,
-        browY: cy - headH * 0.08 - eyeRy * 1.4,
-        noseY: cy + headH * 0.1,
-        mouthY: cy + headH * 0.32,
+        irisR: eyeRy * 0.8,
+        browY: cy + headH * 0.05 - eyeRy * 1.75,
+        noseY: cy + headH * 0.25,
+        mouthY: cy + headH * 0.33,
     };
 }
 
@@ -165,17 +175,14 @@ function computeGeo(size: number): AnimeGeo {
 function drawFace(g: AnimeGeo, skinColor: string): string {
     const { cx, cy, headW, headH, faceTop, chinY } = g;
     const halfW = headW / 2;
-    // V-chin bezier: wide at temples, tapering to pointed chin
-    const templeY = cy - headH * 0.2;
-    const jawY = cy + headH * 0.25;
+    // A round forehead and full cheeks, tapering gently to a soft chin.
+    const cheekY = cy + headH * 0.08;
     return (
         `<path d="M ${cx} ${faceTop} ` +
-        `Q ${cx + halfW * 0.8} ${faceTop} ${cx + halfW} ${templeY} ` +
-        `Q ${cx + halfW * 1.02} ${jawY} ${cx + halfW * 0.25} ${chinY - 2} ` +
-        `Q ${cx + halfW * 0.08} ${chinY + 1} ${cx} ${chinY + 2} ` +
-        `Q ${cx - halfW * 0.08} ${chinY + 1} ${cx - halfW * 0.25} ${chinY - 2} ` +
-        `Q ${cx - halfW * 1.02} ${jawY} ${cx - halfW} ${templeY} ` +
-        `Q ${cx - halfW * 0.8} ${faceTop} ${cx} ${faceTop} Z" ` +
+        `C ${cx + halfW * 0.72} ${faceTop} ${cx + halfW} ${cy - headH * 0.3} ${cx + halfW} ${cheekY} ` +
+        `C ${cx + halfW} ${cy + headH * 0.33} ${cx + halfW * 0.42} ${chinY} ${cx} ${chinY} ` +
+        `C ${cx - halfW * 0.42} ${chinY} ${cx - halfW} ${cy + headH * 0.33} ${cx - halfW} ${cheekY} ` +
+        `C ${cx - halfW} ${cy - headH * 0.3} ${cx - halfW * 0.72} ${faceTop} ${cx} ${faceTop} Z" ` +
         `fill="${skinColor}"/>`
     );
 }
@@ -198,91 +205,92 @@ function drawEars(g: AnimeGeo, skinColor: string): string {
 // Hair rendering — sharp polygons + layered bangs
 // ============================================================================
 
+/** A smooth mass around the head, reaching down to `bottom`. */
+function hairMass(g: AnimeGeo, color: string, spread: number, bottom: number): string {
+    const { cx, faceTop, headW } = g;
+    const left = cx - headW / 2 - spread;
+    const right = cx + headW / 2 + spread;
+    const top = faceTop - 3;
+    return `<path d="M ${left} ${bottom} C ${left - 1} ${top - 3} ${right + 1} ${top - 3} ${right} ${bottom} Q ${cx} ${bottom + 3} ${left} ${bottom} Z" fill="${color}"/>`;
+}
+
+/** Sharp tufts along the crown, which give spiky styles their silhouette. */
+function tufts(g: AnimeGeo, color: string, height: number): string {
+    const { cx, faceTop, headW } = g;
+    const halfW = headW / 2 + 2;
+    const y = faceTop + 2;
+    return `<path d="M ${cx - halfW} ${y + 7} L ${cx - halfW * 0.72} ${y - height * 0.6} L ${cx - halfW * 0.42} ${y - 1} L ${cx - halfW * 0.15} ${y - height} L ${cx + halfW * 0.15} ${y - 1} L ${cx + halfW * 0.42} ${y - height * 0.85} L ${cx + halfW * 0.6} ${y - 1} L ${cx + halfW * 0.8} ${y - height * 0.5} L ${cx + halfW} ${y + 7} Z" fill="${color}"/>`;
+}
+
 function drawHairBehind(style: HairStyle, g: AnimeGeo, color: string): string {
-    const { cx, cy, headW, headH, faceTop } = g;
+    const { cx, cy, headW, headH } = g;
     const halfW = headW / 2;
-    const top = faceTop - 4;
 
     switch (style) {
         case "short-spiky":
-            return `<path d="M ${cx - halfW - 4} ${cy + 2} L ${cx - halfW - 6} ${top - 6} L ${cx - halfW * 0.5} ${top - 10} L ${cx} ${top - 14} L ${cx + halfW * 0.5} ${top - 10} L ${cx + halfW + 6} ${top - 6} L ${cx + halfW + 4} ${cy + 2} Z" fill="${color}"/>`;
+            return hairMass(g, color, 2, cy + 2) + tufts(g, color, 7);
         case "medium-messy":
-            return `<path d="M ${cx - halfW - 5} ${cy + 6} L ${cx - halfW - 8} ${top - 4} L ${cx - halfW * 0.3} ${top - 12} L ${cx + 2} ${top - 16} L ${cx + halfW * 0.4} ${top - 10} L ${cx + halfW + 8} ${top - 4} L ${cx + halfW + 5} ${cy + 6} Z" fill="${color}"/>`;
+            return hairMass(g, color, 3, cy + 9) + tufts(g, color, 5);
         case "long-straight":
-            return `<path d="M ${cx - halfW - 6} ${cy + headH * 0.45} L ${cx - halfW - 6} ${top - 8} L ${cx} ${top - 12} L ${cx + halfW + 6} ${top - 8} L ${cx + halfW + 6} ${cy + headH * 0.45} Q ${cx + halfW + 4} ${cy + headH * 0.5} ${cx + halfW + 2} ${cy + headH * 0.45} L ${cx - halfW - 2} ${cy + headH * 0.45} Z" fill="${color}"/>`;
+            return hairMass(g, color, 4, 62);
         case "twin-tails":
             return (
-                `<path d="M ${cx - halfW - 3} ${cy} L ${cx - halfW - 3} ${top - 6} L ${cx} ${top - 10} L ${cx + halfW + 3} ${top - 6} L ${cx + halfW + 3} ${cy} Z" fill="${color}"/>` +
-                `<ellipse cx="${cx - halfW - 6}" cy="${cy + headH * 0.15}" rx="5" ry="12" fill="${color}" transform="rotate(-10 ${cx - halfW - 6} ${cy + headH * 0.15})"/>` +
-                `<ellipse cx="${cx + halfW + 6}" cy="${cy + headH * 0.15}" rx="5" ry="12" fill="${color}" transform="rotate(10 ${cx + halfW + 6} ${cy + headH * 0.15})"/>`
+                hairMass(g, color, 2, cy + 2) +
+                `<ellipse cx="${cx - halfW - 5}" cy="${cy + 8}" rx="4.5" ry="13" fill="${color}" transform="rotate(8 ${cx - halfW - 5} ${cy + 8})"/>` +
+                `<ellipse cx="${cx + halfW + 5}" cy="${cy + 8}" rx="4.5" ry="13" fill="${color}" transform="rotate(-8 ${cx + halfW + 5} ${cy + 8})"/>`
             );
         case "ponytail":
             return (
-                `<path d="M ${cx - halfW - 3} ${cy - 2} L ${cx - halfW - 3} ${top - 6} L ${cx} ${top - 10} L ${cx + halfW + 3} ${top - 6} L ${cx + halfW + 3} ${cy - 2} Z" fill="${color}"/>` +
-                `<ellipse cx="${cx + halfW * 0.2}" cy="${cy + headH * 0.3}" rx="4" ry="10" fill="${color}" transform="rotate(8 ${cx + halfW * 0.2} ${cy + headH * 0.3})"/>`
+                `<path d="M ${cx + halfW - 3} ${cy - 10} C ${cx + halfW + 9} ${cy - 10} ${cx + halfW + 10} ${cy + 14} ${cx + halfW + 3} ${cy + 20} C ${cx + halfW + 4} ${cy + 10} ${cx + halfW + 1} ${cy} ${cx + halfW - 3} ${cy - 2} Z" fill="${color}"/>` +
+                hairMass(g, color, 2, cy + 1)
             );
         case "side-swept":
-            return `<path d="M ${cx - halfW - 6} ${cy + 4} L ${cx - halfW - 8} ${top - 6} L ${cx - halfW * 0.2} ${top - 14} L ${cx + halfW * 0.6} ${top - 10} L ${cx + halfW + 4} ${top - 4} L ${cx + halfW + 4} ${cy + 2} Z" fill="${color}"/>`;
+            return hairMass(g, color, 3, cy + 5);
         case "wild":
-            return `<path d="M ${cx - halfW - 8} ${cy + 8} L ${cx - halfW - 12} ${top - 10} L ${cx - halfW * 0.6} ${top - 18} L ${cx - 2} ${top - 14} L ${cx + halfW * 0.5} ${top - 20} L ${cx + halfW + 10} ${top - 8} L ${cx + halfW + 8} ${cy + 8} Z" fill="${color}"/>`;
+            return hairMass(g, color, 5, cy + 10) + tufts(g, color, 9);
         case "bob":
-            return `<path d="M ${cx - halfW - 4} ${cy + headH * 0.1} Q ${cx - halfW - 5} ${top - 6} ${cx} ${top - 10} Q ${cx + halfW + 5} ${top - 6} ${cx + halfW + 4} ${cy + headH * 0.1} Q ${cx + halfW + 2} ${cy + headH * 0.15} ${cx + halfW} ${cy + headH * 0.12} L ${cx - halfW} ${cy + headH * 0.12} Z" fill="${color}"/>`;
+            return hairMass(g, color, 4, cy + headH * 0.32);
         case "hime-cut":
-            return (
-                `<path d="M ${cx - halfW - 5} ${cy + headH * 0.35} L ${cx - halfW - 5} ${top - 8} L ${cx} ${top - 12} L ${cx + halfW + 5} ${top - 8} L ${cx + halfW + 5} ${cy + headH * 0.35} Z" fill="${color}"/>` +
-                `<rect x="${cx - halfW - 6}" y="${cy - headH * 0.1}" width="6" height="${headH * 0.45}" rx="2" fill="${color}"/>` +
-                `<rect x="${cx + halfW}" y="${cy - headH * 0.1}" width="6" height="${headH * 0.45}" rx="2" fill="${color}"/>`
-            );
+            return hairMass(g, color, 3, 60);
         case "shaggy":
-            return `<path d="M ${cx - halfW - 6} ${cy + 6} L ${cx - halfW - 9} ${top - 4} L ${cx - halfW * 0.4} ${top - 14} L ${cx + halfW * 0.3} ${top - 12} L ${cx + halfW + 9} ${top - 4} L ${cx + halfW + 6} ${cy + 6} Z" fill="${color}"/>`;
+            return hairMass(g, color, 4, cy + 12) + tufts(g, color, 4);
     }
 }
 
 function drawHairFront(style: HairStyle, g: AnimeGeo, color: string, hasBangs: boolean): string {
     const { cx, cy, headW, headH, faceTop } = g;
     const halfW = headW / 2;
-    const top = faceTop - 2;
 
-    // Bangs layer — sharp polygon spikes over forehead
+    // Over the crown, so that a face without bangs does not read as bald.
+    const crown = `<path d="M ${cx - halfW - 0.5} ${cy - 3} C ${cx - halfW - 1} ${faceTop - 7} ${cx + halfW + 1} ${faceTop - 7} ${cx + halfW + 0.5} ${cy - 3} C ${cx + halfW - 2} ${faceTop + 5} ${cx - halfW + 2} ${faceTop + 5} ${cx - halfW - 0.5} ${cy - 3} Z" fill="${color}"/>`;
+
+    // Bangs layer — sharp spikes over the forehead
     let bangs = "";
     if (hasBangs) {
-        const bangBase = faceTop + headH * 0.12;
+        const top = faceTop - 1;
+        const tip = faceTop + headH * 0.2;
         bangs =
-            `<path d="M ${cx - halfW * 0.9} ${top} ` +
-            `L ${cx - halfW * 0.7} ${bangBase + 3} ` +
-            `L ${cx - halfW * 0.45} ${top + 2} ` +
-            `L ${cx - halfW * 0.2} ${bangBase + 5} ` +
-            `L ${cx} ${top + 1} ` +
-            `L ${cx + halfW * 0.2} ${bangBase + 5} ` +
-            `L ${cx + halfW * 0.45} ${top + 2} ` +
-            `L ${cx + halfW * 0.7} ${bangBase + 3} ` +
-            `L ${cx + halfW * 0.9} ${top} Z" fill="${color}"/>`;
+            `<path d="M ${cx - halfW} ${top + 3} ` +
+            `L ${cx - halfW * 0.72} ${tip} ` +
+            `L ${cx - halfW * 0.45} ${top + 5} ` +
+            `L ${cx - halfW * 0.2} ${tip + 1.5} ` +
+            `L ${cx + halfW * 0.02} ${top + 5} ` +
+            `L ${cx + halfW * 0.28} ${tip + 1.5} ` +
+            `L ${cx + halfW * 0.5} ${top + 5} ` +
+            `L ${cx + halfW * 0.75} ${tip} ` +
+            `L ${cx + halfW} ${top + 3} Z" fill="${color}"/>`;
     }
 
-    // Style-specific front hair details
-    let detail = "";
-    switch (style) {
-        case "short-spiky":
-            detail = `<polygon points="${cx - 4},${top - 2} ${cx - 2},${top - 10} ${cx},${top - 3} ${cx + 2},${top - 12} ${cx + 4},${top - 2}" fill="${color}"/>`;
-            break;
-        case "medium-messy":
-            detail = `<polygon points="${cx - 6},${top} ${cx - 3},${top - 8} ${cx + 1},${top - 2} ${cx + 4},${top - 10} ${cx + 6},${top}" fill="${color}"/>`;
-            break;
-        case "wild":
-            detail =
-                `<polygon points="${cx - 8},${top + 2} ${cx - 5},${top - 12} ${cx - 1},${top} ${cx + 3},${top - 14} ${cx + 7},${top + 2}" fill="${color}"/>` +
-                `<polygon points="${cx - halfW - 4},${cy - headH * 0.15} ${cx - halfW - 10},${cy - headH * 0.3} ${cx - halfW - 3},${cy - headH * 0.25}" fill="${color}"/>`;
-            break;
-        case "side-swept": {
-            const bangBase = faceTop + headH * 0.14;
-            detail = `<path d="M ${cx - halfW * 0.8} ${top} L ${cx - halfW * 0.5} ${bangBase + 6} L ${cx - halfW * 0.1} ${top + 2} L ${cx + halfW * 0.3} ${bangBase + 4} L ${cx + halfW * 0.6} ${top + 1}" fill="${color}"/>`;
-            break;
-        }
-        default:
-            break;
+    // Side locks that frame the face
+    let locks = "";
+    if (style === "hime-cut") {
+        const y = cy - headH * 0.1;
+        locks =
+            `<rect x="${cx - halfW - 1.5}" y="${y}" width="5" height="${headH * 0.5}" rx="1.5" fill="${color}"/>` +
+            `<rect x="${cx + halfW - 3.5}" y="${y}" width="5" height="${headH * 0.5}" rx="1.5" fill="${color}"/>`;
     }
 
-    return bangs + detail;
+    return crown + bangs + locks;
 }
 
 // ============================================================================
@@ -290,96 +298,70 @@ function drawHairFront(style: HairStyle, g: AnimeGeo, color: string, hasBangs: b
 // ============================================================================
 
 function drawEyes(style: EyeStyle, g: AnimeGeo, featureColor: string, eyeColor: string): string {
-    const { cx, eyeY, eyeSpacing, eyeRx, eyeRy, irisR } = g;
-    const lx = cx - eyeSpacing;
-    const rx = cx + eyeSpacing;
+    const { cx, eyeY, eyeSpacing, eyeRx, eyeRy } = g;
+    const lash = (d: string, width = 1.6) =>
+        `<path d="${d}" fill="none" stroke="${featureColor}" stroke-width="${width}" stroke-linecap="round"/>`;
 
-    function drawSingleEye(ex: number, mirrored: boolean): string {
-        const hlOff = mirrored ? -0.8 : 0.8;
+    /** Large, tall iris, a dark upper lash and a bright catchlight, nothing fussier. */
+    const openEye = (x: number, height = 1, irisScale = 1): string => {
+        const ry = eyeRy * height;
+        const irisRx = eyeRx * 0.8 * irisScale;
+        const irisRy = ry * 0.86 * irisScale;
+        const y = eyeY + (ry - irisRy) * 0.5;
+        return (
+            `<ellipse cx="${x}" cy="${eyeY}" rx="${eyeRx}" ry="${ry}" fill="#fff"/>` +
+            `<ellipse cx="${x}" cy="${y}" rx="${irisRx}" ry="${irisRy}" fill="${eyeColor}"/>` +
+            `<ellipse cx="${x}" cy="${y + irisRy * 0.12}" rx="${irisRx * 0.55}" ry="${irisRy * 0.6}" fill="#17110D"/>` +
+            `<circle cx="${x + irisRx * 0.35}" cy="${y - irisRy * 0.42}" r="${irisRx * 0.4}" fill="#fff"/>` +
+            `<circle cx="${x - irisRx * 0.35}" cy="${y + irisRy * 0.42}" r="${irisRx * 0.2}" fill="#fff" opacity="0.85"/>` +
+            lash(
+                `M ${x - eyeRx - 0.3} ${eyeY - ry * 0.5} Q ${x} ${eyeY - ry * 1.32} ${x + eyeRx + 0.3} ${eyeY - ry * 0.5}`,
+            )
+        );
+    };
 
+    const drawOne = (x: number): string => {
         switch (style) {
             case "normal":
-                return (
-                    `<ellipse cx="${ex}" cy="${eyeY + 0.5}" rx="${eyeRx + 0.5}" ry="${eyeRy + 0.5}" fill="#e8e0d8" opacity="0.3"/>` +
-                    `<ellipse cx="${ex}" cy="${eyeY}" rx="${eyeRx}" ry="${eyeRy}" fill="white"/>` +
-                    `<circle cx="${ex}" cy="${eyeY + 0.5}" r="${irisR}" fill="${eyeColor}"/>` +
-                    `<circle cx="${ex}" cy="${eyeY + 1}" r="${irisR * 0.5}" fill="${featureColor}"/>` +
-                    `<ellipse cx="${ex}" cy="${eyeY - eyeRy * 0.6}" rx="${eyeRx * 0.9}" ry="${eyeRy * 0.18}" fill="${featureColor}" opacity="0.15"/>` +
-                    `<path d="M ${ex - eyeRx} ${eyeY - eyeRy * 0.7} Q ${ex} ${eyeY - eyeRy * 1.1} ${ex + eyeRx} ${eyeY - eyeRy * 0.7}" fill="none" stroke="${featureColor}" stroke-width="1.2" stroke-linecap="round"/>` +
-                    `<circle cx="${ex + hlOff * 1.5}" cy="${eyeY - irisR * 0.5}" r="${irisR * 0.32}" fill="white"/>` +
-                    `<circle cx="${ex - hlOff}" cy="${eyeY + irisR * 0.3}" r="${irisR * 0.18}" fill="white"/>`
-                );
-
+            case "gentle":
+                return openEye(x);
             case "sparkly":
                 return (
-                    `<ellipse cx="${ex}" cy="${eyeY + 0.5}" rx="${eyeRx + 0.5}" ry="${eyeRy + 0.5}" fill="#e8e0d8" opacity="0.3"/>` +
-                    `<ellipse cx="${ex}" cy="${eyeY}" rx="${eyeRx}" ry="${eyeRy}" fill="white"/>` +
-                    `<circle cx="${ex}" cy="${eyeY + 0.5}" r="${irisR}" fill="${eyeColor}"/>` +
-                    `<circle cx="${ex}" cy="${eyeY + 1}" r="${irisR * 0.45}" fill="${featureColor}"/>` +
-                    `<ellipse cx="${ex}" cy="${eyeY - eyeRy * 0.6}" rx="${eyeRx * 0.9}" ry="${eyeRy * 0.18}" fill="${featureColor}" opacity="0.15"/>` +
-                    `<path d="M ${ex - eyeRx} ${eyeY - eyeRy * 0.7} Q ${ex} ${eyeY - eyeRy * 1.1} ${ex + eyeRx} ${eyeY - eyeRy * 0.7}" fill="none" stroke="${featureColor}" stroke-width="1.2" stroke-linecap="round"/>` +
-                    `<circle cx="${ex + hlOff * 1.8}" cy="${eyeY - irisR * 0.6}" r="${irisR * 0.38}" fill="white"/>` +
-                    `<circle cx="${ex - hlOff * 1.2}" cy="${eyeY + irisR * 0.2}" r="${irisR * 0.22}" fill="white"/>` +
-                    `<circle cx="${ex + hlOff * 0.5}" cy="${eyeY + irisR * 0.5}" r="${irisR * 0.14}" fill="white" opacity="0.7"/>`
+                    openEye(x) +
+                    `<circle cx="${x + eyeRx * 0.05}" cy="${eyeY + eyeRy * 0.05}" r="${eyeRx * 0.16}" fill="#fff"/>`
                 );
-
             case "determined":
-                return (
-                    `<ellipse cx="${ex}" cy="${eyeY + 0.5}" rx="${eyeRx + 0.5}" ry="${eyeRy + 0.3}" fill="#e8e0d8" opacity="0.3"/>` +
-                    `<ellipse cx="${ex}" cy="${eyeY}" rx="${eyeRx}" ry="${eyeRy * 0.85}" fill="white"/>` +
-                    `<circle cx="${ex}" cy="${eyeY + 0.5}" r="${irisR * 0.95}" fill="${eyeColor}"/>` +
-                    `<circle cx="${ex}" cy="${eyeY + 1}" r="${irisR * 0.5}" fill="${featureColor}"/>` +
-                    `<line x1="${ex - eyeRx}" y1="${eyeY - eyeRy * 0.6}" x2="${ex + eyeRx}" y2="${eyeY - eyeRy * 0.85}" stroke="${featureColor}" stroke-width="1.5" stroke-linecap="round"/>` +
-                    `<circle cx="${ex + hlOff * 1.5}" cy="${eyeY - irisR * 0.4}" r="${irisR * 0.3}" fill="white"/>` +
-                    `<circle cx="${ex - hlOff}" cy="${eyeY + irisR * 0.3}" r="${irisR * 0.16}" fill="white"/>`
-                );
-
-            case "gentle":
-                return (
-                    `<ellipse cx="${ex}" cy="${eyeY + 0.5}" rx="${eyeRx + 0.5}" ry="${eyeRy + 0.5}" fill="#e8e0d8" opacity="0.3"/>` +
-                    `<ellipse cx="${ex}" cy="${eyeY}" rx="${eyeRx}" ry="${eyeRy * 1.05}" fill="white"/>` +
-                    `<circle cx="${ex}" cy="${eyeY + 1}" r="${irisR * 1.05}" fill="${eyeColor}"/>` +
-                    `<circle cx="${ex}" cy="${eyeY + 1.5}" r="${irisR * 0.5}" fill="${featureColor}"/>` +
-                    `<path d="M ${ex - eyeRx * 0.7} ${eyeY - eyeRy * 0.5} Q ${ex} ${eyeY - eyeRy * 0.9} ${ex + eyeRx * 0.7} ${eyeY - eyeRy * 0.5}" fill="none" stroke="${featureColor}" stroke-width="1" stroke-linecap="round"/>` +
-                    `<circle cx="${ex + hlOff * 1.5}" cy="${eyeY - irisR * 0.3}" r="${irisR * 0.35}" fill="white"/>` +
-                    `<circle cx="${ex - hlOff}" cy="${eyeY + irisR * 0.4}" r="${irisR * 0.2}" fill="white"/>`
-                );
-
+                return openEye(x, 0.9);
             case "cat":
                 return (
-                    `<ellipse cx="${ex}" cy="${eyeY + 0.5}" rx="${eyeRx + 0.5}" ry="${eyeRy * 0.75}" fill="#e8e0d8" opacity="0.3"/>` +
-                    `<ellipse cx="${ex}" cy="${eyeY}" rx="${eyeRx}" ry="${eyeRy * 0.7}" fill="white"/>` +
-                    `<ellipse cx="${ex}" cy="${eyeY + 0.3}" rx="${irisR * 0.35}" ry="${irisR * 0.9}" fill="${featureColor}"/>` +
-                    `<ellipse cx="${ex}" cy="${eyeY}" rx="${irisR}" ry="${eyeRy * 0.65}" fill="${eyeColor}" opacity="0.6"/>` +
-                    `<path d="M ${ex - eyeRx * 1.1} ${eyeY - eyeRy * 0.3} Q ${ex} ${eyeY - eyeRy * 0.9} ${ex + eyeRx * 1.1} ${eyeY - eyeRy * 0.3}" fill="none" stroke="${featureColor}" stroke-width="1.3" stroke-linecap="round"/>` +
-                    `<circle cx="${ex + hlOff * 1.5}" cy="${eyeY - irisR * 0.3}" r="${irisR * 0.25}" fill="white"/>`
+                    `<ellipse cx="${x}" cy="${eyeY}" rx="${eyeRx}" ry="${eyeRy * 0.82}" fill="#fff"/>` +
+                    `<ellipse cx="${x}" cy="${eyeY}" rx="${eyeRx * 0.76}" ry="${eyeRy * 0.74}" fill="${eyeColor}"/>` +
+                    `<ellipse cx="${x}" cy="${eyeY}" rx="${eyeRx * 0.2}" ry="${eyeRy * 0.62}" fill="#17110D"/>` +
+                    `<circle cx="${x + eyeRx * 0.3}" cy="${eyeY - eyeRy * 0.34}" r="${eyeRx * 0.24}" fill="#fff"/>` +
+                    lash(
+                        `M ${x - eyeRx - 0.3} ${eyeY - eyeRy * 0.35} Q ${x} ${eyeY - eyeRy * 1.1} ${x + eyeRx + 0.3} ${eyeY - eyeRy * 0.35}`,
+                    )
                 );
-
-            case "half-closed":
+            case "half-closed": {
+                const lid = eyeY - eyeRy * 0.1;
                 return (
-                    `<ellipse cx="${ex}" cy="${eyeY + 1}" rx="${eyeRx}" ry="${eyeRy * 0.5}" fill="white"/>` +
-                    `<ellipse cx="${ex}" cy="${eyeY + 1.3}" rx="${irisR * 0.9}" ry="${irisR * 0.45}" fill="${eyeColor}"/>` +
-                    `<ellipse cx="${ex}" cy="${eyeY + 1.5}" rx="${irisR * 0.5}" ry="${irisR * 0.3}" fill="${featureColor}"/>` +
-                    `<line x1="${ex - eyeRx}" y1="${eyeY + 0.3}" x2="${ex + eyeRx}" y2="${eyeY + 0.3}" stroke="${featureColor}" stroke-width="1.5" stroke-linecap="round"/>` +
-                    `<circle cx="${ex + hlOff}" cy="${eyeY + 0.8}" r="${irisR * 0.2}" fill="white"/>`
+                    `<path d="M ${x - eyeRx} ${lid} H ${x + eyeRx} A ${eyeRx} ${eyeRy * 0.9} 0 0 1 ${x - eyeRx} ${lid} Z" fill="#fff"/>` +
+                    `<path d="M ${x - eyeRx * 0.72} ${lid} H ${x + eyeRx * 0.72} A ${eyeRx * 0.72} ${eyeRy * 0.74} 0 0 1 ${x - eyeRx * 0.72} ${lid} Z" fill="${eyeColor}"/>` +
+                    `<path d="M ${x - eyeRx * 0.38} ${lid} H ${x + eyeRx * 0.38} A ${eyeRx * 0.38} ${eyeRy * 0.42} 0 0 1 ${x - eyeRx * 0.38} ${lid} Z" fill="#17110D"/>` +
+                    lash(`M ${x - eyeRx - 0.3} ${lid} H ${x + eyeRx + 0.3}`)
                 );
-
+            }
             case "closed-happy":
-                return `<path d="M ${ex - eyeRx} ${eyeY + 1} Q ${ex} ${eyeY - eyeRy * 0.8} ${ex + eyeRx} ${eyeY + 1}" fill="none" stroke="${featureColor}" stroke-width="1.5" stroke-linecap="round"/>`;
-
-            case "surprised":
-                return (
-                    `<ellipse cx="${ex}" cy="${eyeY}" rx="${eyeRx * 1.1}" ry="${eyeRy * 1.15}" fill="white"/>` +
-                    `<circle cx="${ex}" cy="${eyeY}" r="${irisR * 0.9}" fill="${eyeColor}"/>` +
-                    `<circle cx="${ex}" cy="${eyeY + 0.5}" r="${irisR * 0.45}" fill="${featureColor}"/>` +
-                    `<path d="M ${ex - eyeRx * 1.1} ${eyeY - eyeRy * 0.85} Q ${ex} ${eyeY - eyeRy * 1.3} ${ex + eyeRx * 1.1} ${eyeY - eyeRy * 0.85}" fill="none" stroke="${featureColor}" stroke-width="1.3" stroke-linecap="round"/>` +
-                    `<circle cx="${ex + hlOff * 1.8}" cy="${eyeY - irisR * 0.6}" r="${irisR * 0.35}" fill="white"/>` +
-                    `<circle cx="${ex - hlOff}" cy="${eyeY + irisR * 0.3}" r="${irisR * 0.18}" fill="white"/>`
+                return lash(
+                    `M ${x - eyeRx} ${eyeY + 1.5} Q ${x} ${eyeY - eyeRy * 0.75} ${x + eyeRx} ${eyeY + 1.5}`,
+                    1.8,
                 );
+            case "surprised":
+                return openEye(x, 1.05, 0.72);
         }
-    }
+    };
 
-    return drawSingleEye(lx, false) + drawSingleEye(rx, true);
+    return drawOne(cx - eyeSpacing) + drawOne(cx + eyeSpacing);
 }
 
 // ============================================================================
@@ -390,29 +372,21 @@ function drawEyebrows(style: EyebrowStyle, g: AnimeGeo, color: string): string {
     const { cx, browY, eyeSpacing, eyeRx } = g;
     const lx = cx - eyeSpacing;
     const rx = cx + eyeSpacing;
-    const bw = eyeRx * 1.1;
+    const bw = eyeRx * 0.85;
+    /** Short and light, high above the eye, from the outer end to the inner end. */
+    const pair = (lift: number, inner: number, width: number) =>
+        `<path d="M ${lx - bw} ${browY + 0.5} Q ${lx} ${browY - lift} ${lx + bw} ${browY + inner}" fill="none" stroke="${color}" stroke-width="${width}" stroke-linecap="round"/>` +
+        `<path d="M ${rx + bw} ${browY + 0.5} Q ${rx} ${browY - lift} ${rx - bw} ${browY + inner}" fill="none" stroke="${color}" stroke-width="${width}" stroke-linecap="round"/>`;
 
     switch (style) {
         case "natural":
-            return (
-                `<path d="M ${lx - bw} ${browY + 1} Q ${lx} ${browY - 2} ${lx + bw} ${browY}" fill="none" stroke="${color}" stroke-width="1.3" stroke-linecap="round"/>` +
-                `<path d="M ${rx - bw} ${browY} Q ${rx} ${browY - 2} ${rx + bw} ${browY + 1}" fill="none" stroke="${color}" stroke-width="1.3" stroke-linecap="round"/>`
-            );
+            return pair(1, 0.3, 1);
         case "furrowed":
-            return (
-                `<line x1="${lx - bw}" y1="${browY - 1}" x2="${lx + bw}" y2="${browY + 2}" stroke="${color}" stroke-width="1.5" stroke-linecap="round"/>` +
-                `<line x1="${rx - bw}" y1="${browY + 2}" x2="${rx + bw}" y2="${browY - 1}" stroke="${color}" stroke-width="1.5" stroke-linecap="round"/>`
-            );
+            return pair(0.2, 1.2, 1.1);
         case "raised":
-            return (
-                `<path d="M ${lx - bw} ${browY + 2} Q ${lx} ${browY - 4} ${lx + bw} ${browY + 1}" fill="none" stroke="${color}" stroke-width="1.3" stroke-linecap="round"/>` +
-                `<path d="M ${rx - bw} ${browY + 1} Q ${rx} ${browY - 4} ${rx + bw} ${browY + 2}" fill="none" stroke="${color}" stroke-width="1.3" stroke-linecap="round"/>`
-            );
+            return pair(2, 0, 1);
         case "thin":
-            return (
-                `<line x1="${lx - bw}" y1="${browY}" x2="${lx + bw}" y2="${browY - 0.5}" stroke="${color}" stroke-width="0.7" stroke-linecap="round"/>` +
-                `<line x1="${rx - bw}" y1="${browY - 0.5}" x2="${rx + bw}" y2="${browY}" stroke="${color}" stroke-width="0.7" stroke-linecap="round"/>`
-            );
+            return pair(0.8, 0.2, 0.7);
     }
 }
 
@@ -476,8 +450,8 @@ function drawExpressions(random: Random, g: AnimeGeo, hasBlush: boolean): string
 
     // Blush — pink ovals on cheeks (35%)
     if (hasBlush) {
-        const blushY = eyeY + eyeRy * 1.8;
-        const blushSpacing = headW * 0.28;
+        const blushY = eyeY + eyeRy * 1.3;
+        const blushSpacing = headW * 0.36;
         content +=
             `<ellipse cx="${cx - blushSpacing}" cy="${blushY}" rx="3.5" ry="2" fill="#FF9999" opacity="0.35"/>` +
             `<ellipse cx="${cx + blushSpacing}" cy="${blushY}" rx="3.5" ry="2" fill="#FF9999" opacity="0.35"/>`;
@@ -533,8 +507,8 @@ function drawAccessories(random: Random, g: AnimeGeo, _skinColor: string): strin
 
     // Bandaid on cheek (5%)
     if (random.bool(0.05)) {
-        const bx = cx + headW * 0.22;
-        const by = eyeY + eyeRy * 2.5;
+        const bx = cx + headW * 0.34;
+        const by = eyeY + eyeRy * 1.6;
         content += `<rect x="${bx - 3}" y="${by - 1}" width="6" height="2.5" rx="0.5" fill="#F5DEB3" stroke="#DEB887" stroke-width="0.3" transform="rotate(-15 ${bx} ${by})"/>`;
     }
 
@@ -553,8 +527,9 @@ function drawAccessories(random: Random, g: AnimeGeo, _skinColor: string): strin
 
 function drawAhoge(g: AnimeGeo, hairColor: string): string {
     const { cx, faceTop } = g;
-    const baseY = faceTop - 8;
-    return `<path d="M ${cx - 1} ${baseY + 4} Q ${cx - 4} ${baseY - 6} ${cx + 1} ${baseY - 10} Q ${cx + 3} ${baseY - 4} ${cx + 1} ${baseY + 4}" fill="${hairColor}"/>`;
+    // Stops short of the top of the frame, where a clip would cut it off.
+    const y = faceTop - 2;
+    return `<path d="M ${cx - 1.4} ${y + 2} Q ${cx - 3} ${y - 3} ${cx + 2.5} ${y - 6} Q ${cx + 0.5} ${y - 2} ${cx + 1.4} ${y + 2} Z" fill="${hairColor}"/>`;
 }
 
 // ============================================================================
@@ -563,6 +538,7 @@ function drawAhoge(g: AnimeGeo, hairColor: string): string {
 
 /** What the seed decides for one anime avatar. */
 export interface AnimeTraits {
+    collarColor: string;
     skinColor: string;
     hairColor: string;
     featureColor: string;
@@ -587,16 +563,17 @@ export interface AnimeTraits {
 function prepareAnime(options: AnimeOptions, random: Random): AnimeTraits {
     const size = options.size ?? 64;
     const skinTones = options.skinTones ?? SKIN_TONES;
-    const eyeColorPalette = options.eyeColors ?? EYE_COLORS;
+    const eyeColorPalette = options.eyeColors ?? EYE_TONES;
 
     const skinColor = random.pick(skinTones);
     const hairColor = random.pick(ANIME_HAIR_COLORS);
     const eyeColor = random.pick(eyeColorPalette);
+    const collarColor = random.pick(COLLARS);
 
     // Pick features
     const hairStyle: HairStyle = options.hairStyle ?? random.pick(HAIR_STYLES);
-    const eyeStyle: EyeStyle = options.eyeStyle ?? random.pick(EYE_STYLES);
-    const mouthStyle: MouthStyle = options.mouthStyle ?? random.pick(MOUTH_STYLES);
+    const eyeStyle: EyeStyle = options.eyeStyle ?? random.pick(FRIENDLY_EYES);
+    const mouthStyle: MouthStyle = options.mouthStyle ?? random.pick(FRIENDLY_MOUTHS);
     const noseStyle: NoseStyle = options.noseStyle ?? random.pick(NOSE_STYLES);
     const eyebrowStyle: EyebrowStyle = random.pick(EYEBROW_STYLES);
 
@@ -611,6 +588,7 @@ function prepareAnime(options: AnimeOptions, random: Random): AnimeTraits {
     const accessories = enableAccessories ? drawAccessories(random, g, skinColor) : "";
 
     return {
+        collarColor,
         skinColor,
         hairColor,
         featureColor: "#2C1810",
@@ -651,6 +629,7 @@ function prepareAnime(options: AnimeOptions, random: Random): AnimeTraits {
  */
 export const anime: ComposableStyle<AnimeOptions, AnimeTraits> = defineStyle<AnimeOptions, AnimeTraits>({
     name: "anime",
+    canvas: CANVAS,
 
     validate(options) {
         validateOption("anime", "hairStyle", options.hairStyle, HAIR_STYLES);
@@ -671,6 +650,16 @@ export const anime: ComposableStyle<AnimeOptions, AnimeTraits> = defineStyle<Ani
             name: "hair-behind",
             feature: "hair",
             render: ({ traits, size }) => drawHairBehind(traits.hairStyle, computeGeo(size), traits.hairColor),
+        },
+        {
+            name: "body",
+            render: ({ traits, size }) => {
+                const g = computeGeo(size);
+                return (
+                    `<path d="M 11 64 C 11 53 21 48.5 ${g.cx} 48.5 C 43 48.5 53 53 53 64 Z" fill="${traits.collarColor}"/>` +
+                    `<rect x="${g.cx - 4.5}" y="${g.chinY - 5}" width="9" height="${50 - g.chinY + 5}" rx="3" fill="${traits.skinColor}"/>`
+                );
+            },
         },
         { name: "ears", render: ({ traits, size }) => drawEars(computeGeo(size), traits.skinColor) },
         // V-chin bezier path

@@ -28,7 +28,7 @@
     "module": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "bin": {
-        "create-avatar-style": "./dist/cli.js"
+        "create-avatar-style": "dist/cli.js"
     },
     "exports": {
         ".": {

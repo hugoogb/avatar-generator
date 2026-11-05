@@ -1,5 +1,5 @@
 import type { AvatarOptions, AvatarResult, Style } from "@avatar-generator/core";
-import { buildSvg, createRandom, DEFAULT_COLORS, escapeXml, resolveTheme } from "@avatar-generator/core";
+import { buildSvg, createRandom, DEFAULT_COLORS, escapeXml, readableColor, resolveTheme } from "@avatar-generator/core";
 
 // ============================================================================
 // Options
@@ -11,51 +11,51 @@ import { buildSvg, createRandom, DEFAULT_COLORS, escapeXml, resolveTheme } from 
 export interface InitialsOptions extends AvatarOptions {
     /** Name to extract initials from (defaults to seed) */
     name?: string;
-    /** Font family (default: sans-serif) */
+    /** Font family (default: the system UI font) */
     fontFamily?: string;
     /** Font weight (default: 600) */
     fontWeight?: number;
-    /** Text color (default: the theme's foreground, otherwise #fff) */
+    /** Text color (default: the theme's foreground, otherwise white or near-black, whichever reads better) */
     textColor?: string;
 }
 
 /**
- * Extracts initials from a name string
+ * Extracts initials from a name. An email address uses its local part, so
+ * `ana.li@example.com` gives `AL` rather than `A`.
  */
 function getInitials(name: string): string {
-    if (!name.trim()) return "?";
+    const trimmed = name.trim();
+    if (!trimmed) return "?";
 
-    return name
-        .split(" ")
+    const words = trimmed.includes("@") ? trimmed.split("@")[0].split(/[._+-]+/) : trimmed.split(/\s+/);
+    const initials = words
         .filter(Boolean)
         .slice(0, 2)
         .map((part) => Array.from(part)[0].toUpperCase())
         .join("");
+    return initials || "?";
 }
+
+// Unquoted on purpose: this value sits inside an attribute of a data URI.
+const FONT_STACK = "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif";
 
 /**
  * Creates initials style avatar content
  */
-function createInitialsContent(options: InitialsOptions): string {
+function createInitialsContent(options: InitialsOptions, backgroundColor: string): string {
     const size = options.size ?? 64;
-    const name = options.name ?? options.seed;
-    const initials = getInitials(name);
-    const fontFamily = options.fontFamily ?? "sans-serif";
+    const initials = getInitials(options.name ?? options.seed);
+    const fontFamily = options.fontFamily ?? FONT_STACK;
     const fontWeight = options.fontWeight ?? 600;
-    const textColor = options.textColor ?? resolveTheme(options.theme)?.foreground ?? "#fff";
+    // With no background, the page behind could be any colour. The palette's
+    // mid-tones hold up on both light and dark, where black or white would vanish.
+    const automatic = options.transparent ? backgroundColor : readableColor(backgroundColor);
+    const textColor = options.textColor ?? resolveTheme(options.theme)?.foreground ?? automatic;
 
-    // Calculate font size based on avatar size and number of initials
-    const fontSize = size * (initials.length === 1 ? 0.5 : 0.4);
+    // Two letters take up more room, so they get a smaller size.
+    const fontSize = size * (Array.from(initials).length === 1 ? 0.5 : 0.4);
 
-    return `<text
-    x="${size / 2}"
-    y="${size / 2}"
-    font-family="${fontFamily}"
-    font-size="${fontSize}"
-    font-weight="${fontWeight}"
-    fill="${textColor}"
-    text-anchor="middle"
-    dominant-baseline="central">${escapeXml(initials)}</text>`;
+    return `<text x="${size / 2}" y="${size / 2}" font-family="${fontFamily}" font-size="${fontSize}" font-weight="${fontWeight}" fill="${textColor}" text-anchor="middle" dominant-baseline="central">${escapeXml(initials)}</text>`;
 }
 
 /**
@@ -83,7 +83,7 @@ export const initials: Style<InitialsOptions> = {
         const colors = options.colors ?? DEFAULT_COLORS;
         const backgroundColor = random.pick(colors);
 
-        const content = createInitialsContent(options);
+        const content = createInitialsContent(options, backgroundColor);
 
         return buildSvg(content, options, backgroundColor);
     },

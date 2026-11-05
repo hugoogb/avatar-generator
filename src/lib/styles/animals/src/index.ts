@@ -1,5 +1,13 @@
 import type { AvatarOptions, AvatarResult, Style } from "@avatar-generator/core";
-import { buildSvg, createRandom, DEFAULT_COLORS, layerGroup, validateOption } from "@avatar-generator/core";
+import {
+    buildSvg,
+    contrastRatio,
+    createRandom,
+    DEFAULT_COLORS,
+    layerGroup,
+    pickContrasting,
+    validateOption,
+} from "@avatar-generator/core";
 
 // ============================================================================
 // Options
@@ -21,6 +29,9 @@ export const ANIMALS: Animal[] = ["cat", "dog", "bear", "fox", "panda", "bunny",
 
 // Earth-tone fur palette used when the caller does not supply one.
 const FUR_TONES = ["#D4A574", "#A67B5B", "#7F5A3C", "#E8C89C", "#C88F5D"];
+
+/** Drawn in this coordinate space and scaled, so details stay in proportion. */
+const CANVAS = 64;
 
 const STROKE = "#2C1810";
 const WHITE = "#FFFFFF";
@@ -57,7 +68,7 @@ function drawCat(g: AnimalGeo, fur: string): string {
     const { cx, cy, headW, headH } = g;
     const halfW = headW / 2;
     const halfH = headH / 2;
-    const earBase = halfW * 0.55;
+    const earBase = halfW * 0.8;
 
     return (
         // Ears (triangles on top)
@@ -70,8 +81,8 @@ function drawCat(g: AnimalGeo, fur: string): string {
         `<ellipse cx="${cx}" cy="${cy}" rx="${halfW}" ry="${halfH}" fill="${fur}"/>` +
         EYES_START +
         // Eyes
-        `<ellipse cx="${cx - halfW * 0.35}" cy="${cy - halfH * 0.05}" rx="${halfW * 0.11}" ry="${halfH * 0.14}" fill="${STROKE}"/>` +
-        `<ellipse cx="${cx + halfW * 0.35}" cy="${cy - halfH * 0.05}" rx="${halfW * 0.11}" ry="${halfH * 0.14}" fill="${STROKE}"/>` +
+        `<ellipse cx="${cx - halfW * 0.35}" cy="${cy - halfH * 0.05}" rx="${halfW * 0.13}" ry="${halfH * 0.17}" fill="${STROKE}"/>` +
+        `<ellipse cx="${cx + halfW * 0.35}" cy="${cy - halfH * 0.05}" rx="${halfW * 0.13}" ry="${halfH * 0.17}" fill="${STROKE}"/>` +
         `<circle cx="${cx - halfW * 0.32}" cy="${cy - halfH * 0.1}" r="1.2" fill="${WHITE}"/>` +
         `<circle cx="${cx + halfW * 0.38}" cy="${cy - halfH * 0.1}" r="1.2" fill="${WHITE}"/>` +
         EYES_END +
@@ -102,8 +113,8 @@ function drawDog(g: AnimalGeo, fur: string): string {
         `<ellipse cx="${cx}" cy="${cy + halfH * 0.35}" rx="${halfW * 0.45}" ry="${halfH * 0.3}" fill="${WHITE}" opacity="0.6"/>` +
         EYES_START +
         // Eyes
-        `<circle cx="${cx - halfW * 0.32}" cy="${cy - halfH * 0.1}" r="${halfW * 0.1}" fill="${STROKE}"/>` +
-        `<circle cx="${cx + halfW * 0.32}" cy="${cy - halfH * 0.1}" r="${halfW * 0.1}" fill="${STROKE}"/>` +
+        `<circle cx="${cx - halfW * 0.32}" cy="${cy - halfH * 0.1}" r="${halfW * 0.13}" fill="${STROKE}"/>` +
+        `<circle cx="${cx + halfW * 0.32}" cy="${cy - halfH * 0.1}" r="${halfW * 0.13}" fill="${STROKE}"/>` +
         `<circle cx="${cx - halfW * 0.3}" cy="${cy - halfH * 0.14}" r="1.4" fill="${WHITE}"/>` +
         `<circle cx="${cx + halfW * 0.34}" cy="${cy - halfH * 0.14}" r="1.4" fill="${WHITE}"/>` +
         EYES_END +
@@ -134,8 +145,8 @@ function drawBear(g: AnimalGeo, fur: string): string {
         `<ellipse cx="${cx}" cy="${cy + halfH * 0.3}" rx="${halfW * 0.55}" ry="${halfH * 0.35}" fill="#F5E8D3"/>` +
         EYES_START +
         // Eyes
-        `<circle cx="${cx - halfW * 0.28}" cy="${cy - halfH * 0.12}" r="${halfW * 0.08}" fill="${STROKE}"/>` +
-        `<circle cx="${cx + halfW * 0.28}" cy="${cy - halfH * 0.12}" r="${halfW * 0.08}" fill="${STROKE}"/>` +
+        `<circle cx="${cx - halfW * 0.28}" cy="${cy - halfH * 0.12}" r="${halfW * 0.12}" fill="${STROKE}"/>` +
+        `<circle cx="${cx + halfW * 0.28}" cy="${cy - halfH * 0.12}" r="${halfW * 0.12}" fill="${STROKE}"/>` +
         EYES_END +
         // Nose
         `<ellipse cx="${cx}" cy="${cy + halfH * 0.12}" rx="${halfW * 0.1}" ry="${halfH * 0.08}" fill="${BLACK}"/>` +
@@ -165,8 +176,8 @@ function drawFox(g: AnimalGeo, _fur: string): string {
         `<path d="M ${cx - halfW * 0.45} ${cy + halfH * 0.1} Q ${cx} ${cy + halfH * 0.7} ${cx + halfW * 0.45} ${cy + halfH * 0.1} Q ${cx} ${cy + halfH * 0.35} ${cx - halfW * 0.45} ${cy + halfH * 0.1} Z" fill="${WHITE}"/>` +
         EYES_START +
         // Eyes
-        `<ellipse cx="${cx - halfW * 0.3}" cy="${cy - halfH * 0.1}" rx="${halfW * 0.09}" ry="${halfH * 0.12}" fill="${STROKE}"/>` +
-        `<ellipse cx="${cx + halfW * 0.3}" cy="${cy - halfH * 0.1}" rx="${halfW * 0.09}" ry="${halfH * 0.12}" fill="${STROKE}"/>` +
+        `<ellipse cx="${cx - halfW * 0.3}" cy="${cy - halfH * 0.1}" rx="${halfW * 0.12}" ry="${halfH * 0.15}" fill="${STROKE}"/>` +
+        `<ellipse cx="${cx + halfW * 0.3}" cy="${cy - halfH * 0.1}" rx="${halfW * 0.12}" ry="${halfH * 0.15}" fill="${STROKE}"/>` +
         EYES_END +
         // Nose
         `<ellipse cx="${cx}" cy="${cy + halfH * 0.22}" rx="${halfW * 0.08}" ry="${halfH * 0.07}" fill="${BLACK}"/>` +
@@ -212,20 +223,20 @@ function drawBunny(g: AnimalGeo, fur: string): string {
     const halfW = headW / 2;
     const halfH = headH / 2;
     const earW = halfW * 0.2;
-    const earH = halfH * 0.9;
+    const earH = halfH * 0.8;
 
     return (
         // Long ears
-        `<ellipse cx="${cx - halfW * 0.35}" cy="${cy - halfH * 0.8}" rx="${earW}" ry="${earH}" fill="${fur}" transform="rotate(-10 ${cx - halfW * 0.35} ${cy - halfH * 0.8})"/>` +
-        `<ellipse cx="${cx + halfW * 0.35}" cy="${cy - halfH * 0.8}" rx="${earW}" ry="${earH}" fill="${fur}" transform="rotate(10 ${cx + halfW * 0.35} ${cy - halfH * 0.8})"/>` +
+        `<ellipse cx="${cx - halfW * 0.35}" cy="${cy - halfH * 0.72}" rx="${earW}" ry="${earH}" fill="${fur}" transform="rotate(-10 ${cx - halfW * 0.35} ${cy - halfH * 0.72})"/>` +
+        `<ellipse cx="${cx + halfW * 0.35}" cy="${cy - halfH * 0.72}" rx="${earW}" ry="${earH}" fill="${fur}" transform="rotate(10 ${cx + halfW * 0.35} ${cy - halfH * 0.72})"/>` +
         `<ellipse cx="${cx - halfW * 0.35}" cy="${cy - halfH * 0.75}" rx="${earW * 0.5}" ry="${earH * 0.75}" fill="${PINK}" transform="rotate(-10 ${cx - halfW * 0.35} ${cy - halfH * 0.75})"/>` +
         `<ellipse cx="${cx + halfW * 0.35}" cy="${cy - halfH * 0.75}" rx="${earW * 0.5}" ry="${earH * 0.75}" fill="${PINK}" transform="rotate(10 ${cx + halfW * 0.35} ${cy - halfH * 0.75})"/>` +
         // Head
         `<ellipse cx="${cx}" cy="${cy + halfH * 0.05}" rx="${halfW}" ry="${halfH * 0.9}" fill="${fur}"/>` +
         EYES_START +
         // Eyes
-        `<circle cx="${cx - halfW * 0.28}" cy="${cy - halfH * 0.05}" r="${halfW * 0.08}" fill="${STROKE}"/>` +
-        `<circle cx="${cx + halfW * 0.28}" cy="${cy - halfH * 0.05}" r="${halfW * 0.08}" fill="${STROKE}"/>` +
+        `<circle cx="${cx - halfW * 0.28}" cy="${cy - halfH * 0.05}" r="${halfW * 0.12}" fill="${STROKE}"/>` +
+        `<circle cx="${cx + halfW * 0.28}" cy="${cy - halfH * 0.05}" r="${halfW * 0.12}" fill="${STROKE}"/>` +
         EYES_END +
         // Nose
         `<polygon points="${cx},${cy + halfH * 0.2} ${cx - 3},${cy + halfH * 0.12} ${cx + 3},${cy + halfH * 0.12}" fill="${PINK}"/>` +
@@ -279,21 +290,23 @@ function drawMonkey(g: AnimalGeo, fur: string): string {
     const halfH = headH / 2;
     const earR = halfW * 0.25;
     const face = "#F5C99B";
+    // A pale coat and the face patch would blur into one colour.
+    const coat = contrastRatio(fur, face) >= 1.6 ? fur : "#7F5A3C";
 
     return (
         // Side ears
-        `<circle cx="${cx - halfW - earR * 0.4}" cy="${cy}" r="${earR}" fill="${fur}"/>` +
-        `<circle cx="${cx + halfW + earR * 0.4}" cy="${cy}" r="${earR}" fill="${fur}"/>` +
+        `<circle cx="${cx - halfW - earR * 0.4}" cy="${cy}" r="${earR}" fill="${coat}"/>` +
+        `<circle cx="${cx + halfW + earR * 0.4}" cy="${cy}" r="${earR}" fill="${coat}"/>` +
         `<circle cx="${cx - halfW - earR * 0.4}" cy="${cy}" r="${earR * 0.55}" fill="${face}"/>` +
         `<circle cx="${cx + halfW + earR * 0.4}" cy="${cy}" r="${earR * 0.55}" fill="${face}"/>` +
         // Head
-        `<ellipse cx="${cx}" cy="${cy}" rx="${halfW}" ry="${halfH}" fill="${fur}"/>` +
+        `<ellipse cx="${cx}" cy="${cy}" rx="${halfW}" ry="${halfH}" fill="${coat}"/>` +
         // Face patch
         `<ellipse cx="${cx}" cy="${cy + halfH * 0.15}" rx="${halfW * 0.65}" ry="${halfH * 0.7}" fill="${face}"/>` +
         EYES_START +
         // Eyes
-        `<circle cx="${cx - halfW * 0.25}" cy="${cy - halfH * 0.05}" r="${halfW * 0.08}" fill="${STROKE}"/>` +
-        `<circle cx="${cx + halfW * 0.25}" cy="${cy - halfH * 0.05}" r="${halfW * 0.08}" fill="${STROKE}"/>` +
+        `<circle cx="${cx - halfW * 0.25}" cy="${cy - halfH * 0.05}" r="${halfW * 0.12}" fill="${STROKE}"/>` +
+        `<circle cx="${cx + halfW * 0.25}" cy="${cy - halfH * 0.05}" r="${halfW * 0.12}" fill="${STROKE}"/>` +
         EYES_END +
         // Nostrils
         `<circle cx="${cx - 2}" cy="${cy + halfH * 0.2}" r="1" fill="${STROKE}"/>` +
@@ -316,16 +329,24 @@ const RENDERERS: Record<Animal, (g: AnimalGeo, fur: string) => string> = {
     monkey: drawMonkey,
 };
 
-function createAnimalsContent(options: AnimalsOptions): string {
-    const size = options.size ?? 64;
+/** The colour a species mostly shows, which its background must stand apart from. */
+const COAT: Partial<Record<Animal, string>> = { fox: "#D96E2E", frog: "#6FB368", panda: WHITE };
+
+function pickAnimal(options: AnimalsOptions): { animal: Animal; fur: string } {
     const random = createRandom(options.seed);
     const animal: Animal = options.animal ?? random.pick(ANIMALS);
-    const furTones = options.furTones ?? FUR_TONES;
-    const fur = random.pick(furTones);
+    const fur = random.pick(options.furTones ?? FUR_TONES);
+    return { animal, fur };
+}
 
-    return RENDERERS[animal](computeGeo(size), fur).replace(EYES, (_match, eyes: string) =>
+function createAnimalsContent(options: AnimalsOptions, animal: Animal, fur: string): string {
+    const drawing = RENDERERS[animal](computeGeo(CANVAS), fur).replace(EYES, (_match, eyes: string) =>
         layerGroup("eyes", eyes, options),
     );
+
+    // Each species is drawn around the canvas centre. Enlarging it from there, and
+    // shifting it down to make room for ears, fills the frame the way a head should.
+    return `<g transform="translate(32 35) scale(1.22) translate(-32 -32)">${drawing}</g>`;
 }
 
 /**
@@ -349,12 +370,17 @@ export const animals: Style<AnimalsOptions> = {
     create(options: AnimalsOptions): AvatarResult {
         validateOption("animals", "animal", options.animal, ANIMALS);
 
-        const random = createRandom(options.seed);
+        const { animal, fur } = pickAnimal(options);
         const colors = options.colors ?? DEFAULT_COLORS;
-        const backgroundColor = random.pick(colors);
+        const backgroundColor = pickContrasting(
+            createRandom(`${options.seed}:background`),
+            colors,
+            COAT[animal] ?? fur,
+            1.5,
+        );
 
-        const content = createAnimalsContent(options);
-        return buildSvg(content, options, backgroundColor);
+        const content = createAnimalsContent(options, animal, fur);
+        return buildSvg(content, options, backgroundColor, { canvas: CANVAS });
     },
 };
 
