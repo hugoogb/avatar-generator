@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from "@angular/core";
-import { createAvatar, type AvatarOptions, type Style } from "@avatar-generator/core";
+import { adaptForImage, createAvatar, type AvatarOptions, type Style } from "@avatar-generator/core";
 
 /**
  * Angular component for rendering avatars
@@ -44,7 +44,9 @@ export class AvatarComponent<T extends AvatarOptions> implements OnChanges {
     }
 
     private renderAvatar(): void {
-        const avatar = createAvatar(this.style, this.options);
+        // Read here rather than subscribed to: the setting applies from the next
+        // input change, not the moment the viewer changes it.
+        const avatar = createAvatar(this.style, adaptForImage(this.options));
         this.dataUri = avatar.toDataUri();
         this.size = this.options.size ?? 64;
     }

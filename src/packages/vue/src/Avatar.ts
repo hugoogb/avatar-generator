@@ -1,5 +1,6 @@
-import { createAvatar, type AvatarOptions, type Style } from "@avatar-generator/core";
+import { adaptForImage, createAvatar, type AvatarOptions, type Style } from "@avatar-generator/core";
 import { computed, defineComponent, h, type PropType } from "vue";
+import { useViewerPreferences } from "./useViewerPreferences";
 
 /**
  * Vue 3 component for rendering avatars.
@@ -28,7 +29,8 @@ export const Avatar = defineComponent({
         class: { type: String, default: "" },
     },
     setup(props) {
-        const avatar = computed(() => createAvatar(props.style, props.options));
+        const preferences = useViewerPreferences();
+        const avatar = computed(() => createAvatar(props.style, adaptForImage(props.options, preferences.value)));
         const size = computed(() => props.options.size ?? 64);
 
         return () =>

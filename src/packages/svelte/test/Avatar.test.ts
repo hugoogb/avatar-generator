@@ -1,12 +1,14 @@
 // @vitest-environment happy-dom
-import { createAvatar } from "@avatar-generator/core";
+import { createAvatar, createAvatarGroup } from "@avatar-generator/core";
 // Imported from source: the package entry is the raw component, resolved
 // through the `svelte` export condition, which neither tsc nor vitest read.
 import Avatar from "../src/Avatar.svelte";
+import AvatarGroup from "../src/AvatarGroup.svelte";
 import { initials } from "@avatar-generator/style-initials";
 import { geometric } from "@avatar-generator/style-geometric";
 import { cleanup, render, screen } from "@testing-library/svelte";
-import { afterEach, describe, expect, it } from "vitest";
+import { tick } from "svelte";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 afterEach(cleanup);
 
@@ -86,5 +88,54 @@ describe("<Avatar /> (svelte)", () => {
         render(Avatar, { style: initials, options: { seed: "stable" } });
 
         expect(img().src).toBe(first);
+    });
+});
+
+describe("<AvatarGroup /> (svelte)", () => {
+    const seeds = ["ana", "ben", "chi"];
+
+    it("renders the group the core API produces", () => {
+        render(AvatarGroup, { style: initials, items: seeds, options: { size: 40 } });
+        const group = createAvatarGroup(initials, seeds, { size: 40 });
+
+        expect(img().src).toBe(group.toDataUri());
+        expect(img().getAttribute("width")).toBe(String(group.width));
+    });
+
+    it("defaults alt to the group's label and prefers an explicit one", () => {
+        render(AvatarGroup, { style: initials, items: seeds });
+        expect(img().alt).toBe("3 avatars");
+        cleanup();
+        render(AvatarGroup, { style: initials, items: seeds, alt: "Team" });
+        expect(img().alt).toBe("Team");
+    });
+});
+
+/** Reports every media query containing `feature` as matching. */
+const stubMatchMedia = (feature: string) => {
+    const listeners = new Set<() => void>();
+    vi.stubGlobal("matchMedia", (query: string) => ({
+        matches: query.includes(feature),
+        addEventListener: (_: string, listener: () => void) => listeners.add(listener),
+        removeEventListener: (_: string, listener: () => void) => listeners.delete(listener),
+    }));
+    return listeners;
+};
+
+describe("viewer preferences (svelte)", () => {
+    afterEach(() => vi.unstubAllGlobals());
+
+    it("does not animate for a viewer who prefers reduced motion", async () => {
+        stubMatchMedia("reduced-motion");
+        render(Avatar, { style: initials, options: { seed: "x", animation: true } });
+        await tick();
+        expect(img().src).toBe(createAvatar(initials, { seed: "x" }).toDataUri());
+    });
+
+    it("applies to groups", async () => {
+        stubMatchMedia("reduced-motion");
+        render(AvatarGroup, { style: initials, items: ["a"], options: { options: { animation: true } } });
+        await tick();
+        expect(img().src).toBe(createAvatarGroup(initials, ["a"]).toDataUri());
     });
 });
