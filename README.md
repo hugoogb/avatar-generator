@@ -21,7 +21,8 @@ React, Vue, Svelte, Angular, a custom element, or plain JavaScript.
 ## Features
 
 - **11 styles** — Initials, Geometric, Pixels, Rings, Faces, Illustrated, Anime, Abstract, Emoji, Animals, Gradient
-- **Deterministic** — the same seed always produces byte-identical SVG
+- **Deterministic** — within a release, the same seed always produces byte-identical SVG
+- **Production-ready at any size** — legible from 24px to 256px, with text that clears 4.5:1 contrast
 - **Tree-shakeable** — each style is its own package; you bundle only what you import
 - **Works anywhere** — React, Vue, Svelte, Angular, a custom element, or plain JS
 - **No runtime dependencies** — core ships ESM and CommonJS and depends on nothing

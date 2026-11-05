@@ -49,6 +49,15 @@ v1 codebase can migrate incrementally. It calls `document.createElement`, so it
 throws during server-side rendering. See the
 [Migration Guide](/reference/migration/).
 
+## When avatars change appearance
+
+A seed always gives the same avatar **within a release**, on any machine. A release
+can still redraw a style: 3.1.0 redrew all eleven, so every seed looks different from
+3.0.x. The release notes say when this happens.
+
+If an avatar's exact bytes must never change, for example because you hash or cache
+them forever, pin an exact version rather than a `^` range.
+
 ## What the version number covers
 
 All eighteen packages — `@avatar-generator/core`, the eleven style packages, the

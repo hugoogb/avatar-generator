@@ -61,7 +61,10 @@ export const blob = defineStyle<AvatarOptions, { skin: string }>({
 });
 ```
 
-Other options are `validate` to reject bad options, `background` to pick the
+Set `canvas: 64` to draw in a fixed coordinate space. Layers then see `size` as 64,
+so you can use plain numbers and every detail scales with the avatar, which is how
+the bundled styles keep their proportions from 24px to 256px. Other options are
+`validate` to reject bad options, `background` to pick the
 background colour, and `head`, which tells [`mixStyles`](/guides/mixing-styles/)
 where your head is so traded features line up. Layers sharing a `feature` name are
 swapped together, like hair drawn both behind and in front of a head.
@@ -104,6 +107,9 @@ primitives every bundled style uses:
 | `escapeXml(text)`             | Escapes text for use inside SVG `<text>` nodes                          |
 | `DEFAULT_COLORS`              | Vivid 10-color palette used as a fallback                               |
 | `SKIN_TONES`, `EYE_COLORS`    | Curated palettes for face-based styles                                  |
+| `HAIR_COLORS`                 | Natural hair colours, apart from the background palette                 |
+| `readableColor(bg)`           | White or near-black, whichever is easier to read on `bg`                |
+| `pickContrasting(...)`        | Picks a palette colour that stands out against another                  |
 | `validateOption(...)`         | Throws a descriptive error if a string option is not in a known list    |
 | `layerGroup(name, svg, opts)` | Marks a part of your drawing, such as eyes, so `blink` can reach it     |
 | `resolveTheme(opts.theme)`    | Reads the theme, so anything you draw over the palette can follow it    |

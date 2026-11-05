@@ -3,8 +3,6 @@ title: Mix Avatar Styles
 description: "Combine features across @avatar-generator styles, such as Illustrated hair with Faces eyes, or replace a single feature with your own drawing."
 ---
 
-import { Aside } from "@astrojs/starlight/components";
-
 `mixStyles` builds a new style by taking features from others. The result works
 everywhere a style does: `createAvatar`, every framework wrapper, and `mixStyles`
 itself.
@@ -27,11 +25,11 @@ createAvatar(mixed, { seed: "user-42", size: 96 });
 
 ## Mixable features
 
-| Style         | Features                                                                                                 |
-| ------------- | -------------------------------------------------------------------------------------------------------- |
-| `faces`       | `hair`, `ears`, `head`, `eyes`, `eyebrows`, `nose`, `mouth`, `blush`                                     |
-| `illustrated` | `hair`, `ears`, `head`, `eyebrows`, `eyes`, `nose`, `mouth`, `facial-hair`, `glasses`, `earrings`, `hat` |
-| `anime`       | `hair`, `ears`, `head`, `eyebrows`, `eyes`, `nose`, `mouth`, `expressions`, `accessories`                |
+| Style         | Features                                                                                                         |
+| ------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `faces`       | `body`, `hair`, `ears`, `head`, `eyes`, `eyebrows`, `nose`, `mouth`, `blush`                                     |
+| `illustrated` | `body`, `hair`, `ears`, `head`, `eyebrows`, `eyes`, `nose`, `mouth`, `facial-hair`, `glasses`, `earrings`, `hat` |
+| `anime`       | `body`, `hair`, `ears`, `head`, `eyebrows`, `eyes`, `nose`, `mouth`, `expressions`, `accessories`                |
 
 Any style built with [`defineStyle`](/guides/custom-styles/) can be mixed too. A
 feature the base lacks is added on top, so `mixStyles(faces, { glasses: illustrated })`
@@ -47,7 +45,3 @@ gives faces glasses. An unknown feature throws, naming the ones that exist.
 - **Options stay with their style.** A donor gets the shared options (`size`,
   `colors`, `theme` and so on) plus whatever you pass in `options`. The base's
   `hairStyle: "flat-top"` never reaches a donor that has no such hair.
-
-<Aside>
-    Some bundled features use fixed pixel sizes, as they do unmixed, so they look finest near the default 64px.
-</Aside>

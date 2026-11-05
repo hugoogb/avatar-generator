@@ -213,9 +213,19 @@ pnpm run trust:list                     # show what is configured
 Run it from a terminal, never from CI — granting trust should not be automated
 by the thing being trusted.
 
-npm can only hold trust settings for a package that exists, and
-`create-avatar-style` is outside the `@avatar-generator` scope, so a new package
-needs one publish by hand before this script can configure it.
+npm can only hold trust settings for a package that exists, so a new package needs
+one publish by hand before this script can configure it. Publish a placeholder
+version rather than the one being released: the release workflow fails on a version
+already on the registry, and a hand publish has no provenance. Do it from a copy
+outside the workspace, because npm cannot read `workspace:` ranges:
+
+```bash
+cd src/packages/<new-package>
+pnpm run build
+D=$(mktemp -d); cp -R dist package.json README.md LICENSE CHANGELOG.md "$D"; cd "$D"
+npm pkg set version=0.0.1
+npm publish --access public --tag bootstrap
+```
 
 **A trusted publisher can only be attached to a package that already exists on
 npm** — the registry's token exchange endpoint is per package. A brand-new

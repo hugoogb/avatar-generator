@@ -232,11 +232,14 @@ Fix synchronization issues between source, playgrounds, and documentation.
 - [x] Avatar group component (overlapping circles)
 - [x] Theme system (light/dark mode color palettes)
 
+### Style polish
+
+- [x] Redraw all eleven styles for production use, checked in a browser at 24px to 256px
+- [x] Stop skin tone following the background colour
+- [x] Draw on a fixed canvas, so details keep their proportions at any size
+- [x] Guarantee readable text and distinct foregrounds on the default palette
+
 ### Follow-ups
 
-- [ ] Publish `create-avatar-style` by hand once, then configure trusted publishing
-      for it — npm cannot hold trust settings for a package that does not exist yet
-- [ ] Check `prefers-reduced-motion` and `prefers-contrast` inside `<img>` on Firefox
-      and Safari — only Chromium has been tested, where neither reaches the image
-- [ ] Make fixed-pixel face features scale with `size`. They look right near 64px
-      only; fixing it changes output, so it belongs in a major
+- [x] Publish `create-avatar-style` once by hand as a `0.0.1` placeholder and configure
+      trusted publishing for it, so that 3.1.0 can go through the release workflow
