@@ -1,3 +1,4 @@
+import { animationCss, animationRootAttributes, resolveAnimations } from "./animation";
 import { hashSeed } from "./random";
 import type { AvatarOptions, AvatarResult } from "./types";
 
@@ -42,8 +43,72 @@ export function escapeXml(text: string): string {
 /**
  * Creates the opening SVG tag with common attributes
  */
-export function createSvgOpen(size: number): string {
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">`;
+export function createSvgOpen(size: number, attributes = ""): string {
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}"${attributes}>`;
+}
+
+/**
+ * Encodes an SVG string as a base64 data URI.
+ *
+ * `btoa` accepts only code points up to U+00FF and treats each as one byte. An
+ * SVG with `李` in it made `btoa` throw, and one with `é` produced bytes that
+ * are not valid UTF-8, so the browser refused to draw it. Encoding to UTF-8
+ * first fixes both and leaves ASCII output unchanged.
+ */
+export function svgToDataUri(svg: string): string {
+    const bytes = new TextEncoder().encode(svg);
+    let binary = "";
+    for (const byte of bytes) binary += String.fromCharCode(byte);
+    return `data:image/svg+xml;base64,${btoa(binary)}`;
+}
+
+/** Wraps a complete SVG string in the {@link AvatarResult} shape. */
+export function toAvatarResult(svg: string): AvatarResult {
+    return { svg, toDataUri: () => svgToDataUri(svg) };
+}
+
+/**
+ * Prefixes every `id` in an SVG and every reference to one.
+ *
+ * Ids are global to the document an SVG sits in. When SVGs are nested or
+ * inlined, a repeated id silently resolves to the first match, so a second
+ * avatar can pick up the first one's gradient.
+ */
+export function scopeSvgIds(svg: string, prefix: string): string {
+    return svg
+        .replace(/\bid="([^"]+)"/g, `id="${prefix}-$1"`)
+        .replace(/url\(#([^)]+)\)/g, `url(#${prefix}-$1)`)
+        .replace(/href="#([^"]+)"/g, `href="#${prefix}-$1"`);
+}
+
+/** Root attributes and leading elements for the accessibility options. */
+export function accessibleMarkup(options: Pick<AvatarOptions, "title" | "description">): {
+    attributes: string;
+    children: string;
+} {
+    let attributes = "";
+    let children = "";
+    if (options.title) {
+        const title = escapeXml(options.title);
+        attributes += ` role="img" aria-label="${title}"`;
+        children += `<title>${title}</title>`;
+    }
+    if (options.description) {
+        children += `<desc>${escapeXml(options.description)}</desc>`;
+    }
+    return { attributes, children };
+}
+
+/**
+ * Wraps a layer's markup in a class-bearing group when the options ask for
+ * layer hooks. Otherwise returns it untouched, so output stays byte-identical.
+ *
+ * Styles built with `defineStyle` get this for free. A hand-written style can
+ * call it around its eyes so that the `blink` animation reaches them.
+ */
+export function layerGroup(name: string, content: string, options: AvatarOptions): string {
+    if (!content || (!options.classes && !resolveAnimations(options).blink)) return content;
+    return `<g class="ag-layer ag-layer-${name}">${content}</g>`;
 }
 
 /**
@@ -136,7 +201,23 @@ export function buildSvg(content: string, options: AvatarOptions, backgroundColo
     // always produce byte-identical SVG output.
     const clipId = `clip-${hashSeed(options.seed).toString(36)}`;
 
-    let svg = createSvgOpen(size);
+    const animations = resolveAnimations(options);
+    const animated = animations.blink || animations.breathe;
+    const accessible = accessibleMarkup(options);
+
+    const rootClasses: string[] = [];
+    if (options.classes) rootClasses.push("ag-avatar");
+    if (typeof options.classes === "string") rootClasses.push(escapeXml(options.classes));
+    if (animations.blink) rootClasses.push("ag-blink");
+    if (animations.breathe) rootClasses.push("ag-breathe");
+
+    let attributes = accessible.attributes;
+    if (rootClasses.length > 0) attributes += ` class="${rootClasses.join(" ")}"`;
+    if (animated) attributes += animationRootAttributes(options.seed);
+
+    let svg = createSvgOpen(size, attributes) + accessible.children;
+
+    if (animated) svg += `<style>${animationCss(animations)}</style>`;
 
     // Add defs with clip path
     svg += "<defs>";
@@ -150,7 +231,8 @@ export function buildSvg(content: string, options: AvatarOptions, backgroundColo
     svg += createBackground(size, backgroundColor, options.transparent);
 
     // Add transformed content
-    svg += wrapWithTransform(content, options);
+    const transformed = wrapWithTransform(content, options);
+    svg += options.classes || animated ? `<g class="ag-content">${transformed}</g>` : transformed;
 
     svg += "</g>";
 
@@ -161,10 +243,5 @@ export function buildSvg(content: string, options: AvatarOptions, backgroundColo
 
     svg += "</svg>";
 
-    return {
-        svg,
-        toDataUri() {
-            return `data:image/svg+xml;base64,${btoa(svg)}`;
-        },
-    };
+    return toAvatarResult(svg);
 }
