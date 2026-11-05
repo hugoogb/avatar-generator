@@ -1,5 +1,5 @@
 import type { AvatarOptions, AvatarResult, Style } from "@avatar-generator/core";
-import { buildSvg, createRandom, validateOption } from "@avatar-generator/core";
+import { buildSvg, createRandom, layerGroup, validateOption } from "@avatar-generator/core";
 
 // ============================================================================
 // Options
@@ -204,7 +204,7 @@ function createEmojiContent(options: EmojiOptions): string {
     let content = "";
     // Face (circle with subtle outline)
     content += `<circle cx="${g.cx}" cy="${g.cy}" r="${g.r}" fill="${faceColor}" stroke="${STROKE}" stroke-width="1.5"/>`;
-    content += drawEyes(expression, g);
+    content += layerGroup("eyes", drawEyes(expression, g), options);
     content += drawMouth(expression, g);
     content += drawExtras(expression, g);
 

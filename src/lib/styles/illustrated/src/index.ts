@@ -1,5 +1,5 @@
-import type { AvatarOptions, AvatarResult, Style } from "@avatar-generator/core";
-import { buildSvg, createRandom, DEFAULT_COLORS, EYE_COLORS, SKIN_TONES, validateOption } from "@avatar-generator/core";
+import type { AvatarOptions, ComposableStyle, Random } from "@avatar-generator/core";
+import { defineStyle, DEFAULT_COLORS, EYE_COLORS, SKIN_TONES, validateOption } from "@avatar-generator/core";
 
 // ============================================================================
 // Options
@@ -433,18 +433,36 @@ function drawFacialHair(type: FacialHairType, g: Geo, color: string): string {
 // Main content builder
 // ============================================================================
 
-function createIllustratedContent(options: IllustratedOptions): string {
-    const size = options.size ?? 64;
+/** What the seed decides for one illustrated avatar. */
+export interface IllustratedTraits {
+    skinColor: string;
+    hairColor: string;
+    featureColor: string;
+    eyeColor: string;
+    hairStyle: HairStyle;
+    eyeStyle: EyeStyle;
+    eyebrowStyle: EyebrowStyle;
+    noseStyle: NoseStyle;
+    mouthStyle: MouthStyle;
+    glassesType: GlassesType | null;
+    hatType: HatType | null;
+    facialHairType: FacialHairType | null;
+    earringColor: string | null;
+    hatColor: string | null;
+}
+
+/**
+ * The order of these draws is part of the output: reordering them changes every
+ * avatar for every seed.
+ */
+function prepareIllustrated(options: IllustratedOptions, random: Random): IllustratedTraits {
     const skinTones = options.skinTones ?? SKIN_TONES;
     const eyeColorPalette = options.eyeColors ?? EYE_COLORS;
     const colors = options.colors ?? DEFAULT_COLORS;
-    const random = createRandom(options.seed);
 
     const skinColor = random.pick(skinTones);
     const hairColor = random.pick(colors);
-    const featureColor = "#2C1810";
     const eyeColor = random.pick(eyeColorPalette);
-    const g = computeGeo(size);
 
     // Pick features
     const hairStyle: HairStyle = options.hairStyle ?? random.pick(HAIR_STYLES);
@@ -462,61 +480,25 @@ function createIllustratedContent(options: IllustratedOptions): string {
     const glassesType = hasGlasses ? random.pick(GLASSES_TYPES) : null;
     const hatType = hasHat ? random.pick(HAT_TYPES) : null;
     const facialHairType = hasFacialHair ? random.pick(FACIAL_HAIR_TYPES) : null;
+    const earringColor = hasEarrings ? random.pick(colors) : null;
+    const hatColor = hatType ? random.pick(colors) : null;
 
-    let content = "";
-
-    // Render order: hair-behind → ears → head → hair-front → eyebrows → eyes → nose → mouth → facial hair → glasses → hat
-
-    // 1. Hair behind
-    content += drawHairBehind(hairStyle, g, hairColor);
-
-    // 2. Ears
-    const earR = size * 0.055;
-    const earY = g.eyeY + 2;
-    content += `<ellipse cx="${g.cx - g.headW / 2 - earR * 0.5}" cy="${earY}" rx="${earR}" ry="${earR * 1.2}" fill="${skinColor}"/>`;
-    content += `<ellipse cx="${g.cx + g.headW / 2 + earR * 0.5}" cy="${earY}" rx="${earR}" ry="${earR * 1.2}" fill="${skinColor}"/>`;
-
-    // 3. Head
-    content += `<ellipse cx="${g.cx}" cy="${g.cy}" rx="${g.headW / 2}" ry="${g.headH / 2}" fill="${skinColor}"/>`;
-
-    // 4. Hair front
-    content += drawHairFront(hairStyle, g, hairColor);
-
-    // 5. Eyebrows
-    content += drawEyebrows(eyebrowStyle, g, featureColor);
-
-    // 6. Eyes
-    content += drawEyes(eyeStyle, g, featureColor, eyeColor);
-
-    // 7. Nose
-    content += drawNose(noseStyle, g, featureColor);
-
-    // 8. Mouth
-    content += drawMouth(mouthStyle, g, featureColor);
-
-    // 9. Facial hair
-    if (facialHairType) {
-        content += drawFacialHair(facialHairType, g, hairColor);
-    }
-
-    // 10. Glasses
-    if (glassesType) {
-        content += drawGlasses(glassesType, g, featureColor);
-    }
-
-    // 11. Earrings
-    if (hasEarrings) {
-        const earringColor = random.pick(colors);
-        content += drawEarrings(g, earringColor);
-    }
-
-    // 12. Hat (drawn last, on top of everything)
-    if (hatType) {
-        const hatColor = random.pick(colors);
-        content += drawHat(hatType, g, hatColor);
-    }
-
-    return content;
+    return {
+        skinColor,
+        hairColor,
+        featureColor: "#2C1810",
+        eyeColor,
+        hairStyle,
+        eyeStyle,
+        eyebrowStyle,
+        noseStyle,
+        mouthStyle,
+        glassesType,
+        hatType,
+        facialHairType,
+        earringColor,
+        hatColor,
+    };
 }
 
 /**
@@ -525,6 +507,9 @@ function createIllustratedContent(options: IllustratedOptions): string {
  * Creates detailed cartoon face avatars with varied hair, eyes, eyebrows,
  * nose, mouth, and optional accessories (glasses, hats, earrings, facial hair).
  * Over 1.7M+ unique combinations before accessories.
+ *
+ * Its features can be mixed with other styles: `hair`, `ears`, `head`,
+ * `eyebrows`, `eyes`, `nose`, `mouth`, `facial-hair`, `glasses`, `earrings` and `hat`.
  *
  * @example
  * ```ts
@@ -537,24 +522,96 @@ function createIllustratedContent(options: IllustratedOptions): string {
  * });
  * ```
  */
-export const illustrated: Style<IllustratedOptions> = {
+export const illustrated: ComposableStyle<IllustratedOptions, IllustratedTraits> = defineStyle<
+    IllustratedOptions,
+    IllustratedTraits
+>({
     name: "illustrated",
 
-    create(options: IllustratedOptions): AvatarResult {
+    validate(options) {
         validateOption("illustrated", "hairStyle", options.hairStyle, HAIR_STYLES);
         validateOption("illustrated", "eyeStyle", options.eyeStyle, EYE_STYLES);
         validateOption("illustrated", "eyebrowStyle", options.eyebrowStyle, EYEBROW_STYLES);
         validateOption("illustrated", "noseStyle", options.noseStyle, NOSE_STYLES);
         validateOption("illustrated", "mouthStyle", options.mouthStyle, MOUTH_STYLES);
-
-        const random = createRandom(options.seed);
-        const colors = options.colors ?? DEFAULT_COLORS;
-        const backgroundColor = random.pick(colors);
-
-        const content = createIllustratedContent(options);
-
-        return buildSvg(content, options, backgroundColor);
     },
-};
+
+    prepare: prepareIllustrated,
+
+    head: (size) => {
+        const { cx, cy, headW, headH } = computeGeo(size);
+        return { x: cx - headW / 2, y: cy - headH / 2, width: headW, height: headH };
+    },
+
+    layers: [
+        {
+            name: "hair-behind",
+            feature: "hair",
+            render: ({ traits, size }) => drawHairBehind(traits.hairStyle, computeGeo(size), traits.hairColor),
+        },
+        {
+            name: "ears",
+            render: ({ traits, size }) => {
+                const g = computeGeo(size);
+                const earR = size * 0.055;
+                const earY = g.eyeY + 2;
+                return (
+                    `<ellipse cx="${g.cx - g.headW / 2 - earR * 0.5}" cy="${earY}" rx="${earR}" ry="${earR * 1.2}" fill="${traits.skinColor}"/>` +
+                    `<ellipse cx="${g.cx + g.headW / 2 + earR * 0.5}" cy="${earY}" rx="${earR}" ry="${earR * 1.2}" fill="${traits.skinColor}"/>`
+                );
+            },
+        },
+        {
+            name: "head",
+            render: ({ traits, size }) => {
+                const g = computeGeo(size);
+                return `<ellipse cx="${g.cx}" cy="${g.cy}" rx="${g.headW / 2}" ry="${g.headH / 2}" fill="${traits.skinColor}"/>`;
+            },
+        },
+        {
+            name: "hair-front",
+            feature: "hair",
+            render: ({ traits, size }) => drawHairFront(traits.hairStyle, computeGeo(size), traits.hairColor),
+        },
+        {
+            name: "eyebrows",
+            render: ({ traits, size }) => drawEyebrows(traits.eyebrowStyle, computeGeo(size), traits.featureColor),
+        },
+        {
+            name: "eyes",
+            render: ({ traits, size }) =>
+                drawEyes(traits.eyeStyle, computeGeo(size), traits.featureColor, traits.eyeColor),
+        },
+        {
+            name: "nose",
+            render: ({ traits, size }) => drawNose(traits.noseStyle, computeGeo(size), traits.featureColor),
+        },
+        {
+            name: "mouth",
+            render: ({ traits, size }) => drawMouth(traits.mouthStyle, computeGeo(size), traits.featureColor),
+        },
+        {
+            name: "facial-hair",
+            render: ({ traits, size }) =>
+                traits.facialHairType ? drawFacialHair(traits.facialHairType, computeGeo(size), traits.hairColor) : "",
+        },
+        {
+            name: "glasses",
+            render: ({ traits, size }) =>
+                traits.glassesType ? drawGlasses(traits.glassesType, computeGeo(size), traits.featureColor) : "",
+        },
+        {
+            name: "earrings",
+            render: ({ traits, size }) =>
+                traits.earringColor ? drawEarrings(computeGeo(size), traits.earringColor) : "",
+        },
+        {
+            // Drawn last, on top of everything
+            name: "hat",
+            render: ({ traits, size }) =>
+                traits.hatType && traits.hatColor ? drawHat(traits.hatType, computeGeo(size), traits.hatColor) : "",
+        },
+    ],
+});
 
 export default illustrated;

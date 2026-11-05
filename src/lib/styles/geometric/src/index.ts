@@ -1,5 +1,5 @@
 import type { AvatarOptions, AvatarResult, Style } from "@avatar-generator/core";
-import { buildSvg, createRandom, DEFAULT_COLORS } from "@avatar-generator/core";
+import { buildSvg, createRandom, DEFAULT_COLORS, resolveTheme } from "@avatar-generator/core";
 
 // ============================================================================
 // Options
@@ -120,6 +120,8 @@ export const geometric: Style<GeometricOptions> = {
             const idx = colors.indexOf(foreground);
             foreground = colors[(idx + 1) % colors.length];
         }
+        // The draw above still happens, so the pattern is the same in every theme.
+        foreground = options.foregroundColor ?? resolveTheme(options.theme)?.foreground ?? foreground;
 
         const content = createIdenticonContent(options, foreground);
 

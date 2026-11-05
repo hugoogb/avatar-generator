@@ -1,5 +1,12 @@
 import type { AvatarOptions, AvatarResult, Style } from "@avatar-generator/core";
-import { createRandom, DEFAULT_COLORS, SKIN_TONES, buildSvg } from "@avatar-generator/core";
+import {
+    createRandom,
+    DEFAULT_COLORS,
+    SKIN_TONES,
+    buildSvg,
+    layerGroup,
+    resolveAnimations,
+} from "@avatar-generator/core";
 
 // ============================================================================
 // Options
@@ -191,8 +198,10 @@ function createPixelFaceContent(options: PixelsOptions): string {
     }
 
     // Eyes
+    const eyeKeys = new Set<string>();
     for (const [row, col] of getEyePixels(eyeStyle)) {
         pixelMap.set(`${row},${col}`, featureColor);
+        eyeKeys.add(`${row},${col}`);
     }
 
     // Eyebrows (row 2, above eyes)
@@ -218,16 +227,21 @@ function createPixelFaceContent(options: PixelsOptions): string {
         pixelMap.set("3,4", featureColor);
     }
 
-    // Render all pixels as rects
+    // Render all pixels as rects. Eye pixels are only pulled out into their own
+    // group when something will use it, which keeps the default output unchanged.
+    const separateEyes = Boolean(options.classes) || resolveAnimations(options).blink;
     let content = "";
+    let eyes = "";
     for (const [key, color] of pixelMap) {
         const [row, col] = key.split(",").map(Number);
         const x = col * cellSize;
         const y = row * cellSize;
-        content += `<rect x="${x}" y="${y}" width="${cellSize}" height="${cellSize}" fill="${color}"/>`;
+        const rect = `<rect x="${x}" y="${y}" width="${cellSize}" height="${cellSize}" fill="${color}"/>`;
+        if (separateEyes && eyeKeys.has(key)) eyes += rect;
+        else content += rect;
     }
 
-    return content;
+    return content + layerGroup("eyes", eyes, options);
 }
 
 /**

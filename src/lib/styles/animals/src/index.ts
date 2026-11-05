@@ -1,5 +1,5 @@
 import type { AvatarOptions, AvatarResult, Style } from "@avatar-generator/core";
-import { buildSvg, createRandom, DEFAULT_COLORS, validateOption } from "@avatar-generator/core";
+import { buildSvg, createRandom, DEFAULT_COLORS, layerGroup, validateOption } from "@avatar-generator/core";
 
 // ============================================================================
 // Options
@@ -45,6 +45,12 @@ function computeGeo(size: number): AnimalGeo {
     };
 }
 
+// Marks where each species draws its eyes, without threading options through
+// eight renderers. Resolved in createAnimalsContent and never reaches the output.
+const EYES_START = "\u0000eyes-start\u0000";
+const EYES_END = "\u0000eyes-end\u0000";
+const EYES = new RegExp(`${EYES_START}(.*?)${EYES_END}`);
+
 // ─── Cat ─────────────────────────────────────────────────────────────────
 
 function drawCat(g: AnimalGeo, fur: string): string {
@@ -62,11 +68,13 @@ function drawCat(g: AnimalGeo, fur: string): string {
         `<polygon points="${cx + halfW - earBase * 0.45},${cy - halfH * 0.3} ${cx + halfW - earBase * 0.6},${cy - halfH - earBase * 0.4} ${cx + halfW - earBase * 0.85},${cy - halfH * 0.2}" fill="${PINK}"/>` +
         // Head
         `<ellipse cx="${cx}" cy="${cy}" rx="${halfW}" ry="${halfH}" fill="${fur}"/>` +
+        EYES_START +
         // Eyes
         `<ellipse cx="${cx - halfW * 0.35}" cy="${cy - halfH * 0.05}" rx="${halfW * 0.11}" ry="${halfH * 0.14}" fill="${STROKE}"/>` +
         `<ellipse cx="${cx + halfW * 0.35}" cy="${cy - halfH * 0.05}" rx="${halfW * 0.11}" ry="${halfH * 0.14}" fill="${STROKE}"/>` +
         `<circle cx="${cx - halfW * 0.32}" cy="${cy - halfH * 0.1}" r="1.2" fill="${WHITE}"/>` +
         `<circle cx="${cx + halfW * 0.38}" cy="${cy - halfH * 0.1}" r="1.2" fill="${WHITE}"/>` +
+        EYES_END +
         // Nose
         `<polygon points="${cx},${cy + halfH * 0.15} ${cx - 4},${cy + halfH * 0.05} ${cx + 4},${cy + halfH * 0.05}" fill="${PINK}"/>` +
         // Mouth (little w)
@@ -92,11 +100,13 @@ function drawDog(g: AnimalGeo, fur: string): string {
         `<ellipse cx="${cx}" cy="${cy}" rx="${halfW}" ry="${halfH}" fill="${fur}"/>` +
         // Muzzle
         `<ellipse cx="${cx}" cy="${cy + halfH * 0.35}" rx="${halfW * 0.45}" ry="${halfH * 0.3}" fill="${WHITE}" opacity="0.6"/>` +
+        EYES_START +
         // Eyes
         `<circle cx="${cx - halfW * 0.32}" cy="${cy - halfH * 0.1}" r="${halfW * 0.1}" fill="${STROKE}"/>` +
         `<circle cx="${cx + halfW * 0.32}" cy="${cy - halfH * 0.1}" r="${halfW * 0.1}" fill="${STROKE}"/>` +
         `<circle cx="${cx - halfW * 0.3}" cy="${cy - halfH * 0.14}" r="1.4" fill="${WHITE}"/>` +
         `<circle cx="${cx + halfW * 0.34}" cy="${cy - halfH * 0.14}" r="1.4" fill="${WHITE}"/>` +
+        EYES_END +
         // Nose
         `<ellipse cx="${cx}" cy="${cy + halfH * 0.2}" rx="${halfW * 0.08}" ry="${halfH * 0.08}" fill="${BLACK}"/>` +
         // Tongue / mouth
@@ -122,9 +132,11 @@ function drawBear(g: AnimalGeo, fur: string): string {
         `<ellipse cx="${cx}" cy="${cy}" rx="${halfW}" ry="${halfH}" fill="${fur}"/>` +
         // Muzzle (cream patch)
         `<ellipse cx="${cx}" cy="${cy + halfH * 0.3}" rx="${halfW * 0.55}" ry="${halfH * 0.35}" fill="#F5E8D3"/>` +
+        EYES_START +
         // Eyes
         `<circle cx="${cx - halfW * 0.28}" cy="${cy - halfH * 0.12}" r="${halfW * 0.08}" fill="${STROKE}"/>` +
         `<circle cx="${cx + halfW * 0.28}" cy="${cy - halfH * 0.12}" r="${halfW * 0.08}" fill="${STROKE}"/>` +
+        EYES_END +
         // Nose
         `<ellipse cx="${cx}" cy="${cy + halfH * 0.12}" rx="${halfW * 0.1}" ry="${halfH * 0.08}" fill="${BLACK}"/>` +
         // Mouth
@@ -151,9 +163,11 @@ function drawFox(g: AnimalGeo, _fur: string): string {
         `<path d="M ${cx - halfW} ${cy - halfH * 0.2} Q ${cx - halfW} ${cy + halfH * 0.5} ${cx} ${cy + halfH * 0.65} Q ${cx + halfW} ${cy + halfH * 0.5} ${cx + halfW} ${cy - halfH * 0.2} Q ${cx + halfW * 0.8} ${cy - halfH * 0.6} ${cx} ${cy - halfH * 0.55} Q ${cx - halfW * 0.8} ${cy - halfH * 0.6} ${cx - halfW} ${cy - halfH * 0.2} Z" fill="${orange}"/>` +
         // White muzzle
         `<path d="M ${cx - halfW * 0.45} ${cy + halfH * 0.1} Q ${cx} ${cy + halfH * 0.7} ${cx + halfW * 0.45} ${cy + halfH * 0.1} Q ${cx} ${cy + halfH * 0.35} ${cx - halfW * 0.45} ${cy + halfH * 0.1} Z" fill="${WHITE}"/>` +
+        EYES_START +
         // Eyes
         `<ellipse cx="${cx - halfW * 0.3}" cy="${cy - halfH * 0.1}" rx="${halfW * 0.09}" ry="${halfH * 0.12}" fill="${STROKE}"/>` +
         `<ellipse cx="${cx + halfW * 0.3}" cy="${cy - halfH * 0.1}" rx="${halfW * 0.09}" ry="${halfH * 0.12}" fill="${STROKE}"/>` +
+        EYES_END +
         // Nose
         `<ellipse cx="${cx}" cy="${cy + halfH * 0.22}" rx="${halfW * 0.08}" ry="${halfH * 0.07}" fill="${BLACK}"/>` +
         // Mouth
@@ -178,11 +192,13 @@ function drawPanda(g: AnimalGeo, _fur: string): string {
         // Black eye patches
         `<ellipse cx="${cx - halfW * 0.32}" cy="${cy - halfH * 0.05}" rx="${halfW * 0.2}" ry="${halfH * 0.22}" fill="${BLACK}" transform="rotate(-18 ${cx - halfW * 0.32} ${cy - halfH * 0.05})"/>` +
         `<ellipse cx="${cx + halfW * 0.32}" cy="${cy - halfH * 0.05}" rx="${halfW * 0.2}" ry="${halfH * 0.22}" fill="${BLACK}" transform="rotate(18 ${cx + halfW * 0.32} ${cy - halfH * 0.05})"/>` +
+        EYES_START +
         // White eyes
         `<circle cx="${cx - halfW * 0.32}" cy="${cy - halfH * 0.05}" r="${halfW * 0.08}" fill="${WHITE}"/>` +
         `<circle cx="${cx + halfW * 0.32}" cy="${cy - halfH * 0.05}" r="${halfW * 0.08}" fill="${WHITE}"/>` +
         `<circle cx="${cx - halfW * 0.3}" cy="${cy - halfH * 0.03}" r="2" fill="${BLACK}"/>` +
         `<circle cx="${cx + halfW * 0.34}" cy="${cy - halfH * 0.03}" r="2" fill="${BLACK}"/>` +
+        EYES_END +
         // Nose and mouth
         `<ellipse cx="${cx}" cy="${cy + halfH * 0.18}" rx="${halfW * 0.08}" ry="${halfH * 0.05}" fill="${BLACK}"/>` +
         `<path d="M ${cx} ${cy + halfH * 0.22} L ${cx} ${cy + halfH * 0.32} M ${cx} ${cy + halfH * 0.32} Q ${cx - 3} ${cy + halfH * 0.38} ${cx - 6} ${cy + halfH * 0.32} M ${cx} ${cy + halfH * 0.32} Q ${cx + 3} ${cy + halfH * 0.38} ${cx + 6} ${cy + halfH * 0.32}" fill="none" stroke="${BLACK}" stroke-width="1.2" stroke-linecap="round"/>`
@@ -206,9 +222,11 @@ function drawBunny(g: AnimalGeo, fur: string): string {
         `<ellipse cx="${cx + halfW * 0.35}" cy="${cy - halfH * 0.75}" rx="${earW * 0.5}" ry="${earH * 0.75}" fill="${PINK}" transform="rotate(10 ${cx + halfW * 0.35} ${cy - halfH * 0.75})"/>` +
         // Head
         `<ellipse cx="${cx}" cy="${cy + halfH * 0.05}" rx="${halfW}" ry="${halfH * 0.9}" fill="${fur}"/>` +
+        EYES_START +
         // Eyes
         `<circle cx="${cx - halfW * 0.28}" cy="${cy - halfH * 0.05}" r="${halfW * 0.08}" fill="${STROKE}"/>` +
         `<circle cx="${cx + halfW * 0.28}" cy="${cy - halfH * 0.05}" r="${halfW * 0.08}" fill="${STROKE}"/>` +
+        EYES_END +
         // Nose
         `<polygon points="${cx},${cy + halfH * 0.2} ${cx - 3},${cy + halfH * 0.12} ${cx + 3},${cy + halfH * 0.12}" fill="${PINK}"/>` +
         // Teeth
@@ -235,6 +253,7 @@ function drawFrog(g: AnimalGeo, _fur: string): string {
         `<circle cx="${cx + halfW * 0.45}" cy="${cy - halfH * 0.55}" r="${halfW * 0.3}" fill="${green}"/>` +
         // Head
         `<ellipse cx="${cx}" cy="${cy + halfH * 0.1}" rx="${halfW * 1.05}" ry="${halfH * 0.85}" fill="${green}"/>` +
+        EYES_START +
         // Eye whites
         `<circle cx="${cx - halfW * 0.45}" cy="${cy - halfH * 0.55}" r="${halfW * 0.22}" fill="${WHITE}"/>` +
         `<circle cx="${cx + halfW * 0.45}" cy="${cy - halfH * 0.55}" r="${halfW * 0.22}" fill="${WHITE}"/>` +
@@ -243,6 +262,7 @@ function drawFrog(g: AnimalGeo, _fur: string): string {
         `<circle cx="${cx + halfW * 0.45}" cy="${cy - halfH * 0.5}" r="${halfW * 0.1}" fill="${BLACK}"/>` +
         `<circle cx="${cx - halfW * 0.42}" cy="${cy - halfH * 0.55}" r="2" fill="${WHITE}"/>` +
         `<circle cx="${cx + halfW * 0.48}" cy="${cy - halfH * 0.55}" r="2" fill="${WHITE}"/>` +
+        EYES_END +
         // Wide mouth
         `<path d="M ${cx - halfW * 0.6} ${cy + halfH * 0.25} Q ${cx} ${cy + halfH * 0.55} ${cx + halfW * 0.6} ${cy + halfH * 0.25}" fill="none" stroke="${darkGreen}" stroke-width="2.2" stroke-linecap="round"/>` +
         // Nostrils
@@ -270,9 +290,11 @@ function drawMonkey(g: AnimalGeo, fur: string): string {
         `<ellipse cx="${cx}" cy="${cy}" rx="${halfW}" ry="${halfH}" fill="${fur}"/>` +
         // Face patch
         `<ellipse cx="${cx}" cy="${cy + halfH * 0.15}" rx="${halfW * 0.65}" ry="${halfH * 0.7}" fill="${face}"/>` +
+        EYES_START +
         // Eyes
         `<circle cx="${cx - halfW * 0.25}" cy="${cy - halfH * 0.05}" r="${halfW * 0.08}" fill="${STROKE}"/>` +
         `<circle cx="${cx + halfW * 0.25}" cy="${cy - halfH * 0.05}" r="${halfW * 0.08}" fill="${STROKE}"/>` +
+        EYES_END +
         // Nostrils
         `<circle cx="${cx - 2}" cy="${cy + halfH * 0.2}" r="1" fill="${STROKE}"/>` +
         `<circle cx="${cx + 2}" cy="${cy + halfH * 0.2}" r="1" fill="${STROKE}"/>` +
@@ -301,7 +323,9 @@ function createAnimalsContent(options: AnimalsOptions): string {
     const furTones = options.furTones ?? FUR_TONES;
     const fur = random.pick(furTones);
 
-    return RENDERERS[animal](computeGeo(size), fur);
+    return RENDERERS[animal](computeGeo(size), fur).replace(EYES, (_match, eyes: string) =>
+        layerGroup("eyes", eyes, options),
+    );
 }
 
 /**

@@ -1,5 +1,5 @@
-import type { AvatarOptions, AvatarResult, Style } from "@avatar-generator/core";
-import { buildSvg, createRandom, DEFAULT_COLORS, SKIN_TONES, validateOption } from "@avatar-generator/core";
+import type { AvatarOptions, ComposableStyle, Random } from "@avatar-generator/core";
+import { defineStyle, DEFAULT_COLORS, SKIN_TONES, validateOption } from "@avatar-generator/core";
 
 // ============================================================================
 // Options
@@ -176,91 +176,49 @@ function drawMouth(style: MouthStyle, cx: number, mouthY: number, color: string)
     }
 }
 
+/** What the seed decides for one faces avatar. */
+export interface FacesTraits {
+    skinColor: string;
+    hairColor: string;
+    featureColor: string;
+    faceShape: FaceShape;
+    hairStyle: HairStyle;
+    eyeStyle: EyeStyle;
+    mouthStyle: MouthStyle;
+    showEyebrows: boolean;
+    showEars: boolean;
+    showNose: boolean;
+    showBlush: boolean;
+}
+
 /**
- * Creates faces avatar content — bold, geometric, icon-style faces
+ * The order of these draws is part of the output: reordering them changes every
+ * avatar for every seed.
  */
-function createFacesContent(options: FacesOptions): string {
-    const size = options.size ?? 64;
+function prepareFaces(options: FacesOptions, random: Random): FacesTraits {
     const skinTones = options.skinTones ?? SKIN_TONES;
     const colors = options.colors ?? DEFAULT_COLORS;
-    const random = createRandom(options.seed);
 
-    const skinColor = random.pick(skinTones);
-    const hairColor = random.pick(colors);
-    const featureColor = options.featureColor ?? "#2C1810";
-
-    // Face shape — unique to this style
-    const faceShape = random.pick(FACE_SHAPES);
-
-    // Pick features
-    const hairStyle: HairStyle = options.hairStyle ?? random.pick(HAIR_STYLES);
-    const eyeStyle: EyeStyle = options.eyeStyle ?? random.pick(EYE_STYLES);
-    const mouthStyle: MouthStyle = options.mouthStyle ?? random.pick(MOUTH_STYLES);
-    const showEyebrows = options.eyebrows !== false && random.bool(0.5);
-    const showEars = options.ears !== false && random.bool(0.4);
-    const showNose = options.nose !== false && random.bool(0.3);
-    const showBlush = random.bool(0.25);
-
-    // Geometry — faces uses a single headSize (square proportions) instead of elliptical
-    const cx = size / 2;
-    const cy = size / 2;
-    const headSize = size * 0.6;
-    const eyeY = cy - headSize * 0.1;
-    const eyeSpacing = headSize * 0.22;
-    const mouthY = cy + headSize * 0.2;
-
-    let content = "";
-
-    // 1. Hair behind (only styles that extend behind head)
-    if (hairStyle === "round-top") {
-        content += drawHair(hairStyle, cx, cy, headSize, hairColor);
-    }
-
-    // 2. Ears — simple circles
-    if (showEars) {
-        const earR = size * 0.06;
-        content += `<circle cx="${cx - headSize / 2 - earR * 0.5}" cy="${cy}" r="${earR}" fill="${skinColor}"/>`;
-        content += `<circle cx="${cx + headSize / 2 + earR * 0.5}" cy="${cy}" r="${earR}" fill="${skinColor}"/>`;
-    }
-
-    // 3. Head
-    content += drawHead(faceShape, cx, cy, headSize, skinColor);
-
-    // 4. Hair (on top)
-    if (hairStyle !== "round-top") {
-        content += drawHair(hairStyle, cx, cy, headSize, hairColor);
-    }
-
-    // 5. Eyes
-    content += drawEyes(eyeStyle, cx, eyeY, eyeSpacing, featureColor);
-
-    // 6. Eyebrows — simple straight lines
-    if (showEyebrows) {
-        const browY = eyeY - 6;
-        const lx = cx - eyeSpacing;
-        const rx = cx + eyeSpacing;
-        content += `<line x1="${lx - 3}" y1="${browY}" x2="${lx + 3}" y2="${browY}" stroke="${featureColor}" stroke-width="2" stroke-linecap="round"/>`;
-        content += `<line x1="${rx - 3}" y1="${browY}" x2="${rx + 3}" y2="${browY}" stroke="${featureColor}" stroke-width="2" stroke-linecap="round"/>`;
-    }
-
-    // 7. Nose — simple vertical line or dot
-    if (showNose) {
-        const noseY = cy + headSize * 0.04;
-        content += `<line x1="${cx}" y1="${noseY - 2}" x2="${cx}" y2="${noseY + 2}" stroke="${featureColor}" stroke-width="1.5" stroke-linecap="round"/>`;
-    }
-
-    // 8. Mouth
-    content += drawMouth(mouthStyle, cx, mouthY, featureColor);
-
-    // 9. Blush — two simple circles on cheeks
-    if (showBlush) {
-        const blushY = cy + headSize * 0.08;
-        content += `<circle cx="${cx - eyeSpacing - 2}" cy="${blushY}" r="3" fill="#FF6B6B" opacity="0.3"/>`;
-        content += `<circle cx="${cx + eyeSpacing + 2}" cy="${blushY}" r="3" fill="#FF6B6B" opacity="0.3"/>`;
-    }
-
-    return content;
+    return {
+        skinColor: random.pick(skinTones),
+        hairColor: random.pick(colors),
+        featureColor: options.featureColor ?? "#2C1810",
+        // Face shape — unique to this style
+        faceShape: random.pick(FACE_SHAPES),
+        hairStyle: options.hairStyle ?? random.pick(HAIR_STYLES),
+        eyeStyle: options.eyeStyle ?? random.pick(EYE_STYLES),
+        mouthStyle: options.mouthStyle ?? random.pick(MOUTH_STYLES),
+        showEyebrows: options.eyebrows !== false && random.bool(0.5),
+        showEars: options.ears !== false && random.bool(0.4),
+        showNose: options.nose !== false && random.bool(0.3),
+        showBlush: random.bool(0.25),
+    };
 }
+
+// Geometry — faces uses a single headSize (square proportions) instead of elliptical
+const headSizeOf = (size: number) => size * 0.6;
+const eyeYOf = (size: number) => size / 2 - headSizeOf(size) * 0.1;
+const eyeSpacingOf = (size: number) => headSizeOf(size) * 0.22;
 
 /**
  * Faces avatar style
@@ -268,6 +226,9 @@ function createFacesContent(options: FacesOptions): string {
  * Creates bold, geometric, icon-style face avatars with varied head shapes
  * (circle, square, rounded-square), flat hair blocks, and simple geometric features.
  * Visually distinct from the illustrated style which uses detailed bezier curves.
+ *
+ * Its features can be mixed with other styles: `hair`, `ears`, `head`, `eyes`,
+ * `eyebrows`, `nose`, `mouth` and `blush`.
  *
  * @example
  * ```ts
@@ -280,22 +241,100 @@ function createFacesContent(options: FacesOptions): string {
  * });
  * ```
  */
-export const faces: Style<FacesOptions> = {
+export const faces: ComposableStyle<FacesOptions, FacesTraits> = defineStyle<FacesOptions, FacesTraits>({
     name: "faces",
 
-    create(options: FacesOptions): AvatarResult {
+    validate(options) {
         validateOption("faces", "hairStyle", options.hairStyle, HAIR_STYLES);
         validateOption("faces", "eyeStyle", options.eyeStyle, EYE_STYLES);
         validateOption("faces", "mouthStyle", options.mouthStyle, MOUTH_STYLES);
-
-        const random = createRandom(options.seed);
-        const colors = options.colors ?? DEFAULT_COLORS;
-        const backgroundColor = random.pick(colors);
-
-        const content = createFacesContent(options);
-
-        return buildSvg(content, options, backgroundColor);
     },
-};
+
+    prepare: prepareFaces,
+
+    head: (size) => ({ x: size * 0.2, y: size * 0.2, width: size * 0.6, height: size * 0.6 }),
+
+    layers: [
+        {
+            // Only some styles extend behind the head.
+            name: "hair-behind",
+            feature: "hair",
+            render: ({ traits, cx, cy, size }) =>
+                traits.hairStyle === "round-top"
+                    ? drawHair(traits.hairStyle, cx, cy, headSizeOf(size), traits.hairColor)
+                    : "",
+        },
+        {
+            name: "ears",
+            render: ({ traits, cx, cy, size }) => {
+                if (!traits.showEars) return "";
+                const earR = size * 0.06;
+                const half = headSizeOf(size) / 2;
+                return (
+                    `<circle cx="${cx - half - earR * 0.5}" cy="${cy}" r="${earR}" fill="${traits.skinColor}"/>` +
+                    `<circle cx="${cx + half + earR * 0.5}" cy="${cy}" r="${earR}" fill="${traits.skinColor}"/>`
+                );
+            },
+        },
+        {
+            name: "head",
+            render: ({ traits, cx, cy, size }) =>
+                drawHead(traits.faceShape, cx, cy, headSizeOf(size), traits.skinColor),
+        },
+        {
+            name: "hair-front",
+            feature: "hair",
+            render: ({ traits, cx, cy, size }) =>
+                traits.hairStyle !== "round-top"
+                    ? drawHair(traits.hairStyle, cx, cy, headSizeOf(size), traits.hairColor)
+                    : "",
+        },
+        {
+            name: "eyes",
+            render: ({ traits, cx, size }) =>
+                drawEyes(traits.eyeStyle, cx, eyeYOf(size), eyeSpacingOf(size), traits.featureColor),
+        },
+        {
+            // Simple straight lines
+            name: "eyebrows",
+            render: ({ traits, cx, size }) => {
+                if (!traits.showEyebrows) return "";
+                const browY = eyeYOf(size) - 6;
+                const lx = cx - eyeSpacingOf(size);
+                const rx = cx + eyeSpacingOf(size);
+                const color = traits.featureColor;
+                return (
+                    `<line x1="${lx - 3}" y1="${browY}" x2="${lx + 3}" y2="${browY}" stroke="${color}" stroke-width="2" stroke-linecap="round"/>` +
+                    `<line x1="${rx - 3}" y1="${browY}" x2="${rx + 3}" y2="${browY}" stroke="${color}" stroke-width="2" stroke-linecap="round"/>`
+                );
+            },
+        },
+        {
+            name: "nose",
+            render: ({ traits, cx, cy, size }) => {
+                if (!traits.showNose) return "";
+                const noseY = cy + headSizeOf(size) * 0.04;
+                return `<line x1="${cx}" y1="${noseY - 2}" x2="${cx}" y2="${noseY + 2}" stroke="${traits.featureColor}" stroke-width="1.5" stroke-linecap="round"/>`;
+            },
+        },
+        {
+            name: "mouth",
+            render: ({ traits, cx, cy, size }) =>
+                drawMouth(traits.mouthStyle, cx, cy + headSizeOf(size) * 0.2, traits.featureColor),
+        },
+        {
+            name: "blush",
+            render: ({ traits, cx, cy, size }) => {
+                if (!traits.showBlush) return "";
+                const blushY = cy + headSizeOf(size) * 0.08;
+                const spacing = eyeSpacingOf(size);
+                return (
+                    `<circle cx="${cx - spacing - 2}" cy="${blushY}" r="3" fill="#FF6B6B" opacity="0.3"/>` +
+                    `<circle cx="${cx + spacing + 2}" cy="${blushY}" r="3" fill="#FF6B6B" opacity="0.3"/>`
+                );
+            },
+        },
+    ],
+});
 
 export default faces;

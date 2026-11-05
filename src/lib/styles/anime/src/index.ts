@@ -1,5 +1,5 @@
-import type { AvatarOptions, AvatarResult, Random, Style } from "@avatar-generator/core";
-import { buildSvg, createRandom, DEFAULT_COLORS, EYE_COLORS, SKIN_TONES, validateOption } from "@avatar-generator/core";
+import type { AvatarOptions, ComposableStyle, Random } from "@avatar-generator/core";
+import { defineStyle, EYE_COLORS, SKIN_TONES, validateOption } from "@avatar-generator/core";
 
 // ============================================================================
 // Options
@@ -561,17 +561,37 @@ function drawAhoge(g: AnimeGeo, hairColor: string): string {
 // Main content builder
 // ============================================================================
 
-function createAnimeContent(options: AnimeOptions): string {
+/** What the seed decides for one anime avatar. */
+export interface AnimeTraits {
+    skinColor: string;
+    hairColor: string;
+    featureColor: string;
+    eyeColor: string;
+    hairStyle: HairStyle;
+    eyeStyle: EyeStyle;
+    mouthStyle: MouthStyle;
+    noseStyle: NoseStyle;
+    eyebrowStyle: EyebrowStyle;
+    hasBangs: boolean;
+    hasAhoge: boolean;
+    /** Pre-drawn because each mark is a separate draw from the same sequence. */
+    expressions: string;
+    /** Pre-drawn for the same reason. */
+    accessories: string;
+}
+
+/**
+ * The order of these draws is part of the output: reordering them changes every
+ * avatar for every seed.
+ */
+function prepareAnime(options: AnimeOptions, random: Random): AnimeTraits {
     const size = options.size ?? 64;
     const skinTones = options.skinTones ?? SKIN_TONES;
     const eyeColorPalette = options.eyeColors ?? EYE_COLORS;
-    const random = createRandom(options.seed);
 
     const skinColor = random.pick(skinTones);
     const hairColor = random.pick(ANIME_HAIR_COLORS);
-    const featureColor = "#2C1810";
     const eyeColor = random.pick(eyeColorPalette);
-    const g = computeGeo(size);
 
     // Pick features
     const hairStyle: HairStyle = options.hairStyle ?? random.pick(HAIR_STYLES);
@@ -586,47 +606,25 @@ function createAnimeContent(options: AnimeOptions): string {
     const hasBlush = options.blush ?? random.bool(0.35);
     const enableAccessories = options.accessories !== false;
 
-    let content = "";
+    const g = computeGeo(size);
+    const expressions = drawExpressions(random, g, hasBlush);
+    const accessories = enableAccessories ? drawAccessories(random, g, skinColor) : "";
 
-    // Render order:
-    // 1. Hair behind
-    content += drawHairBehind(hairStyle, g, hairColor);
-
-    // 2. Ears
-    content += drawEars(g, skinColor);
-
-    // 3. Face (V-chin bezier path)
-    content += drawFace(g, skinColor);
-
-    // 4. Hair front (bangs over forehead)
-    content += drawHairFront(hairStyle, g, hairColor, hasBangs);
-
-    // 5. Eyebrows
-    content += drawEyebrows(eyebrowStyle, g, featureColor);
-
-    // 6. Eyes (the star feature — multi-layer)
-    content += drawEyes(eyeStyle, g, featureColor, eyeColor);
-
-    // 7. Nose (minimal)
-    content += drawNose(noseStyle, g, featureColor);
-
-    // 8. Mouth (small, lower position)
-    content += drawMouth(mouthStyle, g, featureColor);
-
-    // 9. Expressions (blush, sweat-drop, sparkles, etc.)
-    content += drawExpressions(random, g, hasBlush);
-
-    // 10. Accessories (bandaid, headband)
-    if (enableAccessories) {
-        content += drawAccessories(random, g, skinColor);
-    }
-
-    // 11. Ahoge (single strand on top)
-    if (hasAhoge) {
-        content += drawAhoge(g, hairColor);
-    }
-
-    return content;
+    return {
+        skinColor,
+        hairColor,
+        featureColor: "#2C1810",
+        eyeColor,
+        hairStyle,
+        eyeStyle,
+        mouthStyle,
+        noseStyle,
+        eyebrowStyle,
+        hasBangs,
+        hasAhoge,
+        expressions,
+        accessories,
+    };
 }
 
 /**
@@ -636,6 +634,9 @@ function createAnimeContent(options: AnimeOptions): string {
  * V-shaped chin, dramatic spiky hair, and anime-specific expressions
  * (blush, sweat-drop, sparkles, anger-vein).
  * 20,000+ unique variants.
+ *
+ * Its features can be mixed with other styles: `hair`, `ears`, `head`,
+ * `eyebrows`, `eyes`, `nose`, `mouth`, `expressions` and `accessories`.
  *
  * @example
  * ```ts
@@ -648,23 +649,66 @@ function createAnimeContent(options: AnimeOptions): string {
  * });
  * ```
  */
-export const anime: Style<AnimeOptions> = {
+export const anime: ComposableStyle<AnimeOptions, AnimeTraits> = defineStyle<AnimeOptions, AnimeTraits>({
     name: "anime",
 
-    create(options: AnimeOptions): AvatarResult {
+    validate(options) {
         validateOption("anime", "hairStyle", options.hairStyle, HAIR_STYLES);
         validateOption("anime", "eyeStyle", options.eyeStyle, EYE_STYLES);
         validateOption("anime", "mouthStyle", options.mouthStyle, MOUTH_STYLES);
         validateOption("anime", "noseStyle", options.noseStyle, NOSE_STYLES);
-
-        const random = createRandom(options.seed);
-        const colors = options.colors ?? DEFAULT_COLORS;
-        const backgroundColor = random.pick(colors);
-
-        const content = createAnimeContent(options);
-
-        return buildSvg(content, options, backgroundColor);
     },
-};
+
+    prepare: prepareAnime,
+
+    head: (size) => {
+        const { cx, headW, faceTop, chinY } = computeGeo(size);
+        return { x: cx - headW / 2, y: faceTop, width: headW, height: chinY - faceTop };
+    },
+
+    layers: [
+        {
+            name: "hair-behind",
+            feature: "hair",
+            render: ({ traits, size }) => drawHairBehind(traits.hairStyle, computeGeo(size), traits.hairColor),
+        },
+        { name: "ears", render: ({ traits, size }) => drawEars(computeGeo(size), traits.skinColor) },
+        // V-chin bezier path
+        { name: "head", render: ({ traits, size }) => drawFace(computeGeo(size), traits.skinColor) },
+        {
+            // Bangs over forehead
+            name: "hair-front",
+            feature: "hair",
+            render: ({ traits, size }) =>
+                drawHairFront(traits.hairStyle, computeGeo(size), traits.hairColor, traits.hasBangs),
+        },
+        {
+            name: "eyebrows",
+            render: ({ traits, size }) => drawEyebrows(traits.eyebrowStyle, computeGeo(size), traits.featureColor),
+        },
+        {
+            // The star feature — multi-layer
+            name: "eyes",
+            render: ({ traits, size }) =>
+                drawEyes(traits.eyeStyle, computeGeo(size), traits.featureColor, traits.eyeColor),
+        },
+        {
+            name: "nose",
+            render: ({ traits, size }) => drawNose(traits.noseStyle, computeGeo(size), traits.featureColor),
+        },
+        {
+            name: "mouth",
+            render: ({ traits, size }) => drawMouth(traits.mouthStyle, computeGeo(size), traits.featureColor),
+        },
+        { name: "expressions", render: ({ traits }) => traits.expressions },
+        { name: "accessories", render: ({ traits }) => traits.accessories },
+        {
+            // Single strand on top
+            name: "ahoge",
+            feature: "hair",
+            render: ({ traits, size }) => (traits.hasAhoge ? drawAhoge(computeGeo(size), traits.hairColor) : ""),
+        },
+    ],
+});
 
 export default anime;

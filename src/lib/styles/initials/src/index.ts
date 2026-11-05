@@ -1,5 +1,5 @@
 import type { AvatarOptions, AvatarResult, Style } from "@avatar-generator/core";
-import { buildSvg, createRandom, DEFAULT_COLORS, escapeXml } from "@avatar-generator/core";
+import { buildSvg, createRandom, DEFAULT_COLORS, escapeXml, resolveTheme } from "@avatar-generator/core";
 
 // ============================================================================
 // Options
@@ -15,7 +15,7 @@ export interface InitialsOptions extends AvatarOptions {
     fontFamily?: string;
     /** Font weight (default: 600) */
     fontWeight?: number;
-    /** Text color (default: #fff) */
+    /** Text color (default: the theme's foreground, otherwise #fff) */
     textColor?: string;
 }
 
@@ -29,7 +29,7 @@ function getInitials(name: string): string {
         .split(" ")
         .filter(Boolean)
         .slice(0, 2)
-        .map((part) => part[0].toUpperCase())
+        .map((part) => Array.from(part)[0].toUpperCase())
         .join("");
 }
 
@@ -42,7 +42,7 @@ function createInitialsContent(options: InitialsOptions): string {
     const initials = getInitials(name);
     const fontFamily = options.fontFamily ?? "sans-serif";
     const fontWeight = options.fontWeight ?? 600;
-    const textColor = options.textColor ?? "#fff";
+    const textColor = options.textColor ?? resolveTheme(options.theme)?.foreground ?? "#fff";
 
     // Calculate font size based on avatar size and number of initials
     const fontSize = size * (initials.length === 1 ? 0.5 : 0.4);
