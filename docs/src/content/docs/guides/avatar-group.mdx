@@ -1,0 +1,85 @@
+---
+title: Avatar Groups
+description: "Show a row of overlapping avatars with a +N badge in React, Vue, Svelte, Angular, a web component, or plain JavaScript."
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+A group is one SVG, rendered through a single `<img>`, so it needs no stylesheet.
+
+```ts
+import { createAvatarGroup } from "@avatar-generator/core";
+
+const group = createAvatarGroup(faces, ["ana", "ben", "chi", "dee", "eli"], {
+    size: 40,
+    max: 3,
+    title: "Ana, Ben and 3 others",
+});
+
+img.src = group.toDataUri();
+img.alt = group.label;
+img.width = group.width;
+img.height = group.height;
+```
+
+| Option           | Default   | Description                                              |
+| ---------------- | --------- | -------------------------------------------------------- |
+| `size`           | `48`      | Diameter of each avatar in pixels                        |
+| `overlap`        | `0.25`    | Fraction of each avatar covered by the next, up to 0.9   |
+| `max`            | -         | Show this many, then a `+N` badge                        |
+| `ringWidth`      | `2`       | Width of the ring separating avatars                     |
+| `ringColor`      | `#ffffff` | Ring colour. Match your page background                  |
+| `options`        | -         | Options for every avatar. An item's own options win      |
+| `badgeColor`     | `#E5E7EB` | Background of the badge                                  |
+| `badgeTextColor` | `#1F2933` | Text of the badge                                        |
+| `title`          | -         | Accessible name. Defaults to a count such as `5 avatars` |
+
+Items are seeds, or full options when one person needs their own.
+
+## In your framework
+
+```tsx
+// React
+import { AvatarGroup } from "@avatar-generator/react";
+
+<AvatarGroup style={faces} items={seeds} options={{ size: 40, max: 3 }} alt="Project team" />;
+```
+
+```vue
+<!-- Vue -->
+<script setup>
+import { AvatarGroup } from "@avatar-generator/vue";
+</script>
+
+<template>
+    <AvatarGroup :style="faces" :items="seeds" :options="{ size: 40, max: 3 }" alt="Project team" />
+</template>
+```
+
+```svelte
+<!-- Svelte -->
+<script>
+    import AvatarGroup from "@avatar-generator/svelte/AvatarGroup.svelte";
+</script>
+
+<AvatarGroup style={faces} items={seeds} options={{ size: 40, max: 3 }} alt="Project team" />
+```
+
+```html
+<!-- Angular: add AvatarGroupComponent to your component's imports -->
+<avatar-generator-group [style]="faces" [items]="seeds" [options]="{ size: 40, max: 3 }" alt="Project team" />
+```
+
+```ts
+// Web component
+const el = document.createElement("avatar-generator-group");
+el.styleImpl = faces;
+el.items = seeds;
+el.options = { size: 40, max: 3 };
+el.setAttribute("alt", "Project team");
+```
+
+<Aside>
+    Because a group is one image, its people cannot have separate links or tooltips. For that, lay out individual
+    `Avatar` components with a negative margin.
+</Aside>

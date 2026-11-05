@@ -1,10 +1,46 @@
 // Re-export types
-export type { AvatarOptions, AvatarResult, LegacyAvatarOptions, Random, Style } from "./types";
+export type {
+    AvatarOptions,
+    AvatarResult,
+    AvatarTheme,
+    AvatarThemeName,
+    ComposableStyle,
+    HeadBox,
+    IdleAnimation,
+    LayerContext,
+    LayerRender,
+    LegacyAvatarOptions,
+    Random,
+    Style,
+    StyleLayer,
+} from "./types";
+export type { FeatureSource, MixOptions, StyleDefinition } from "./compose";
+export type { BuildSvgOptions } from "./svg";
+export type { AvatarGroupItem, AvatarGroupOptions, AvatarGroupResult } from "./group";
+export type { RenderToStringOptions } from "./ssr";
+export type { ViewerPreferences } from "./viewer";
+export type { AvatarTransitionOptions } from "./transition";
 
 // Re-export utilities
 export { createRandom } from "./random";
 export { validateOption } from "./validation";
+export { animationCss, resolveAnimations } from "./animation";
+export { contrastRatio, pickContrasting, readableColor } from "./color";
 export {
+    adaptForImage,
+    adaptGroupForImage,
+    NO_PREFERENCES,
+    subscribeViewerPreferences,
+    viewerPreferences,
+} from "./viewer";
+export { defineStyle, mixStyles } from "./compose";
+export { createAvatar } from "./create";
+export { createAvatarGroup } from "./group";
+export { renderToString } from "./ssr";
+export { HIGH_CONTRAST_THEME, DARK_THEME, LIGHT_THEME, defineTheme, resolveTheme } from "./theme";
+export { createAvatarTransition } from "./transition";
+export {
+    accessibleMarkup,
     buildSvg,
     buildTransform,
     createBackground,
@@ -15,58 +51,16 @@ export {
     DEFAULT_COLORS,
     escapeXml,
     EYE_COLORS,
+    HAIR_COLORS,
+    layerGroup,
+    scopeSvgIds,
     SKIN_TONES,
+    svgToDataUri,
+    toAvatarResult,
     wrapWithTransform,
 } from "./svg";
 
-import type { AvatarOptions, AvatarResult, LegacyAvatarOptions, Style } from "./types";
-
-/**
- * Generates a deterministic SVG avatar using a style implementation.
- *
- * The output is determined entirely by `options.seed`: the same seed and the
- * same style always produce byte-identical SVG. Default visual options
- * (size=64, circular shape, opaque background, no transform) are merged in
- * automatically; caller-supplied values in `options` take precedence.
- *
- * @typeParam T - The style-specific options shape, extending {@link AvatarOptions}
- * @param style - A {@link Style} implementation (e.g. `initials`, `faces`, `anime`)
- * @param options - Seed and style-specific settings
- * @returns An {@link AvatarResult} containing the SVG string and a `toDataUri` helper
- *
- * @example Basic usage with the initials style
- * ```ts
- * import { createAvatar } from '@avatar-generator/core';
- * import { initials } from '@avatar-generator/style-initials';
- *
- * const avatar = createAvatar(initials, { seed: 'Hugo GB' });
- * img.src = avatar.toDataUri();
- * ```
- *
- * @example Custom size, palette, and border
- * ```ts
- * createAvatar(faces, {
- *   seed: 'user-42',
- *   size: 128,
- *   colors: ['#FF6B6B', '#4ECDC4'],
- *   border: { width: 2, color: '#000' },
- * });
- * ```
- */
-export function createAvatar<T extends AvatarOptions>(style: Style<T>, options: T): AvatarResult {
-    // Apply defaults
-    const opts = {
-        size: 64,
-        square: false,
-        transparent: false,
-        rotate: 0,
-        flip: false,
-        scale: 1,
-        ...options,
-    } as T;
-
-    return style.create(opts);
-}
+import type { LegacyAvatarOptions } from "./types";
 
 // ============================================================================
 // Legacy v1 API (deprecated, for backwards compatibility)

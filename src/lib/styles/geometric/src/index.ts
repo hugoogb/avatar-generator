@@ -1,5 +1,13 @@
 import type { AvatarOptions, AvatarResult, Style } from "@avatar-generator/core";
-import { buildSvg, createRandom, DEFAULT_COLORS } from "@avatar-generator/core";
+import {
+    buildSvg,
+    contrastRatio,
+    createRandom,
+    DEFAULT_COLORS,
+    pickContrasting,
+    readableColor,
+    resolveTheme,
+} from "@avatar-generator/core";
 
 // ============================================================================
 // Options
@@ -8,7 +16,7 @@ import { buildSvg, createRandom, DEFAULT_COLORS } from "@avatar-generator/core";
 export interface GeometricOptions extends AvatarOptions {
     /** Grid size (default: 5, odd recommended) */
     gridSize?: number;
-    /** Padding cells around the pattern (default: 1) */
+    /** Padding cells around the pattern (default: 1.5, which keeps its corners inside a circle) */
     padding?: number;
     /** Override foreground color (otherwise picked from palette) */
     foregroundColor?: string;
@@ -20,7 +28,7 @@ export interface GeometricOptions extends AvatarOptions {
 function createIdenticonContent(options: GeometricOptions, foreground: string): string {
     const size = options.size ?? 64;
     const gridSize = options.gridSize ?? 5;
-    const padding = options.padding ?? 1;
+    const padding = options.padding ?? 1.5;
     const random = createRandom(options.seed);
 
     const cellSize = size / (gridSize + padding * 2);
@@ -84,7 +92,8 @@ function createIdenticonContent(options: GeometricOptions, foreground: string): 
         }
     }
 
-    return content;
+    // Abutting cells must not show hairline seams when antialiased.
+    return `<g shape-rendering="crispEdges">${content}</g>`;
 }
 
 /**
@@ -109,17 +118,20 @@ export const geometric: Style<GeometricOptions> = {
     name: "geometric",
 
     create(options: GeometricOptions): AvatarResult {
-        const random = createRandom(options.seed);
+        const random = createRandom(`${options.seed}:colors`);
         const colors = options.colors ?? DEFAULT_COLORS;
         const backgroundColor = random.pick(colors);
 
-        // Pick foreground color, ensuring it differs from background
-        let foreground = options.foregroundColor ?? random.pick(colors);
-        if (foreground === backgroundColor && !options.foregroundColor) {
-            // Shift to next color in palette
-            const idx = colors.indexOf(foreground);
-            foreground = colors[(idx + 1) % colors.length];
-        }
+        // Always drawn, so the pattern is the same in every theme and palette.
+        const picked = pickContrasting(random, colors, backgroundColor);
+        // With no background, the page behind could be any colour. The palette's
+        // mid-tones hold up on both light and dark, where black or white would vanish.
+        const contrasting = options.transparent
+            ? backgroundColor
+            : contrastRatio(picked, backgroundColor) >= 3
+              ? picked
+              : readableColor(backgroundColor);
+        const foreground = options.foregroundColor ?? resolveTheme(options.theme)?.foreground ?? contrasting;
 
         const content = createIdenticonContent(options, foreground);
 

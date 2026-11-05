@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Avatar } from "@avatar-vue/src";
+import { Avatar, AvatarGroup } from "@avatar-vue/src";
 import { initials } from "@avatar-style-initials/src";
 import { geometric } from "@avatar-style-geometric/src";
 import { pixels } from "@avatar-style-pixels/src";
@@ -23,6 +23,8 @@ import {
     EMOJI_OPTIONS,
     ANIMALS_OPTIONS,
     GRADIENT_OPTIONS,
+    GROUP_OPTIONS,
+    GROUP_SEEDS,
 } from "../consts";
 
 const sections = [
@@ -53,6 +55,10 @@ const sections = [
                     :alt="`${section.title} avatar ${i + 1}`"
                 />
             </div>
+        </section>
+        <section>
+            <h2>Avatar group</h2>
+            <AvatarGroup :style="faces" :items="GROUP_SEEDS" :options="GROUP_OPTIONS" alt="Project team" />
         </section>
     </div>
 </template>

@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/vue",
-    "version": "3.0.2",
+    "version": "3.1.0",
     "description": "Deterministic SVG avatar component for Vue 3, in eleven styles",
     "keywords": [
         "avatar",

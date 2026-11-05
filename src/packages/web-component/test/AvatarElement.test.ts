@@ -1,9 +1,9 @@
 // @vitest-environment happy-dom
-import { createAvatar } from "@avatar-generator/core";
+import { createAvatar, createAvatarGroup, type AvatarOptions, type Style } from "@avatar-generator/core";
 import { initials } from "@avatar-generator/style-initials";
 import { geometric } from "@avatar-generator/style-geometric";
-import { afterEach, describe, expect, it } from "vitest";
-import { AvatarElement, register } from "@avatar-generator/web-component";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { AvatarElement, register, registerGroup, type AvatarGroupElement } from "@avatar-generator/web-component";
 
 /** The element paints into a shadow root, so reach through it to assert. */
 const imgIn = (el: AvatarElement) => el.shadowRoot?.querySelector("img") ?? null;
@@ -122,5 +122,99 @@ describe("<avatar-generator>", () => {
         el.options = { seed: "Hugo GB" };
 
         expect(imgIn(el)?.getAttribute("src")).toBe(createAvatar(initials, { seed: "Hugo GB" }).toDataUri());
+    });
+});
+
+describe("<avatar-generator-group>", () => {
+    const seeds = ["ana", "ben", "chi"];
+
+    const mountGroup = () => {
+        const el = document.createElement("avatar-generator-group") as AvatarGroupElement;
+        el.styleImpl = initials as Style<AvatarOptions>;
+        el.items = seeds;
+        el.options = { size: 40 };
+        document.body.append(el);
+        return { el, image: el.shadowRoot?.querySelector("img") as HTMLImageElement };
+    };
+
+    it("is registered on import", () => {
+        expect(customElements.get("avatar-generator-group")).toBeDefined();
+    });
+
+    it("renders the group the core API produces", () => {
+        const group = createAvatarGroup(initials as Style<AvatarOptions>, seeds, { size: 40 });
+        const { image } = mountGroup();
+
+        expect(image.src).toBe(group.toDataUri());
+        expect(image.width).toBe(group.width);
+    });
+
+    it("defaults alt to the group's label and follows the attribute", () => {
+        const { el, image } = mountGroup();
+        expect(image.alt).toBe("3 avatars");
+        el.setAttribute("alt", "Team");
+        expect(image.alt).toBe("Team");
+        el.removeAttribute("alt");
+        expect(image.alt).toBe("3 avatars");
+    });
+
+    it("can be registered under another name", () => {
+        registerGroup("team-avatars");
+        expect(customElements.get("team-avatars")).toBeDefined();
+        expect(() => registerGroup("team-avatars")).not.toThrow();
+    });
+});
+
+/** Reports every media query containing `feature` as matching. */
+const stubMatchMedia = (feature: string) => {
+    const listeners = new Set<() => void>();
+    vi.stubGlobal("matchMedia", (query: string) => ({
+        matches: query.includes(feature),
+        addEventListener: (_: string, listener: () => void) => listeners.add(listener),
+        removeEventListener: (_: string, listener: () => void) => listeners.delete(listener),
+    }));
+    return listeners;
+};
+
+describe("viewer preferences (web component)", () => {
+    afterEach(() => vi.unstubAllGlobals());
+
+    it("does not animate for a viewer who prefers reduced motion", () => {
+        stubMatchMedia("reduced-motion");
+        const el = mount();
+        el.styleImpl = initials as Style<AvatarOptions>;
+        el.options = { seed: "x", animation: true };
+        expect(imgIn(el)?.src).toBe(createAvatar(initials, { seed: "x" }).toDataUri());
+    });
+
+    it("re-renders when the setting changes, and stops when removed", () => {
+        const listeners = stubMatchMedia("nothing");
+        const el = mount();
+        el.styleImpl = initials as Style<AvatarOptions>;
+        el.options = { seed: "x", animation: true };
+        expect(imgIn(el)?.src).toBe(createAvatar(initials, { seed: "x", animation: true }).toDataUri());
+
+        const previous = [...listeners];
+        vi.stubGlobal("matchMedia", (query: string) => ({
+            matches: query.includes("reduced-motion"),
+            addEventListener: () => {},
+            removeEventListener: (_: string, listener: () => void) => listeners.delete(listener),
+        }));
+        previous.forEach((listener) => listener());
+        expect(imgIn(el)?.src).toBe(createAvatar(initials, { seed: "x" }).toDataUri());
+
+        el.remove();
+        expect(listeners.size).toBe(0);
+    });
+
+    it("applies to groups", () => {
+        stubMatchMedia("reduced-motion");
+        const el = document.createElement("avatar-generator-group") as AvatarGroupElement;
+        el.styleImpl = initials as Style<AvatarOptions>;
+        el.items = ["a"];
+        el.options = { options: { animation: true } };
+        document.body.append(el);
+        const image = el.shadowRoot?.querySelector("img") as HTMLImageElement;
+        expect(image.src).toBe(createAvatarGroup(initials as Style<AvatarOptions>, ["a"]).toDataUri());
     });
 });

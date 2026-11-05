@@ -28,28 +28,29 @@ const MONDRIAN_DIVIDER = "#111111";
 // Kandinsky/Bauhaus use bolder saturated palettes.
 const BOLD_COLORS = ["#E63946", "#F1C40F", "#2A9D8F", "#264653", "#F4A261", "#6C5CE7", "#0984E3"];
 
+/** Drawn in this coordinate space and scaled, so line weights stay in proportion. */
+const CANVAS = 64;
+
 // ============================================================================
 // Mondrian composition — axis-aligned rectangles with thick black dividers.
 // ============================================================================
 
-function drawMondrian(size: number, random: Random): string {
-    const divider = 3;
-    // Vertical splits (1–2 columns of sub-rects) and horizontal splits per band.
+function drawMondrian(size: number, random: Random, palette: string[]): string {
+    const divider = 2.5;
     const vSplits = [random.int(Math.floor(size * 0.35), Math.floor(size * 0.55))];
     if (random.bool(0.4)) {
         vSplits.push(random.int(Math.floor(size * 0.65), Math.floor(size * 0.82)));
     }
-    vSplits.sort((a, b) => a - b);
 
     const xs = [0, ...vSplits, size];
-    let content = "";
+    let blocks = "";
+    let lines = "";
 
     for (let i = 0; i < xs.length - 1; i++) {
         const left = xs[i];
-        const right = xs[i + 1];
-        const width = right - left;
+        const width = xs[i + 1] - left;
 
-        // Per column, split vertically into 1–3 rectangles.
+        // Per column, split into 1-3 rectangles, each divider on a block's edge.
         const bands = random.pick([1, 2, 2, 3]);
         const hSplits: number[] = [];
         for (let b = 1; b < bands; b++) {
@@ -59,36 +60,26 @@ function drawMondrian(size: number, random: Random): string {
         const ys = [0, ...hSplits, size];
 
         for (let j = 0; j < ys.length - 1; j++) {
-            const top = ys[j];
-            const height = ys[j + 1] - top;
-            const color = random.pick(MONDRIAN_COLORS);
-            content += `<rect x="${left}" y="${top}" width="${width}" height="${height}" fill="${color}"/>`;
+            const color = random.pick(palette);
+            blocks += `<rect x="${left}" y="${ys[j]}" width="${width}" height="${ys[j + 1] - ys[j]}" fill="${color}"/>`;
+        }
+        for (const y of hSplits) {
+            lines += `<rect x="${left}" y="${y - divider / 2}" width="${width}" height="${divider}" fill="${MONDRIAN_DIVIDER}"/>`;
         }
     }
 
-    // Draw the divider grid on top.
     for (const x of vSplits) {
-        content += `<rect x="${x - divider / 2}" y="0" width="${divider}" height="${size}" fill="${MONDRIAN_DIVIDER}"/>`;
-    }
-    // Horizontal dividers are per-column; approximate them with a thin grid across the full canvas.
-    const hDividerCount = random.int(2, 4);
-    const used = new Set<number>();
-    for (let i = 0; i < hDividerCount; i++) {
-        const y = random.int(Math.floor(size * 0.2), Math.floor(size * 0.8));
-        if (!used.has(y)) {
-            used.add(y);
-            content += `<rect x="0" y="${y - divider / 2}" width="${size}" height="${divider}" fill="${MONDRIAN_DIVIDER}"/>`;
-        }
+        lines += `<rect x="${x - divider / 2}" y="0" width="${divider}" height="${size}" fill="${MONDRIAN_DIVIDER}"/>`;
     }
 
-    return content;
+    return blocks + lines;
 }
 
 // ============================================================================
 // Kandinsky composition — organic circles, triangles, and radiating lines.
 // ============================================================================
 
-function drawKandinsky(size: number, random: Random, shapeCount: number): string {
+function drawKandinsky(size: number, random: Random, shapeCount: number, palette: string[]): string {
     const cx = size / 2;
     const cy = size / 2;
     let content = "";
@@ -98,22 +89,23 @@ function drawKandinsky(size: number, random: Random, shapeCount: number): string
     const originY = random.pick([0, size]);
     for (let i = 0; i < 3; i++) {
         const r = size * (0.35 + i * 0.22);
-        const color = random.pick(BOLD_COLORS);
+        const color = random.pick(palette);
         content += `<circle cx="${originX}" cy="${originY}" r="${r}" fill="none" stroke="${color}" stroke-width="${random.int(2, 4)}" opacity="0.6"/>`;
     }
 
     // Central grouping of concentric circles (Kandinsky "Several Circles").
     const centralR = size * 0.22;
-    const ringColor = random.pick(BOLD_COLORS);
-    content += `<circle cx="${cx}" cy="${cy}" r="${centralR}" fill="${ringColor}"/>`;
-    content += `<circle cx="${cx}" cy="${cy}" r="${centralR * 0.6}" fill="${random.pick(BOLD_COLORS)}"/>`;
-    content += `<circle cx="${cx}" cy="${cy}" r="${centralR * 0.3}" fill="${random.pick(BOLD_COLORS)}"/>`;
+    // Shuffled rather than picked, so that neighbouring circles differ.
+    const [outer, middle = outer, inner = outer] = random.shuffle([...palette]);
+    content += `<circle cx="${cx}" cy="${cy}" r="${centralR}" fill="${outer}"/>`;
+    content += `<circle cx="${cx}" cy="${cy}" r="${centralR * 0.6}" fill="${middle}"/>`;
+    content += `<circle cx="${cx}" cy="${cy}" r="${centralR * 0.3}" fill="${inner}"/>`;
 
     // Accent shapes scattered on the canvas.
     for (let i = 0; i < shapeCount; i++) {
         const x = random.int(Math.floor(size * 0.1), Math.floor(size * 0.9));
         const y = random.int(Math.floor(size * 0.1), Math.floor(size * 0.9));
-        const color = random.pick(BOLD_COLORS);
+        const color = random.pick(palette);
         const kind = random.pick(["triangle", "circle", "line"] as const);
 
         if (kind === "triangle") {
@@ -139,7 +131,7 @@ function drawKandinsky(size: number, random: Random, shapeCount: number): string
 // Bauhaus composition — half-circles, squares, and bold diagonals.
 // ============================================================================
 
-function drawBauhaus(size: number, random: Random): string {
+function drawBauhaus(size: number, random: Random, palette: string[]): string {
     // Divide canvas into a 2x2 grid where each cell gets one primitive.
     const cell = size / 2;
     let content = "";
@@ -148,8 +140,9 @@ function drawBauhaus(size: number, random: Random): string {
         for (let col = 0; col < 2; col++) {
             const x = col * cell;
             const y = row * cell;
-            const fillBg = random.pick(BOLD_COLORS);
-            const fill = random.pick(BOLD_COLORS.filter((c) => c !== fillBg));
+            const fillBg = random.pick(palette);
+            const others = palette.filter((c) => c !== fillBg);
+            const fill = random.pick(others.length > 0 ? others : palette);
 
             content += `<rect x="${x}" y="${y}" width="${cell}" height="${cell}" fill="${fillBg}"/>`;
 
@@ -192,18 +185,17 @@ function drawBauhaus(size: number, random: Random): string {
 // ============================================================================
 
 function createAbstractContent(options: AbstractOptions): string {
-    const size = options.size ?? 64;
     const random = createRandom(options.seed);
     const composition: Composition = options.composition ?? random.pick(COMPOSITIONS);
     const shapeCount = options.shapeCount ?? 3;
 
     switch (composition) {
         case "mondrian":
-            return drawMondrian(size, random);
+            return drawMondrian(CANVAS, random, options.colors ?? MONDRIAN_COLORS);
         case "kandinsky":
-            return drawKandinsky(size, random, shapeCount);
+            return drawKandinsky(CANVAS, random, shapeCount, options.colors ?? BOLD_COLORS);
         case "bauhaus":
-            return drawBauhaus(size, random);
+            return drawBauhaus(CANVAS, random, options.colors ?? BOLD_COLORS);
     }
 }
 
@@ -229,16 +221,13 @@ export const abstract: Style<AbstractOptions> = {
     create(options: AbstractOptions): AvatarResult {
         validateOption("abstract", "composition", options.composition, COMPOSITIONS);
 
-        const random = createRandom(options.seed);
-        // The composition draws over the full canvas, but we still honor
-        // `options.colors` for the underlying background so transparent and
-        // custom-palette tests behave consistently across styles.
+        const random = createRandom(`${options.seed}:background`);
         const palette = options.colors ?? BOLD_COLORS;
         const backgroundColor = random.pick(palette);
 
         const content = createAbstractContent(options);
 
-        return buildSvg(content, options, backgroundColor);
+        return buildSvg(content, options, backgroundColor, { canvas: CANVAS });
     },
 };
 

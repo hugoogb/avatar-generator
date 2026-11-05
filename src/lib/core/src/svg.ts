@@ -1,3 +1,4 @@
+import { animationCss, animationRootAttributes, resolveAnimations } from "./animation";
 import { hashSeed } from "./random";
 import type { AvatarOptions, AvatarResult } from "./types";
 
@@ -12,19 +13,26 @@ export const SKIN_TONES = ["#FFDBB4", "#EAC086", "#C68B59", "#A0674B", "#8D5524"
 export const EYE_COLORS = ["#634E34", "#2E536F", "#3D6B45", "#89724B", "#3B3024"];
 
 /**
- * Default color palettes for avatar generation
+ * Natural hair colours for face-based styles. Kept apart from the background
+ * palette, so hair cannot vanish into a background of the same colour.
+ */
+export const HAIR_COLORS = ["#231A14", "#3B2417", "#5A3A22", "#8A5A2B", "#C9973F", "#A8452A", "#8C8F96", "#1E2433"];
+
+/**
+ * Default background palette: saturated mid-tones that are distinct from each
+ * other and from skin tones, and hold either white or near-black text at 4.5:1.
  */
 export const DEFAULT_COLORS = [
-    "#FF6B6B", // Red
-    "#4ECDC4", // Teal
-    "#45B7D1", // Sky blue
-    "#96CEB4", // Sage
-    "#FFEAA7", // Yellow
-    "#DDA0DD", // Plum
-    "#98D8C8", // Mint
-    "#F7DC6F", // Gold
-    "#BB8FCE", // Purple
-    "#85C1E9", // Light blue
+    "#3B6FD9", // Blue
+    "#6D5BD0", // Indigo
+    "#C2478A", // Magenta
+    "#E8705A", // Coral
+    "#F2B84B", // Amber
+    "#2A9D8F", // Teal
+    "#4CAF6D", // Green
+    "#3AA7D6", // Sky
+    "#8E4FC0", // Purple
+    "#C93C4A", // Red
 ];
 
 /**
@@ -42,8 +50,72 @@ export function escapeXml(text: string): string {
 /**
  * Creates the opening SVG tag with common attributes
  */
-export function createSvgOpen(size: number): string {
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">`;
+export function createSvgOpen(size: number, attributes = ""): string {
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}"${attributes}>`;
+}
+
+/**
+ * Encodes an SVG string as a base64 data URI.
+ *
+ * `btoa` accepts only code points up to U+00FF and treats each as one byte. An
+ * SVG with `李` in it made `btoa` throw, and one with `é` produced bytes that
+ * are not valid UTF-8, so the browser refused to draw it. Encoding to UTF-8
+ * first fixes both and leaves ASCII output unchanged.
+ */
+export function svgToDataUri(svg: string): string {
+    const bytes = new TextEncoder().encode(svg);
+    let binary = "";
+    for (const byte of bytes) binary += String.fromCharCode(byte);
+    return `data:image/svg+xml;base64,${btoa(binary)}`;
+}
+
+/** Wraps a complete SVG string in the {@link AvatarResult} shape. */
+export function toAvatarResult(svg: string): AvatarResult {
+    return { svg, toDataUri: () => svgToDataUri(svg) };
+}
+
+/**
+ * Prefixes every `id` in an SVG and every reference to one.
+ *
+ * Ids are global to the document an SVG sits in. When SVGs are nested or
+ * inlined, a repeated id silently resolves to the first match, so a second
+ * avatar can pick up the first one's gradient.
+ */
+export function scopeSvgIds(svg: string, prefix: string): string {
+    return svg
+        .replace(/\bid="([^"]+)"/g, `id="${prefix}-$1"`)
+        .replace(/url\(#([^)]+)\)/g, `url(#${prefix}-$1)`)
+        .replace(/href="#([^"]+)"/g, `href="#${prefix}-$1"`);
+}
+
+/** Root attributes and leading elements for the accessibility options. */
+export function accessibleMarkup(options: Pick<AvatarOptions, "title" | "description">): {
+    attributes: string;
+    children: string;
+} {
+    let attributes = "";
+    let children = "";
+    if (options.title) {
+        const title = escapeXml(options.title);
+        attributes += ` role="img" aria-label="${title}"`;
+        children += `<title>${title}</title>`;
+    }
+    if (options.description) {
+        children += `<desc>${escapeXml(options.description)}</desc>`;
+    }
+    return { attributes, children };
+}
+
+/**
+ * Wraps a layer's markup in a class-bearing group when the options ask for
+ * layer hooks. Otherwise returns it untouched, so output stays byte-identical.
+ *
+ * Styles built with `defineStyle` get this for free. A hand-written style can
+ * call it around its eyes so that the `blink` animation reaches them.
+ */
+export function layerGroup(name: string, content: string, options: AvatarOptions): string {
+    if (!content || (!options.classes && !resolveAnimations(options).blink)) return content;
+    return `<g class="ag-layer ag-layer-${name}">${content}</g>`;
 }
 
 /**
@@ -117,6 +189,15 @@ export function wrapWithTransform(content: string, options: AvatarOptions): stri
     return `<g${transform}>${content}</g>`;
 }
 
+/** Options for {@link buildSvg}. */
+export interface BuildSvgOptions {
+    /**
+     * Size of the coordinate space `content` was drawn in. Setting it keeps every
+     * detail in proportion at any rendered size, so a style can use plain numbers.
+     */
+    canvas?: number;
+}
+
 /**
  * Wraps style-generated content into a complete SVG document with the right
  * viewBox, clip path (circle or square), background, transform group, and
@@ -128,15 +209,42 @@ export function wrapWithTransform(content: string, options: AvatarOptions): stri
  * @param content - Raw SVG children produced by the style (no outer `<svg>`)
  * @param options - Base avatar options (seed, size, shape, transforms, border)
  * @param backgroundColor - Fill color for the background rectangle
+ * @param buildOptions - See {@link BuildSvgOptions}
  * @returns An {@link AvatarResult} with the assembled SVG string
  */
-export function buildSvg(content: string, options: AvatarOptions, backgroundColor: string): AvatarResult {
-    const size = options.size ?? 64;
+export function buildSvg(
+    content: string,
+    options: AvatarOptions,
+    backgroundColor: string,
+    { canvas }: BuildSvgOptions = {},
+): AvatarResult {
+    const pixels = options.size ?? 64;
+    const size = canvas ?? pixels;
     // Derive a deterministic clip id from the seed so identical options
     // always produce byte-identical SVG output.
     const clipId = `clip-${hashSeed(options.seed).toString(36)}`;
 
-    let svg = createSvgOpen(size);
+    const animations = resolveAnimations(options);
+    const animated = animations.blink || animations.breathe;
+    const accessible = accessibleMarkup(options);
+
+    const rootClasses: string[] = [];
+    if (options.classes) rootClasses.push("ag-avatar");
+    if (typeof options.classes === "string") rootClasses.push(escapeXml(options.classes));
+    if (animations.blink) rootClasses.push("ag-blink");
+    if (animations.breathe) rootClasses.push("ag-breathe");
+
+    let attributes = accessible.attributes;
+    if (rootClasses.length > 0) attributes += ` class="${rootClasses.join(" ")}"`;
+    if (animated) attributes += animationRootAttributes(options.seed);
+
+    // A style drawing on a fixed canvas needs the viewBox and the rendered size
+    // to differ. Without a canvas this is the same as `createSvgOpen(size)`.
+    let svg =
+        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${pixels}" height="${pixels}"${attributes}>` +
+        accessible.children;
+
+    if (animated) svg += `<style>${animationCss(animations)}</style>`;
 
     // Add defs with clip path
     svg += "<defs>";
@@ -150,21 +258,19 @@ export function buildSvg(content: string, options: AvatarOptions, backgroundColo
     svg += createBackground(size, backgroundColor, options.transparent);
 
     // Add transformed content
-    svg += wrapWithTransform(content, options);
+    const transformed = wrapWithTransform(content, { ...options, size });
+    svg += options.classes || animated ? `<g class="ag-content">${transformed}</g>` : transformed;
 
     svg += "</g>";
 
     // Add border if specified (outside clip)
     if (options.border) {
-        svg += createBorder(size, options.border.width, options.border.color, options.square ?? false);
+        // A border is asked for in real pixels, whatever the canvas.
+        const width = (options.border.width * size) / pixels;
+        svg += createBorder(size, width, options.border.color, options.square ?? false);
     }
 
     svg += "</svg>";
 
-    return {
-        svg,
-        toDataUri() {
-            return `data:image/svg+xml;base64,${btoa(svg)}`;
-        },
-    };
+    return toAvatarResult(svg);
 }

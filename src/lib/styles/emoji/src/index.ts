@@ -1,5 +1,5 @@
 import type { AvatarOptions, AvatarResult, Style } from "@avatar-generator/core";
-import { buildSvg, createRandom, validateOption } from "@avatar-generator/core";
+import { buildSvg, createRandom, layerGroup, validateOption } from "@avatar-generator/core";
 
 // ============================================================================
 // Options
@@ -35,6 +35,10 @@ export const EXPRESSIONS: Expression[] = [
 
 // Emoji-yellow face palette with slight variety.
 const FACE_COLORS = ["#FFD93D", "#FFC93C", "#FFCC33", "#FFDC5E"];
+// Cool backgrounds, so that a warm yellow face stands out on every one of them.
+const BACKGROUNDS = ["#3B6FD9", "#6D5BD0", "#2A9D8F", "#3AA7D6", "#9A5BC9", "#C2478A"];
+/** Drawn in this coordinate space and scaled, so strokes stay in proportion. */
+const CANVAS = 64;
 const STROKE = "#2C2C2C";
 const BLUSH = "#FF6B6B";
 const TEAR = "#4FC3F7";
@@ -52,14 +56,14 @@ interface EmojiGeo {
 function computeGeo(size: number): EmojiGeo {
     const cx = size / 2;
     const cy = size / 2;
-    const r = size * 0.42;
+    const r = size * 0.44;
     return {
         cx,
         cy,
         r,
         eyeY: cy - r * 0.18,
-        eyeSpacing: r * 0.35,
-        eyeR: r * 0.09,
+        eyeSpacing: r * 0.38,
+        eyeR: r * 0.13,
         mouthY: cy + r * 0.28,
     };
 }
@@ -81,8 +85,8 @@ function drawEyes(expression: Expression, g: EmojiGeo): string {
         case "laughing":
             // Arcs curving upward like ")("
             return (
-                `<path d="M ${lx - eyeR} ${eyeY + 1} Q ${lx} ${eyeY - eyeR} ${lx + eyeR} ${eyeY + 1}" fill="none" stroke="${STROKE}" stroke-width="2" stroke-linecap="round"/>` +
-                `<path d="M ${rx - eyeR} ${eyeY + 1} Q ${rx} ${eyeY - eyeR} ${rx + eyeR} ${eyeY + 1}" fill="none" stroke="${STROKE}" stroke-width="2" stroke-linecap="round"/>`
+                `<path d="M ${lx - eyeR} ${eyeY + 1} Q ${lx} ${eyeY - eyeR} ${lx + eyeR} ${eyeY + 1}" fill="none" stroke="${STROKE}" stroke-width="2.6" stroke-linecap="round"/>` +
+                `<path d="M ${rx - eyeR} ${eyeY + 1} Q ${rx} ${eyeY - eyeR} ${rx + eyeR} ${eyeY + 1}" fill="none" stroke="${STROKE}" stroke-width="2.6" stroke-linecap="round"/>`
             );
         case "cool": {
             // Sunglasses bar
@@ -91,12 +95,12 @@ function drawEyes(expression: Expression, g: EmojiGeo): string {
             return (
                 `<rect x="${lx - w / 2}" y="${eyeY - h / 2}" width="${w}" height="${h}" rx="1" fill="${STROKE}"/>` +
                 `<rect x="${rx - w / 2}" y="${eyeY - h / 2}" width="${w}" height="${h}" rx="1" fill="${STROKE}"/>` +
-                `<line x1="${lx + w / 2}" y1="${eyeY}" x2="${rx - w / 2}" y2="${eyeY}" stroke="${STROKE}" stroke-width="1.5"/>`
+                `<line x1="${lx + w / 2}" y1="${eyeY}" x2="${rx - w / 2}" y2="${eyeY}" stroke="${STROKE}" stroke-width="2.2"/>`
             );
         }
         case "wink":
             return (
-                `<path d="M ${lx - eyeR} ${eyeY} Q ${lx} ${eyeY - eyeR * 0.6} ${lx + eyeR} ${eyeY}" fill="none" stroke="${STROKE}" stroke-width="2" stroke-linecap="round"/>` +
+                `<path d="M ${lx - eyeR} ${eyeY} Q ${lx} ${eyeY - eyeR * 0.6} ${lx + eyeR} ${eyeY}" fill="none" stroke="${STROKE}" stroke-width="2.6" stroke-linecap="round"/>` +
                 `<circle cx="${rx}" cy="${eyeY}" r="${eyeR}" fill="${STROKE}"/>`
             );
         case "love":
@@ -104,8 +108,8 @@ function drawEyes(expression: Expression, g: EmojiGeo): string {
             return heartEye(lx, eyeY, eyeR * 1.4) + heartEye(rx, eyeY, eyeR * 1.4);
         case "sleepy":
             return (
-                `<line x1="${lx - eyeR}" y1="${eyeY}" x2="${lx + eyeR}" y2="${eyeY}" stroke="${STROKE}" stroke-width="2" stroke-linecap="round"/>` +
-                `<line x1="${rx - eyeR}" y1="${eyeY}" x2="${rx + eyeR}" y2="${eyeY}" stroke="${STROKE}" stroke-width="2" stroke-linecap="round"/>`
+                `<line x1="${lx - eyeR}" y1="${eyeY}" x2="${lx + eyeR}" y2="${eyeY}" stroke="${STROKE}" stroke-width="2.6" stroke-linecap="round"/>` +
+                `<line x1="${rx - eyeR}" y1="${eyeY}" x2="${rx + eyeR}" y2="${eyeY}" stroke="${STROKE}" stroke-width="2.6" stroke-linecap="round"/>`
             );
     }
 }
@@ -124,30 +128,30 @@ function heartEye(cx: number, cy: number, size: number): string {
 
 function drawMouth(expression: Expression, g: EmojiGeo): string {
     const { cx, mouthY, r } = g;
-    const mw = r * 0.5;
+    const mw = r * 0.68;
 
     switch (expression) {
         case "happy":
         case "wink":
         case "cool":
-            return `<path d="M ${cx - mw / 2} ${mouthY} Q ${cx} ${mouthY + mw * 0.5} ${cx + mw / 2} ${mouthY}" fill="none" stroke="${STROKE}" stroke-width="2" stroke-linecap="round"/>`;
+            return `<path d="M ${cx - mw / 2} ${mouthY} Q ${cx} ${mouthY + mw * 0.5} ${cx + mw / 2} ${mouthY}" fill="none" stroke="${STROKE}" stroke-width="2.6" stroke-linecap="round"/>`;
         case "laughing":
             return (
                 `<path d="M ${cx - mw / 2} ${mouthY} Q ${cx} ${mouthY + mw * 0.9} ${cx + mw / 2} ${mouthY} Z" fill="${STROKE}"/>` +
                 `<path d="M ${cx - mw / 2 + 2} ${mouthY + 1} Q ${cx} ${mouthY + mw * 0.7} ${cx + mw / 2 - 2} ${mouthY + 1}" fill="#E74C3C"/>`
             );
         case "love":
-            return `<path d="M ${cx - mw / 2} ${mouthY} Q ${cx} ${mouthY + mw * 0.6} ${cx + mw / 2} ${mouthY}" fill="none" stroke="${STROKE}" stroke-width="2" stroke-linecap="round"/>`;
+            return `<path d="M ${cx - mw / 2} ${mouthY} Q ${cx} ${mouthY + mw * 0.6} ${cx + mw / 2} ${mouthY}" fill="none" stroke="${STROKE}" stroke-width="2.6" stroke-linecap="round"/>`;
         case "neutral":
-            return `<line x1="${cx - mw / 2}" y1="${mouthY}" x2="${cx + mw / 2}" y2="${mouthY}" stroke="${STROKE}" stroke-width="2" stroke-linecap="round"/>`;
+            return `<line x1="${cx - mw / 2}" y1="${mouthY}" x2="${cx + mw / 2}" y2="${mouthY}" stroke="${STROKE}" stroke-width="2.6" stroke-linecap="round"/>`;
         case "sad":
-            return `<path d="M ${cx - mw / 2} ${mouthY + mw * 0.3} Q ${cx} ${mouthY - mw * 0.2} ${cx + mw / 2} ${mouthY + mw * 0.3}" fill="none" stroke="${STROKE}" stroke-width="2" stroke-linecap="round"/>`;
+            return `<path d="M ${cx - mw / 2} ${mouthY + mw * 0.3} Q ${cx} ${mouthY - mw * 0.2} ${cx + mw / 2} ${mouthY + mw * 0.3}" fill="none" stroke="${STROKE}" stroke-width="2.6" stroke-linecap="round"/>`;
         case "angry":
             return `<path d="M ${cx - mw / 2} ${mouthY + mw * 0.2} Q ${cx} ${mouthY - mw * 0.1} ${cx + mw / 2} ${mouthY + mw * 0.2}" fill="none" stroke="${STROKE}" stroke-width="2.5" stroke-linecap="round"/>`;
         case "surprised":
             return `<ellipse cx="${cx}" cy="${mouthY + 1}" rx="${mw * 0.28}" ry="${mw * 0.38}" fill="${STROKE}"/>`;
         case "sleepy":
-            return `<path d="M ${cx - mw * 0.3} ${mouthY} Q ${cx} ${mouthY + mw * 0.25} ${cx + mw * 0.3} ${mouthY}" fill="none" stroke="${STROKE}" stroke-width="1.5" stroke-linecap="round"/>`;
+            return `<path d="M ${cx - mw * 0.3} ${mouthY} Q ${cx} ${mouthY + mw * 0.25} ${cx + mw * 0.3} ${mouthY}" fill="none" stroke="${STROKE}" stroke-width="2.2" stroke-linecap="round"/>`;
     }
 }
 
@@ -163,8 +167,8 @@ function drawExtras(expression: Expression, g: EmojiGeo): string {
             const lx = cx - g.eyeSpacing;
             const rx = cx + g.eyeSpacing;
             return (
-                `<line x1="${lx - g.eyeR * 1.2}" y1="${browY - 1}" x2="${lx + g.eyeR * 1.2}" y2="${browY + 2}" stroke="${STROKE}" stroke-width="2" stroke-linecap="round"/>` +
-                `<line x1="${rx - g.eyeR * 1.2}" y1="${browY + 2}" x2="${rx + g.eyeR * 1.2}" y2="${browY - 1}" stroke="${STROKE}" stroke-width="2" stroke-linecap="round"/>`
+                `<line x1="${lx - g.eyeR * 1.2}" y1="${browY - 1}" x2="${lx + g.eyeR * 1.2}" y2="${browY + 2}" stroke="${STROKE}" stroke-width="2.6" stroke-linecap="round"/>` +
+                `<line x1="${rx - g.eyeR * 1.2}" y1="${browY + 2}" x2="${rx + g.eyeR * 1.2}" y2="${browY - 1}" stroke="${STROKE}" stroke-width="2.6" stroke-linecap="round"/>`
             );
         }
         case "love": {
@@ -185,7 +189,8 @@ function drawExtras(expression: Expression, g: EmojiGeo): string {
             // Small "Z" near forehead
             const zx = cx + r * 0.55;
             const zy = cy - r * 0.55;
-            return `<text x="${zx}" y="${zy}" font-family="sans-serif" font-size="${r * 0.25}" font-weight="700" fill="${STROKE}">Z</text>`;
+            const z = r * 0.11;
+            return `<path d="M ${zx} ${zy} h ${z * 2} l ${-z * 2} ${z * 2} h ${z * 2}" fill="none" stroke="${STROKE}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>`;
         }
         default:
             return "";
@@ -195,16 +200,18 @@ function drawExtras(expression: Expression, g: EmojiGeo): string {
 // ─── Assembly ────────────────────────────────────────────────────────────
 
 function createEmojiContent(options: EmojiOptions): string {
-    const size = options.size ?? 64;
+    const size = CANVAS;
     const random = createRandom(options.seed);
     const expression: Expression = options.expression ?? random.pick(EXPRESSIONS);
     const faceColor = options.faceColor ?? random.pick(FACE_COLORS);
     const g = computeGeo(size);
 
     let content = "";
-    // Face (circle with subtle outline)
-    content += `<circle cx="${g.cx}" cy="${g.cy}" r="${g.r}" fill="${faceColor}" stroke="${STROKE}" stroke-width="1.5"/>`;
-    content += drawEyes(expression, g);
+    // A darker disc under the face reads as a soft shadow along its lower edge,
+    // without the dark outline that turned to a heavy ring at small sizes.
+    content += `<circle cx="${g.cx}" cy="${g.cy}" r="${g.r}" fill="#000" fill-opacity="0.16"/>`;
+    content += `<circle cx="${g.cx}" cy="${g.cy - 1.2}" r="${g.r - 0.6}" fill="${faceColor}"/>`;
+    content += layerGroup("eyes", drawEyes(expression, g), options);
     content += drawMouth(expression, g);
     content += drawExtras(expression, g);
 
@@ -232,12 +239,12 @@ export const emoji: Style<EmojiOptions> = {
     create(options: EmojiOptions): AvatarResult {
         validateOption("emoji", "expression", options.expression, EXPRESSIONS);
 
-        const random = createRandom(options.seed);
-        const palette = options.colors ?? ["#FFF8E7", "#FFEAA7", "#FFF3CD", "#FDEBD0"];
+        const random = createRandom(`${options.seed}:background`);
+        const palette = options.colors ?? BACKGROUNDS;
         const backgroundColor = random.pick(palette);
 
         const content = createEmojiContent(options);
-        return buildSvg(content, options, backgroundColor);
+        return buildSvg(content, options, backgroundColor, { canvas: CANVAS });
     },
 };
 

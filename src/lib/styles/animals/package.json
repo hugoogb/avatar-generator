@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/style-animals",
-    "version": "3.0.2",
+    "version": "3.1.0",
     "description": "Cute animal face avatar style for @avatar-generator/core",
     "keywords": [
         "avatar",
