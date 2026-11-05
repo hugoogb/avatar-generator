@@ -3,6 +3,7 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
+            "create-avatar-style": ["./packages/create-avatar-style/src"],
             "@avatar-generator/core": ["./lib/core/src"],
             "@avatar-generator/react": ["./packages/react/src"],
             "@avatar-generator/angular": ["./packages/angular/src"],

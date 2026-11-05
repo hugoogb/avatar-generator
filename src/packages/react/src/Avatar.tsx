@@ -1,4 +1,5 @@
-import { createAvatar, type AvatarOptions, type AvatarResult, type Style } from "@avatar-generator/core";
+import { adaptForImage, createAvatar, type AvatarOptions, type AvatarResult, type Style } from "@avatar-generator/core";
+import { useViewerPreferences } from "./useViewerPreferences";
 import * as React from "react";
 
 /**
@@ -35,7 +36,11 @@ interface AvatarProps<T extends AvatarOptions> {
  * ```
  */
 function Avatar<T extends AvatarOptions>({ style, options, className, alt }: AvatarProps<T>): React.ReactElement {
-    const avatar: AvatarResult = React.useMemo(() => createAvatar(style, options), [style, options]);
+    const preferences = useViewerPreferences();
+    const avatar: AvatarResult = React.useMemo(
+        () => createAvatar(style, adaptForImage(options, preferences)),
+        [style, options, preferences],
+    );
 
     return (
         <img

@@ -1,5 +1,5 @@
 import type { Style } from "@avatar-core/src";
-import { Avatar } from "@avatar-react/src";
+import { Avatar, AvatarGroup } from "@avatar-react/src";
 import { geometric } from "@avatar-style-geometric/src";
 import { initials } from "@avatar-style-initials/src";
 import { pixels } from "@avatar-style-pixels/src";
@@ -25,6 +25,8 @@ import {
     EMOJI_OPTIONS,
     ANIMALS_OPTIONS,
     GRADIENT_OPTIONS,
+    GROUP_OPTIONS,
+    GROUP_SEEDS,
 } from "../consts";
 
 const StyleSection = ({
@@ -79,6 +81,9 @@ const App = () => {
             <StyleSection title="Animals" style={animals} options={ANIMALS_OPTIONS} />
 
             <StyleSection title="Gradient" style={gradient} options={GRADIENT_OPTIONS} />
+
+            <h2>Avatar group</h2>
+            <AvatarGroup style={faces} items={GROUP_SEEDS} options={GROUP_OPTIONS} alt="Project team" />
         </div>
     );
 };

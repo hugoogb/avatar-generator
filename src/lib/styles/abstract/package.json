@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/style-abstract",
-    "version": "3.0.2",
+    "version": "3.1.0",
     "description": "Abstract geometric art avatar style for @avatar-generator/core (Mondrian, Kandinsky, Bauhaus inspired)",
     "keywords": [
         "avatar",
@@ -12,6 +12,10 @@
         "generator"
     ],
     "license": "MIT",
+    "author": {
+        "name": "Hugo García Benjumea",
+        "url": "https://hugoogb.dev/"
+    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/hugoogb/avatar-generator.git",

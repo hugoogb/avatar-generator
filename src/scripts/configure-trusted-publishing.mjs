@@ -4,7 +4,7 @@
  * npm has no organisation-level trusted publishing: the configuration lives on
  * each individual package. There is no setting that covers `@avatar-generator/*`
  * in one go. What npm does support is doing it in bulk from the CLI, which is
- * what this script is for — 17 packages in one run instead of 17 trips through
+ * what this script is for — 18 packages in one run instead of 18 trips through
  * the website.
  *
  * Requires npm >= 11.5.1 (`npm trust` does not exist before that) and an
@@ -46,7 +46,7 @@ const PACKAGE_DIRS = [
         "animals",
         "gradient",
     ].map((s) => `lib/styles/${s}`),
-    ...["react", "angular", "vue", "svelte", "web-component"].map((p) => `packages/${p}`),
+    ...["react", "angular", "vue", "svelte", "web-component", "create-avatar-style"].map((p) => `packages/${p}`),
 ];
 
 const DRY_RUN = process.argv.includes("--dry-run");

@@ -42,7 +42,7 @@ const PACKAGE_DIRS = [
         "animals",
         "gradient",
     ].map((s) => `lib/styles/${s}`),
-    ...["react", "angular", "vue", "svelte", "web-component"].map((p) => `packages/${p}`),
+    ...["react", "angular", "vue", "svelte", "web-component", "create-avatar-style"].map((p) => `packages/${p}`),
 ];
 
 const run = (cmd, args, cwd) => execFileSync(cmd, args, { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
@@ -54,7 +54,7 @@ const failures = [];
 
 try {
     // ---- 1. Pack everything first -----------------------------------------
-    // Packing all 17 before publishing any means a packing mistake cannot
+    // Packing all 18 before publishing any means a packing mistake cannot
     // leave half the scope released — npm publishes are permanent.
     const packDir = join(workdir, "tarballs");
     const packed = [];

@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/svelte",
-    "version": "3.0.2",
+    "version": "3.1.0",
     "description": "Deterministic SVG avatar component for Svelte 4 and 5, in eleven styles",
     "keywords": [
         "avatar",
@@ -9,6 +9,10 @@
         "component"
     ],
     "license": "MIT",
+    "author": {
+        "name": "Hugo García Benjumea",
+        "url": "https://hugoogb.dev/"
+    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/hugoogb/avatar-generator.git",
@@ -36,7 +40,8 @@
             }
         },
         "./package.json": "./package.json",
-        "./Avatar.svelte": "./dist/Avatar.svelte"
+        "./Avatar.svelte": "./dist/Avatar.svelte",
+        "./AvatarGroup.svelte": "./dist/AvatarGroup.svelte"
     },
     "files": [
         "dist",
@@ -52,7 +57,7 @@
         "build": "tsup src/index.ts --format esm,cjs --dts --sourcemap --clean --target es2020 && node scripts/build-component.mjs",
         "typecheck": "tsc -p tsconfig.json",
         "publint": "publint --strict",
-        "attw": "attw --pack . --exclude-entrypoints ./Avatar.svelte"
+        "attw": "attw --pack . --exclude-entrypoints ./Avatar.svelte ./AvatarGroup.svelte"
     },
     "peerDependencies": {
         "@avatar-generator/core": "workspace:^",

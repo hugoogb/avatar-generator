@@ -210,24 +210,36 @@ Fix synchronization issues between source, playgrounds, and documentation.
 
 - [x] Style packages own their option types, so a third-party style is typeable
       without core knowing it exists (prerequisite, shipped above)
-- [ ] Public API for creating custom avatar styles with composable feature functions
-- [ ] Style template system for scaffolding new styles
-- [ ] CLI tool (`create-avatar-style`) for generating style packages
+- [x] Public API for creating custom avatar styles with composable feature functions
+- [x] Style template system for scaffolding new styles
+- [x] CLI tool (`create-avatar-style`) for generating style packages
 
 ### Animation Support
 
-- [ ] Idle animations (blinking, breathing)
-- [ ] Animated SVG transitions between seeds
-- [ ] CSS animation class integration
+- [x] Idle animations (blinking, breathing)
+- [x] Animated SVG transitions between seeds
+- [x] CSS animation class integration
 
 ### Style Combining
 
-- [ ] Mix features across styles (e.g., Illustrated hair + Faces eyes)
-- [ ] Feature override API across styles
+- [x] Mix features across styles (e.g., Illustrated hair + Faces eyes)
+- [x] Feature override API across styles
 
 ### Advanced Features
 
-- [ ] Accessibility (ARIA labels, high-contrast mode, `prefers-reduced-motion`)
-- [ ] SSR-optimized rendering path
-- [ ] Avatar group component (overlapping circles)
-- [ ] Theme system (light/dark mode color palettes)
+- [x] Accessibility (ARIA labels, high-contrast mode, `prefers-reduced-motion`)
+- [x] SSR-optimized rendering path
+- [x] Avatar group component (overlapping circles)
+- [x] Theme system (light/dark mode color palettes)
+
+### Style polish
+
+- [x] Redraw all eleven styles for production use, checked in a browser at 24px to 256px
+- [x] Stop skin tone following the background colour
+- [x] Draw on a fixed canvas, so details keep their proportions at any size
+- [x] Guarantee readable text and distinct foregrounds on the default palette
+
+### Follow-ups
+
+- [x] Publish `create-avatar-style` once by hand as a `0.0.1` placeholder and configure
+      trusted publishing for it, so that 3.1.0 can go through the release workflow

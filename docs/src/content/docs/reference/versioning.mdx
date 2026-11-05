@@ -49,10 +49,19 @@ v1 codebase can migrate incrementally. It calls `document.createElement`, so it
 throws during server-side rendering. See the
 [Migration Guide](/reference/migration/).
 
+## When avatars change appearance
+
+A seed always gives the same avatar **within a release**, on any machine. A release
+can still redraw a style: 3.1.0 redrew all eleven, so every seed looks different from
+3.0.x. The release notes say when this happens.
+
+If an avatar's exact bytes must never change, for example because you hash or cache
+them forever, pin an exact version rather than a `^` range.
+
 ## What the version number covers
 
-All seventeen packages — `@avatar-generator/core`, the eleven style packages and
-the five framework wrappers — are released together from one fixed version
+All eighteen packages — `@avatar-generator/core`, the eleven style packages, the
+five framework wrappers and `create-avatar-style` — are released together from one fixed version
 group. `@avatar-generator/react@3.0.0` is always meant to be used with
 `@avatar-generator/core@3.0.0` and `@avatar-generator/style-faces@3.0.0`.
 
@@ -108,7 +117,7 @@ declare it explicitly rather than relying on a transitive install.
 Every published tarball is built and checked in CI before it goes out:
 
 - `publint --strict` on the manifest and `attw` on type resolution
-- A smoke test that packs all seventeen packages, installs the tarballs into a
+- A smoke test that packs all eighteen packages, installs the tarballs into a
   throwaway project, loads each from real Node as both ESM and CommonJS,
   generates an avatar from every style, and compiles the published Svelte
   component with no preprocessor configured

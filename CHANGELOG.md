@@ -4,6 +4,102 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com).
 
+## [3.1.0] — Platform
+
+**Every seed looks different from 3.0.x.** All eleven styles were redrawn, so if you
+store or compare avatar bytes, regenerate them, or pin an exact version. See
+"Changed" below. Everything else here is opt-in.
+
+### Added
+
+#### Custom styles
+
+- `defineStyle` builds a style from composable feature functions. Each layer has
+  a private generator, so changing one does not disturb what a seed picks for another
+- `create-avatar-style`, a new package: `npm create avatar-style my-style`, with
+  `minimal`, `pattern` and `face` templates
+
+#### Style combining
+
+- `mixStyles` takes features across styles, as in Illustrated hair with Faces eyes,
+  replaces one with your own function, or removes it. Features are aligned to the
+  base style's head
+- Faces, Illustrated and Anime are now layered, so they can be mixed
+
+#### Animation
+
+- `animation` option: `blink` and `breathe`, as CSS inside the SVG, so they run in `<img>`
+- `createAvatarTransition` cross-fades between two seeds
+- `classes` option adds stable class names for your own CSS
+
+#### Themes and accessibility
+
+- `theme` option: `light`, `dark`, `high-contrast`, your own with `defineTheme`, or
+  `auto` to follow `prefers-color-scheme` and `prefers-contrast`
+- `title` and `description` options for accessible names on inlined SVG
+- All motion honours `prefers-reduced-motion`. Browsers do not reliably pass it or
+  `prefers-contrast` to an SVG inside `<img>`, so every framework wrapper applies
+  them from the page. `adaptForImage` does the same for hand-written `<img>` tags
+
+#### Rendering
+
+- `renderToString` renders to HTML with no DOM, as `<img>` or inline SVG
+- `AvatarGroup` in React, Vue, Svelte and Angular, `<avatar-generator-group>` as a
+  custom element, and `createAvatarGroup` in core
+
+### Fixed
+
+- `toDataUri()` threw on characters beyond Latin-1, such as `李`, and produced a
+  broken image for ones within it, such as `é`. It now encodes UTF-8. ASCII output
+  is unchanged, so existing data URIs do not change
+- The Initials style split an emoji in half when using it as an initial
+- Background and skin tone took the same random draw, so each background colour
+  only ever appeared with one skin tone
+- Faces wrote an invalid `fill` value in its `rect-smile` mouth
+- Initials and Geometric no longer vanish on a dark page when `transparent` is set
+
+### Changed
+
+#### All eleven styles redrawn for production use
+
+Checked in a browser from 24px to 256px, on light and dark pages.
+
+- **Every size:** details now scale with the avatar. They used fixed pixels, so eyes
+  and hair shrank to nothing at large sizes. Faces, Illustrated and Anime are
+  head-and-shoulders portraits, filling more of the frame, and stay legible at 24px
+- **Colour:** a new default palette of saturated mid-tones. Text in Initials now
+  clears 4.5:1, where white on pale yellow could not be read
+- **Faces, Illustrated, Anime, Pixels:** hair uses natural colours (`HAIR_COLORS`)
+  rather than `colors`, so it no longer vanishes into a matching background.
+  Hair wraps the head instead of floating on it, and follows square heads. Illustrated's
+  brows no longer touch the eyes and take the hair's colour, its noses are soft rather
+  than dark outlines, its stubble follows the jaw, and beards no longer hide the mouth
+- **Pixels:** a 12-pixel sprite replaces the 8-pixel one, so `pixelSize` has a minimum
+  of 12. `closed` and `wink` eyes now differ from `dot`, and `wide` has eye whites
+- **Anime:** a rounder face with low, wide-set eyes, vivid irises, light brows and a
+  short neck. Hair is shaped rather than a hard rectangle
+- **Friendlier by default:** Faces' `zigzag`, Illustrated's `frown`, `sleepy`, `furrowed`
+  and `unibrow`, and Anime's `pout`, `half-closed` and furrowed brows are no longer
+  picked at random, as a profile picture should not look upset by accident. Those
+  you can set by option still work when asked for
+- **Abstract:** Mondrian's dividers line up with its colour blocks, and Kandinsky and
+  Bauhaus now follow `colors`, which they ignored
+- **Gradient:** curated colour pairs and a soft highlight, replacing random pairs
+  that often turned muddy. Without `colors`, Abstract and Gradient keep their own palettes
+- **Rings:** three rings, limited to a few colours per avatar and held off the edge
+- **Emoji:** the face fills the frame, on cool backgrounds, without a dark outline
+- **Animals:** larger heads and eyes, on a background that stands apart from the coat
+- **Geometric:** the pattern stays inside a circle (`padding` now defaults to 1.5),
+  clears 3:1 against its background, and shows no seams between cells
+- **Initials:** email addresses use their local part, so `ana.li@example.com` gives `AL`
+
+#### Other
+
+- All packages now name their author in `package.json`
+- `buildSvg` takes an optional `canvas`, and `defineStyle` a `canvas` field, to draw
+  in a fixed coordinate space. New helpers: `readableColor`, `pickContrasting`,
+  `contrastRatio` and `HAIR_COLORS`
+
 ## [3.0.2] — Release Workflow Order
 
 No code changes to any package.

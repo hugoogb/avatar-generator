@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { AvatarComponent } from "@avatar-angular/src";
+import { AvatarComponent, AvatarGroupComponent } from "@avatar-angular/src";
 import type { AvatarOptions, Style } from "@avatar-core/src";
 import { initials } from "@avatar-style-initials/src";
 import { geometric } from "@avatar-style-geometric/src";
@@ -25,6 +25,8 @@ import {
     EMOJI_OPTIONS,
     ANIMALS_OPTIONS,
     GRADIENT_OPTIONS,
+    GROUP_OPTIONS,
+    GROUP_SEEDS,
 } from "../consts";
 
 interface Section {
@@ -37,7 +39,7 @@ interface Section {
     selector: "app-root",
     standalone: true,
     // AvatarComponent is standalone, so it is imported, not declared.
-    imports: [CommonModule, AvatarComponent],
+    imports: [CommonModule, AvatarComponent, AvatarGroupComponent],
     template: `
         <section *ngFor="let section of sections" style="margin-bottom: 24px">
             <h2>{{ section.title }}</h2>
@@ -50,9 +52,17 @@ interface Section {
                 />
             </div>
         </section>
+        <section>
+            <h2>Avatar group</h2>
+            <avatar-generator-group [style]="faces" [items]="groupSeeds" [options]="groupOptions" alt="Project team" />
+        </section>
     `,
 })
 export class AppComponent {
+    faces = faces as Style<AvatarOptions>;
+    groupSeeds = GROUP_SEEDS;
+    groupOptions = GROUP_OPTIONS;
+
     sections: Section[] = [
         { title: "Initials", style: initials as Style<AvatarOptions>, options: INITIALS_OPTIONS },
         { title: "Geometric", style: geometric as Style<AvatarOptions>, options: GEOMETRIC_OPTIONS },

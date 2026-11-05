@@ -26,6 +26,7 @@ export default defineConfig({
             "@avatar-generator/vue": here("./packages/vue/src/index.ts"),
             "@avatar-generator/angular": here("./packages/angular/src/index.ts"),
             "@avatar-generator/web-component": here("./packages/web-component/src/index.ts"),
+            "create-avatar-style": here("./packages/create-avatar-style/src/index.ts"),
         },
     },
     test: {

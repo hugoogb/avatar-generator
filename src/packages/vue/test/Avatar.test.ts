@@ -1,10 +1,11 @@
 // @vitest-environment happy-dom
-import { createAvatar } from "@avatar-generator/core";
-import { Avatar } from "@avatar-generator/vue";
+import { createAvatar, createAvatarGroup, type AvatarOptions, type Style } from "@avatar-generator/core";
+import { Avatar, AvatarGroup } from "@avatar-generator/vue";
 import { initials } from "@avatar-generator/style-initials";
 import { geometric } from "@avatar-generator/style-geometric";
 import { mount } from "@vue/test-utils";
-import { describe, expect, it } from "vitest";
+import { nextTick } from "vue";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 type AvatarProps = InstanceType<typeof Avatar>["$props"];
 
@@ -84,5 +85,70 @@ describe("<Avatar /> (vue)", () => {
         const second = mountAvatar({ style: initials, options: { seed: "stable" } });
 
         expect(second.get("img").attributes("src")).toBe(src);
+    });
+});
+
+describe("<AvatarGroup /> (vue)", () => {
+    const seeds = ["ana", "ben", "chi"];
+
+    it("renders the group the core API produces", () => {
+        const wrapper = mount(AvatarGroup, {
+            props: { style: initials as Style<AvatarOptions>, items: seeds, options: { size: 40 } },
+        });
+        const group = createAvatarGroup(initials as Style<AvatarOptions>, seeds, { size: 40 });
+        const image = wrapper.find("img");
+
+        expect(image.attributes("src")).toBe(group.toDataUri());
+        expect(image.attributes("width")).toBe(String(group.width));
+    });
+
+    it("defaults alt to the group's label and prefers an explicit one", () => {
+        const props = { style: initials as Style<AvatarOptions>, items: seeds };
+        expect(mount(AvatarGroup, { props }).find("img").attributes("alt")).toBe("3 avatars");
+        expect(
+            mount(AvatarGroup, { props: { ...props, alt: "Team" } })
+                .find("img")
+                .attributes("alt"),
+        ).toBe("Team");
+    });
+});
+
+/** Reports every media query containing `feature` as matching. */
+const stubMatchMedia = (feature: string) => {
+    const listeners = new Set<() => void>();
+    vi.stubGlobal("matchMedia", (query: string) => ({
+        matches: query.includes(feature),
+        addEventListener: (_: string, listener: () => void) => listeners.add(listener),
+        removeEventListener: (_: string, listener: () => void) => listeners.delete(listener),
+    }));
+    return listeners;
+};
+
+describe("viewer preferences (vue)", () => {
+    afterEach(() => vi.unstubAllGlobals());
+    const style = initials as Style<AvatarOptions>;
+
+    it("does not animate for a viewer who prefers reduced motion", async () => {
+        stubMatchMedia("reduced-motion");
+        const wrapper = mount(Avatar, { props: { style, options: { seed: "x", animation: true } } });
+        await nextTick();
+        expect(wrapper.find("img").attributes("src")).toBe(createAvatar(style, { seed: "x" }).toDataUri());
+    });
+
+    it("applies to groups", async () => {
+        stubMatchMedia("reduced-motion");
+        const wrapper = mount(AvatarGroup, {
+            props: { style, items: ["a"], options: { options: { animation: true } } },
+        });
+        await nextTick();
+        expect(wrapper.find("img").attributes("src")).toBe(createAvatarGroup(style, ["a"]).toDataUri());
+    });
+
+    it("stops listening on unmount", () => {
+        const listeners = stubMatchMedia("nothing");
+        const wrapper = mount(Avatar, { props: { style, options: { seed: "x" } } });
+        expect(listeners.size).toBeGreaterThan(0);
+        wrapper.unmount();
+        expect(listeners.size).toBe(0);
     });
 });

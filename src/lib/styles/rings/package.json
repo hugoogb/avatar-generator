@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/style-rings",
-    "version": "3.0.2",
+    "version": "3.1.0",
     "description": "Concentric rings avatar style for @avatar-generator/core",
     "keywords": [
         "avatar",
@@ -10,6 +10,10 @@
         "generator"
     ],
     "license": "MIT",
+    "author": {
+        "name": "Hugo García Benjumea",
+        "url": "https://hugoogb.dev/"
+    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/hugoogb/avatar-generator.git",

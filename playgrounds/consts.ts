@@ -148,3 +148,7 @@ export const GRADIENT_OPTIONS: GradientOptions[] = [
     { seed: "gradient-6", size: 80, colorStops: 3 },
     { seed: "gradient-7", size: 80, colors: ["#FF6B9D", "#FFD600"], pattern: "none" },
 ];
+
+// AvatarGroup, with idle animation, shown by every framework playground.
+export const GROUP_SEEDS = ["ana", "ben", "chi", "dee", "eli", "fay"];
+export const GROUP_OPTIONS = { size: 56, max: 4, options: { animation: true } };

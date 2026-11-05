@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
@@ -21,7 +21,21 @@ const declaredTypes = (file: string): string[] =>
     [...readFileSync(join(SRC, file), "utf8").matchAll(/^export (?:interface|type) (\w+)/gm)].map((m) => m[1]);
 
 /** The vocabulary of the Style contract itself — nothing style-specific. */
-const CORE_TYPES = ["Random", "AvatarResult", "AvatarOptions", "Style", "LegacyAvatarOptions"];
+const CORE_TYPES = [
+    "Random",
+    "AvatarResult",
+    "AvatarOptions",
+    "AvatarThemeName",
+    "AvatarTheme",
+    "IdleAnimation",
+    "Style",
+    "LayerContext",
+    "LayerRender",
+    "StyleLayer",
+    "HeadBox",
+    "ComposableStyle",
+    "LegacyAvatarOptions",
+];
 
 const STYLE_NAMES = [
     "initials",
@@ -56,7 +70,7 @@ describe("core type boundary", () => {
         // `[@avatar-generator/style-x]` prefix in validation errors are fine.
         const importsAStyle = /(?:^\s*(?:import|export)[^;]*?from\s*|\bimport\s*\(\s*)["']@avatar-generator\/style-/m;
 
-        for (const file of ["index.ts", "types.ts", "svg.ts", "random.ts", "validation.ts"]) {
+        for (const file of readdirSync(SRC).filter((name) => name.endsWith(".ts"))) {
             expect(readFileSync(join(SRC, file), "utf8")).not.toMatch(importsAStyle);
         }
     });

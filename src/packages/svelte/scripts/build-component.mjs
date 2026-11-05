@@ -1,5 +1,5 @@
 /**
- * Compiles the TypeScript out of Avatar.svelte and writes a plain-JS component
+ * Compiles the TypeScript out of each component and writes plain-JS components
  * to dist/.
  *
  * The package ships the raw `.svelte` file (resolved via the `svelte` export
@@ -14,31 +14,38 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const pkgRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const source = join(pkgRoot, "src", "Avatar.svelte");
-const target = join(pkgRoot, "dist", "Avatar.svelte");
-
-const raw = readFileSync(source, "utf8");
-
 const SCRIPT = /<script([^>]*)\blang=["']ts["']([^>]*)>([\s\S]*?)<\/script>/g;
 
-let found = 0;
-const compiled = raw.replace(SCRIPT, (_match, before, after, body) => {
-    found++;
-    // No `format` here on purpose: setting it makes esbuild normalise the
-    // module and rewrite `export let prop` into a trailing export list, which
-    // is not how Svelte declares props. Left unset, only the types come out.
-    const { code } = transformSync(body, { loader: "ts", target: "es2020" });
-    const attrs = `${before}${after}`.trim();
-    return `<script${attrs ? ` ${attrs}` : ""}>\n${code.trimEnd()}\n</script>`;
-});
+for (const file of ["Avatar.svelte", "AvatarGroup.svelte"]) {
+    const source = join(pkgRoot, "src", file);
+    const target = join(pkgRoot, "dist", file);
 
-if (found === 0) {
-    throw new Error(`${source} has no <script lang="ts"> block — did the component change shape?`);
-}
-if (/\blang=["']ts["']/.test(compiled)) {
-    throw new Error('lang="ts" survived preprocessing; the published component would not compile for consumers');
-}
+    let found = 0;
+    const compiled = readFileSync(source, "utf8").replace(SCRIPT, (_match, before, after, body) => {
+        found++;
+        // No `format` here on purpose: setting it makes esbuild normalise the
+        // module and rewrite `export let prop` into a trailing export list, which
+        // is not how Svelte declares props. Left unset, only the types come out.
+        //
+        // `verbatimModuleSyntax` keeps value imports esbuild cannot see being
+        // used: the markup is what reads them, and it is not part of this script.
+        const { code } = transformSync(body, {
+            loader: "ts",
+            target: "es2020",
+            tsconfigRaw: { compilerOptions: { verbatimModuleSyntax: true } },
+        });
+        const attrs = `${before}${after}`.trim();
+        return `<script${attrs ? ` ${attrs}` : ""}>\n${code.trimEnd()}\n</script>`;
+    });
 
-mkdirSync(dirname(target), { recursive: true });
-writeFileSync(target, compiled);
-console.log(`Avatar.svelte -> dist/Avatar.svelte (TypeScript stripped from ${found} script block)`);
+    if (found === 0) {
+        throw new Error(`${source} has no <script lang="ts"> block — did the component change shape?`);
+    }
+    if (/\blang=["']ts["']/.test(compiled)) {
+        throw new Error('lang="ts" survived preprocessing; the published component would not compile for consumers');
+    }
+
+    mkdirSync(dirname(target), { recursive: true });
+    writeFileSync(target, compiled);
+    console.log(`${file} -> dist/${file} (TypeScript stripped from ${found} script block)`);
+}

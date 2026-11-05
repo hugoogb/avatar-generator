@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/core",
-    "version": "3.0.2",
+    "version": "3.1.0",
     "description": "Generate deterministic SVG avatars from any seed, in eleven styles, with no runtime dependencies",
     "keywords": [
         "avatar",
@@ -9,6 +9,10 @@
         "identicon"
     ],
     "license": "MIT",
+    "author": {
+        "name": "Hugo García Benjumea",
+        "url": "https://hugoogb.dev/"
+    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/hugoogb/avatar-generator.git",

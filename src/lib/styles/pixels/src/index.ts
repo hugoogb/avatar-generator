@@ -1,12 +1,21 @@
 import type { AvatarOptions, AvatarResult, Style } from "@avatar-generator/core";
-import { createRandom, DEFAULT_COLORS, SKIN_TONES, buildSvg } from "@avatar-generator/core";
+import {
+    buildSvg,
+    createRandom,
+    DEFAULT_COLORS,
+    HAIR_COLORS,
+    layerGroup,
+    pickContrasting,
+    resolveAnimations,
+    SKIN_TONES,
+} from "@avatar-generator/core";
 
 // ============================================================================
 // Options
 // ============================================================================
 
 export interface PixelsOptions extends AvatarOptions {
-    /** Pixel grid size (default: 8) */
+    /** Pixels per side of the canvas, at least 12, which is the sprite itself (default: 12) */
     pixelSize?: number;
     /** Custom skin tone palette */
     skinTones?: string[];
@@ -27,145 +36,80 @@ const MOUTH_STYLES: MouthStyle[] = ["smile", "neutral", "open", "smirk"];
 /**
  * Returns pixel coordinates for a hair style (rows 0-1 area)
  */
-function getHairPixels(style: HairStyle): [number, number][] {
+/** Sprite size. Larger grids add margin around it. */
+const SPRITE = 12;
+const SHIRTS = ["#1F2937", "#F3F4F6", "#374151", "#FFFFFF"];
+
+type Pixel = [row: number, col: number];
+
+/** Every (row, col) in a rectangle, inclusive. */
+function block(rowFrom: number, rowTo: number, colFrom: number, colTo: number): Pixel[] {
+    const pixels: Pixel[] = [];
+    for (let row = rowFrom; row <= rowTo; row++) {
+        for (let col = colFrom; col <= colTo; col++) pixels.push([row, col]);
+    }
+    return pixels;
+}
+
+function getHairPixels(style: HairStyle): Pixel[] {
     switch (style) {
         case "none":
             return [];
         case "flat":
-            return [
-                [0, 1],
-                [0, 2],
-                [0, 3],
-                [0, 4],
-                [0, 5],
-                [0, 6],
-                [1, 1],
-                [1, 6],
-            ];
+            return [...block(1, 3, 3, 8), ...block(2, 4, 2, 2), ...block(2, 4, 9, 9)];
         case "spiky":
-            return [
-                [0, 1],
-                [0, 3],
-                [0, 5],
-                [1, 1],
-                [1, 2],
-                [1, 3],
-                [1, 4],
-                [1, 5],
-                [1, 6],
-            ];
+            return [[0, 3], [0, 6], [0, 8], ...block(1, 1, 3, 8), ...block(2, 3, 2, 9)];
         case "side":
-            return [
-                [0, 1],
-                [0, 2],
-                [1, 1],
-                [1, 2],
-                [1, 3],
-                [1, 4],
-                [1, 5],
-                [1, 6],
-                [2, 1],
-            ];
+            return [...block(1, 2, 3, 9), ...block(3, 3, 2, 7), ...block(4, 5, 2, 2), [3, 9]];
         case "mohawk":
-            return [
-                [0, 3],
-                [0, 4],
-                [1, 3],
-                [1, 4],
-            ];
+            return block(0, 3, 5, 6);
         case "full":
-            return [
-                [0, 1],
-                [0, 2],
-                [0, 3],
-                [0, 4],
-                [0, 5],
-                [0, 6],
-                [1, 1],
-                [1, 2],
-                [1, 5],
-                [1, 6],
-            ];
+            return [...block(1, 3, 3, 8), ...block(2, 8, 1, 2), ...block(2, 8, 9, 10)];
     }
 }
 
-/**
- * Returns pixel coordinates for eye styles at row 3
- */
-function getEyePixels(style: EyeStyle): [number, number][] {
+function getEyePixels(style: EyeStyle): { dark: Pixel[]; white: Pixel[] } {
+    const open = (col: number): Pixel[] => block(5, 6, col, col);
+    const shut = (col: number): Pixel[] => block(6, 6, col - 1, col);
+
     switch (style) {
         case "dot":
-            return [
-                [3, 2],
-                [3, 5],
-            ];
+            return { dark: [...open(4), ...open(7)], white: [] };
         case "wide":
-            return [
-                [3, 2],
-                [3, 3],
-                [3, 5],
-                [3, 4],
-            ];
+            return { dark: [...open(4), ...open(7)], white: [...open(3), ...open(8)] };
         case "closed":
-            return [
-                [3, 2],
-                [3, 5],
-            ];
+            return { dark: [...shut(4), ...shut(8)], white: [] };
         case "wink":
-            return [
-                [3, 2],
-                [3, 5],
-            ];
+            return { dark: [...open(4), ...shut(8)], white: [] };
     }
 }
 
-/**
- * Returns pixel coordinates for mouth styles at rows 5-6
- */
-function getMouthPixels(style: MouthStyle): [number, number][] {
+function getMouthPixels(style: MouthStyle): Pixel[] {
     switch (style) {
         case "smile":
-            return [
-                [5, 2],
-                [5, 5],
-                [6, 3],
-                [6, 4],
-            ];
+            return [[8, 4], [8, 7], ...block(9, 9, 5, 6)];
         case "neutral":
-            return [
-                [5, 3],
-                [5, 4],
-            ];
+            return block(8, 8, 5, 6);
         case "open":
-            return [
-                [5, 3],
-                [5, 4],
-                [6, 3],
-                [6, 4],
-            ];
+            return block(8, 9, 5, 6);
         case "smirk":
-            return [
-                [5, 4],
-                [5, 5],
-                [6, 5],
-            ];
+            return [[8, 7], ...block(9, 9, 5, 6)];
     }
 }
 
-/**
- * Creates pixel face avatar content on an 8x8 grid
- */
 function createPixelFaceContent(options: PixelsOptions): string {
     const size = options.size ?? 64;
-    const gridSize = options.pixelSize ?? 8;
+    const grid = Math.max(options.pixelSize ?? SPRITE, SPRITE);
+    const margin = Math.floor((grid - SPRITE) / 2);
     const skinTones = options.skinTones ?? SKIN_TONES;
     const random = createRandom(options.seed);
 
-    const cellSize = size / gridSize;
+    const cellSize = size / grid;
     const skinColor = random.pick(skinTones);
-    const colors = options.colors ?? DEFAULT_COLORS;
-    const hairColor = random.pick(colors);
-    const featureColor = options.featureColor ?? "#2C1810";
+    // Apart from the skin, or a short cut would read as a bald head.
+    const hairColor = pickContrasting(random, HAIR_COLORS, skinColor, 1.6);
+    const shirtColor = random.pick(SHIRTS);
+    const featureColor = options.featureColor ?? "#1A0E08";
 
     const hairStyle = random.pick(HAIR_STYLES);
     const eyeStyle = random.pick(EYE_STYLES);
@@ -174,60 +118,57 @@ function createPixelFaceContent(options: PixelsOptions): string {
     const hasNose = random.bool(0.3);
     const hasAccessories = options.accessories !== false && random.bool(0.15);
 
-    // Build pixel map: key = "row,col", value = color
-    const pixelMap: Map<string, string> = new Map();
+    const pixelMap = new Map<string, string>();
+    const paint = (pixels: Pixel[], color: string): void => {
+        for (const [row, col] of pixels) pixelMap.set(`${row},${col}`, color);
+    };
 
-    // Head shape (rows 1-6, cols 1-6) with rounded corners
-    for (let row = 1; row <= 6; row++) {
-        for (let col = 1; col <= 6; col++) {
-            if ((row === 1 || row === 6) && (col === 1 || col === 6)) continue;
-            pixelMap.set(`${row},${col}`, skinColor);
-        }
-    }
+    paint([...block(10, 10, 2, 9), ...block(11, 11, 1, 10)], shirtColor);
+    paint(block(3, 9, 2, 9), skinColor);
+    // Round off the head's corners.
+    for (const corner of ["9,2", "9,9"]) pixelMap.delete(corner);
 
-    // Hair
-    for (const [row, col] of getHairPixels(hairStyle)) {
-        pixelMap.set(`${row},${col}`, hairColor);
-    }
+    if (hasEyebrows) paint([...block(4, 4, 3, 4), ...block(4, 4, 7, 8)], hairColor);
+    paint(getHairPixels(hairStyle), hairColor);
 
-    // Eyes
-    for (const [row, col] of getEyePixels(eyeStyle)) {
-        pixelMap.set(`${row},${col}`, featureColor);
-    }
+    const eyes = getEyePixels(eyeStyle);
+    paint(eyes.white, "#FFFFFF");
+    paint(eyes.dark, featureColor);
+    const eyeKeys = new Set([...eyes.white, ...eyes.dark].map(([row, col]) => `${row},${col}`));
 
-    // Eyebrows (row 2, above eyes)
-    if (hasEyebrows) {
-        pixelMap.set("2,2", featureColor);
-        pixelMap.set("2,5", featureColor);
-    }
+    if (hasNose) paint([[7, 5]], featureColor);
 
-    // Nose (row 4, center)
-    if (hasNose) {
-        pixelMap.set("4,3", featureColor);
-    }
+    paint(getMouthPixels(mouthStyle), featureColor);
+    if (mouthStyle === "open") paint(block(9, 9, 5, 6), "#B4233A");
 
-    // Mouth
-    for (const [row, col] of getMouthPixels(mouthStyle)) {
-        const mouthColor = mouthStyle === "open" && row === 6 ? "#8B0000" : featureColor;
-        pixelMap.set(`${row},${col}`, mouthColor);
-    }
-
-    // Accessories (glasses bridge)
     if (hasAccessories) {
-        pixelMap.set("3,3", featureColor);
-        pixelMap.set("3,4", featureColor);
+        paint([...block(5, 5, 2, 9)], featureColor);
+        paint(
+            [
+                [6, 3],
+                [6, 4],
+                [6, 7],
+                [6, 8],
+            ],
+            featureColor,
+        );
     }
 
-    // Render all pixels as rects
+    // Eye pixels only get their own group when something will use it.
+    const separateEyes = Boolean(options.classes) || resolveAnimations(options).blink;
     let content = "";
+    let eyeContent = "";
     for (const [key, color] of pixelMap) {
         const [row, col] = key.split(",").map(Number);
-        const x = col * cellSize;
-        const y = row * cellSize;
-        content += `<rect x="${x}" y="${y}" width="${cellSize}" height="${cellSize}" fill="${color}"/>`;
+        const x = (col + margin) * cellSize;
+        const y = (row + margin) * cellSize;
+        const rect = `<rect x="${x}" y="${y}" width="${cellSize}" height="${cellSize}" fill="${color}"/>`;
+        if (separateEyes && eyeKeys.has(key)) eyeContent += rect;
+        else content += rect;
     }
 
-    return content;
+    // Abutting pixels must not show hairline seams when antialiased.
+    return `<g shape-rendering="crispEdges">${content}${layerGroup("eyes", eyeContent, options)}</g>`;
 }
 
 /**
@@ -243,7 +184,6 @@ function createPixelFaceContent(options: PixelsOptions): string {
  * const avatar = createAvatar(pixels, {
  *   seed: 'unique-id',
  *   size: 64,
- *   pixelSize: 8,
  * });
  * ```
  */
@@ -251,7 +191,7 @@ export const pixels: Style<PixelsOptions> = {
     name: "pixels",
 
     create(options: PixelsOptions): AvatarResult {
-        const random = createRandom(options.seed);
+        const random = createRandom(`${options.seed}:background`);
         const colors = options.colors ?? DEFAULT_COLORS;
         const backgroundColor = random.pick(colors);
 

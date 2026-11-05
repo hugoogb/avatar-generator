@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Avatar Generator - Review Gallery</title>
+        <style>
+            :root {
+                --page: #f6f7f9;
+                --card: #ffffff;
+                --line: #e2e5ea;
+                --text: #111827;
+                --muted: #6b7280;
+                --accent: #3b6fd9;
+            }
+            body[data-page="dark"] {
+                --page: #0f1115;
+                --card: #1a1d23;
+                --line: #2c3038;
+                --text: #f3f4f6;
+                --muted: #9ca3af;
+            }
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                background: var(--page);
+                color: var(--text);
+                font:
+                    13px/1.35 system-ui,
+                    -apple-system,
+                    sans-serif;
+            }
+            header {
+                position: sticky;
+                top: 0;
+                z-index: 2;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px 14px;
+                align-items: center;
+                padding: 10px 16px;
+                background: var(--card);
+                border-bottom: 1px solid var(--line);
+            }
+            header strong {
+                font-size: 14px;
+            }
+            label {
+                display: inline-flex;
+                gap: 6px;
+                align-items: center;
+                color: var(--muted);
+            }
+            select,
+            input,
+            button {
+                min-height: 32px;
+                padding: 4px 8px;
+                color: var(--text);
+                background: var(--page);
+                border: 1px solid var(--line);
+                border-radius: 6px;
+                font: inherit;
+            }
+            input {
+                width: 80px;
+            }
+            button {
+                cursor: pointer;
+            }
+            main {
+                padding: 0 16px 48px;
+            }
+            h2 {
+                margin: 24px 0 2px;
+                font-size: 16px;
+                scroll-margin-top: 70px;
+            }
+            .note {
+                margin: 0 0 10px;
+                color: var(--muted);
+            }
+            .grid {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .card {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                align-items: center;
+                min-width: 92px;
+                padding: 8px;
+                background: var(--card);
+                border: 1px solid var(--line);
+                border-radius: 8px;
+                scroll-margin-top: 70px;
+            }
+            .card.found {
+                outline: 3px solid var(--accent);
+            }
+            .stage {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 40px;
+            }
+            .stage img,
+            .stage svg {
+                display: block;
+                max-width: 100%;
+                height: auto;
+            }
+            .stage.on-dark {
+                padding: 8px;
+                background: #0b0d10;
+                border-radius: 6px;
+            }
+            .stage.on-light {
+                padding: 8px;
+                background: #ffffff;
+                border-radius: 6px;
+            }
+            .number {
+                padding: 1px 7px;
+                color: #fff;
+                background: var(--accent);
+                border-radius: 999px;
+                font-size: 12px;
+                font-weight: 700;
+            }
+            .label {
+                max-width: 150px;
+                color: var(--muted);
+                font-size: 11px;
+                text-align: center;
+                overflow-wrap: anywhere;
+            }
+        </style>
+    </head>
+    <body data-page="light">
+        <header>
+            <strong>Review gallery</strong>
+            <label
+                >Section
+                <select id="jump"></select
+            ></label>
+            <label
+                >Size
+                <select id="size"></select
+            ></label>
+            <label
+                >Page
+                <select id="page"></select
+            ></label>
+            <label>Go to # <input id="find" type="number" min="1" /></label>
+            <button id="replay" type="button">Replay transitions</button>
+            <span id="total" class="label"></span>
+        </header>
+        <main id="app"></main>
+        <script type="module" src="main.ts"></script>
+    </body>
+</html>

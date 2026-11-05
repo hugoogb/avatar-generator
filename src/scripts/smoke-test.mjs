@@ -32,7 +32,7 @@ const PACKAGE_DIRS = [
         "animals",
         "gradient",
     ].map((s) => `lib/styles/${s}`),
-    ...["react", "angular", "vue", "svelte", "web-component"].map((p) => `packages/${p}`),
+    ...["react", "angular", "vue", "svelte", "web-component", "create-avatar-style"].map((p) => `packages/${p}`),
 ];
 
 /** Peer dependencies the framework wrappers need present just to be loadable. */
@@ -248,7 +248,24 @@ for (const name of ${JSON.stringify(styles)}) {
         fail(`angular package format — ${err.message}`);
     }
 
-    // ---- 6. The Svelte component must compile with no preprocessor -------
+    // ---- 7. The scaffolder must run from its installed bin -----------------
+    // Its output is run for real by a unit test; what only a tarball can prove
+    // is that the bin is executable and its shebang and bundling survive packing.
+    console.log("\ncreate-avatar-style:");
+    try {
+        run(join(app, "node_modules", ".bin", "create-avatar-style"), ["my-style", "--template", "face"], app);
+        readFileSync(join(app, "my-style", "src", "index.ts"), "utf8");
+        const generated = JSON.parse(readFileSync(join(app, "my-style", "package.json"), "utf8"));
+        const coreVersion = JSON.parse(readFileSync(join(SRC, "lib/core/package.json"), "utf8")).version;
+        if (generated.dependencies["@avatar-generator/core"] !== `^${coreVersion}`) {
+            throw new Error(`generated package depends on ${generated.dependencies["@avatar-generator/core"]}`);
+        }
+        console.log("  ✓ the installed bin scaffolds a package depending on this core");
+    } catch (err) {
+        fail(`create-avatar-style — ${errorLine(err)}`);
+    }
+
+    // ---- 8. The Svelte component must compile with no preprocessor -------
     // A library cannot require consumers to configure svelte-preprocess, so the
     // published .svelte file has to be plain JS, not `<script lang="ts">`.
     console.log("\nSvelte component:");
@@ -260,10 +277,12 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
-const component = require.resolve("@avatar-generator/svelte/Avatar.svelte");
-const { js } = compile(readFileSync(component, "utf8"), { generate: "dom" });
-if (!js.code.includes("createAvatar")) throw new Error("compiled component lost its core import");
-console.log("  \\u2713 @avatar-generator/svelte/Avatar.svelte compiles without a preprocessor");
+for (const [file, call] of [["Avatar.svelte", "createAvatar"], ["AvatarGroup.svelte", "createAvatarGroup"]]) {
+    const component = require.resolve("@avatar-generator/svelte/" + file);
+    const { js } = compile(readFileSync(component, "utf8"), { generate: "dom" });
+    if (!js.code.includes(call)) throw new Error(file + " lost its core import");
+    console.log("  \\u2713 @avatar-generator/svelte/" + file + " compiles without a preprocessor");
+}
 `,
     );
     try {

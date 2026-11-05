@@ -1,4 +1,13 @@
-import { createAvatar } from "@avatar-core/src";
+import {
+    adaptForImage,
+    adaptGroupForImage,
+    createAvatar,
+    createAvatarGroup,
+    createAvatarTransition,
+    mixStyles,
+    type AvatarOptions,
+    type Style,
+} from "@avatar-core/src";
 import { geometric } from "@avatar-style-geometric/src";
 import { initials } from "@avatar-style-initials/src";
 import { pixels } from "@avatar-style-pixels/src";
@@ -69,4 +78,56 @@ if (app) {
 
         app.appendChild(container);
     });
+
+    const section = (title: string, sources: string[]) => {
+        const header = document.createElement("h2");
+        header.textContent = title;
+        header.style.marginTop = "20px";
+        const row = document.createElement("div");
+        row.style.display = "flex";
+        row.style.gap = "16px";
+        row.style.flexWrap = "wrap";
+        row.style.alignItems = "center";
+        for (const source of sources) {
+            const img = document.createElement("img");
+            img.src = source;
+            img.alt = title;
+            row.appendChild(img);
+        }
+        app.append(header, row);
+    };
+
+    const seeds = ["ana", "ben", "chi", "dee"];
+    const size = 96;
+
+    const mixed = mixStyles(faces, { hair: illustrated, eyes: anime });
+    section(
+        "Mixed: faces + illustrated hair + anime eyes",
+        seeds.map((seed) => createAvatar(mixed, { seed, size }).toDataUri()),
+    );
+
+    section(
+        "Idle animation",
+        [faces, anime, illustrated, emoji].map((style) =>
+            createAvatar(
+                style as Style<AvatarOptions>,
+                adaptForImage({ seed: "ana", size, animation: true }),
+            ).toDataUri(),
+        ),
+    );
+
+    section(
+        "Themes: light, dark, high contrast, auto",
+        (["light", "dark", "high-contrast", "auto"] as const).map((theme) =>
+            createAvatar(initials, adaptForImage({ seed: "Ana Li", size, theme })).toDataUri(),
+        ),
+    );
+
+    section("Group", [
+        createAvatarGroup(faces, ...adaptGroupForImage<AvatarOptions>(seeds, { size: 56, max: 3 })).toDataUri(),
+    ]);
+
+    section("Transition between seeds", [
+        createAvatarTransition(faces, { seed: "ana", size }, { seed: "ben", size }, { duration: 1500 }).toDataUri(),
+    ]);
 }

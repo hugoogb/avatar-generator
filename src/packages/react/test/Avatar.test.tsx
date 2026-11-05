@@ -1,10 +1,10 @@
 // @vitest-environment happy-dom
 import { cleanup, render, screen } from "@testing-library/react";
-import { createAvatar } from "@avatar-generator/core";
+import { createAvatar, createAvatarGroup } from "@avatar-generator/core";
 import { initials } from "@avatar-generator/style-initials";
 import { geometric } from "@avatar-generator/style-geometric";
-import { afterEach, describe, expect, it } from "vitest";
-import { Avatar } from "@avatar-generator/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { Avatar, AvatarGroup } from "@avatar-generator/react";
 
 afterEach(cleanup);
 
@@ -82,5 +82,81 @@ describe("<Avatar /> (react)", () => {
         render(<Avatar style={initials} options={{ seed: "stable" }} />);
 
         expect(img().src).toBe(first);
+    });
+});
+
+describe("<AvatarGroup /> (react)", () => {
+    const seeds = ["ana", "ben", "chi"];
+
+    it("renders the group the core API produces", () => {
+        render(<AvatarGroup style={initials} items={seeds} options={{ size: 40 }} />);
+        const group = createAvatarGroup(initials, seeds, { size: 40 });
+        const image = screen.getByRole("img") as HTMLImageElement;
+
+        expect(image.src).toBe(group.toDataUri());
+        expect(image.getAttribute("width")).toBe(String(group.width));
+        expect(image.getAttribute("height")).toBe(String(group.height));
+    });
+
+    it("defaults alt to the group's label", () => {
+        render(<AvatarGroup style={initials} items={seeds} />);
+        expect(screen.getByAltText("3 avatars")).toBeDefined();
+    });
+
+    it("prefers explicit alt, including an empty one for decoration", () => {
+        const { container } = render(<AvatarGroup style={initials} items={seeds} alt="" />);
+        expect(container.querySelector("img")?.getAttribute("alt")).toBe("");
+    });
+
+    it("passes className through", () => {
+        render(<AvatarGroup style={initials} items={seeds} className="team" />);
+        expect(screen.getByRole("img").className).toBe("team");
+    });
+});
+
+/** Reports every media query containing `feature` as matching. */
+const stubMatchMedia = (feature: string) => {
+    const listeners = new Set<() => void>();
+    vi.stubGlobal("matchMedia", (query: string) => ({
+        matches: query.includes(feature),
+        addEventListener: (_: string, listener: () => void) => listeners.add(listener),
+        removeEventListener: (_: string, listener: () => void) => listeners.delete(listener),
+    }));
+    return listeners;
+};
+
+describe("viewer preferences (react)", () => {
+    afterEach(() => vi.unstubAllGlobals());
+
+    it("does not animate for a viewer who prefers reduced motion", () => {
+        stubMatchMedia("reduced-motion");
+        render(<Avatar style={initials} options={{ seed: "x", animation: true }} />);
+        expect(img().src).toBe(createAvatar(initials, { seed: "x" }).toDataUri());
+    });
+
+    it("animates otherwise", () => {
+        stubMatchMedia("nothing");
+        render(<Avatar style={initials} options={{ seed: "x", animation: true }} />);
+        expect(img().src).toBe(createAvatar(initials, { seed: "x", animation: true }).toDataUri());
+    });
+
+    it("uses high contrast for the auto theme when asked", () => {
+        stubMatchMedia("contrast");
+        render(<Avatar style={initials} options={{ seed: "x", theme: "auto" }} />);
+        expect(img().src).toBe(createAvatar(initials, { seed: "x", theme: "high-contrast" }).toDataUri());
+    });
+
+    it("applies to groups", () => {
+        stubMatchMedia("reduced-motion");
+        render(<AvatarGroup style={initials} items={["a"]} options={{ options: { animation: true } }} />);
+        expect(img().src).toBe(createAvatarGroup(initials, ["a"]).toDataUri());
+    });
+
+    it("stops listening on unmount", () => {
+        const listeners = stubMatchMedia("nothing");
+        const { unmount } = render(<Avatar style={initials} options={{ seed: "x" }} />);
+        expect(listeners.size).toBeGreaterThan(0);
+        unmount();
+        expect(listeners.size).toBe(0);
     });
 });

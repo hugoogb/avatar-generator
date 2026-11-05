@@ -1,5 +1,5 @@
 import "@avatar-web-component/src";
-import type { AvatarElement } from "@avatar-web-component/src";
+import type { AvatarElement, AvatarGroupElement } from "@avatar-web-component/src";
 import type { AvatarOptions, Style } from "@avatar-core/src";
 import { initials } from "@avatar-style-initials/src";
 import { geometric } from "@avatar-style-geometric/src";
@@ -24,6 +24,8 @@ import {
     EMOJI_OPTIONS,
     ANIMALS_OPTIONS,
     GRADIENT_OPTIONS,
+    GROUP_OPTIONS,
+    GROUP_SEEDS,
 } from "../consts";
 
 const sections: Array<{ title: string; style: Style<AvatarOptions>; options: AvatarOptions[] }> = [
@@ -58,4 +60,15 @@ if (app) {
         }
         app.appendChild(row);
     }
+
+    const header = document.createElement("h2");
+    header.textContent = "Avatar group";
+    app.appendChild(header);
+
+    const group = document.createElement("avatar-generator-group") as AvatarGroupElement;
+    group.styleImpl = faces as Style<AvatarOptions>;
+    group.items = GROUP_SEEDS;
+    group.options = GROUP_OPTIONS;
+    group.setAttribute("alt", "Project team");
+    app.appendChild(group);
 }

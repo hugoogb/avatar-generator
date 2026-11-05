@@ -14,7 +14,7 @@ avatar-generator/
 ├── src/                    # Source packages (pnpm workspace root)
 │   ├── lib/core/           # @avatar-generator/core
 │   ├── lib/styles/         # The eleven style packages
-│   ├── packages/           # Framework wrappers: react, vue, svelte, angular, web-component
+│   ├── packages/           # Framework wrappers, plus the create-avatar-style CLI
 │   └── scripts/            # Packaging smoke test, export checks, release version guard
 ├── playgrounds/            # Six Vite playgrounds (own pnpm project)
 │   ├── core/               # Core API
@@ -121,7 +121,7 @@ pnpm run smoke           # pack, install and load every package from real Node
 pnpm run verify:publish  # build + both of the above
 ```
 
-`pnpm run smoke` packs all 17 packages, installs the tarballs into a throwaway
+`pnpm run smoke` packs all 18 packages, installs the tarballs into a throwaway
 project and loads each one from Node as ESM and as CommonJS, generates an avatar
 from every style, and compiles the published Svelte component with no
 preprocessor configured.
@@ -206,12 +206,26 @@ npm login                   # as a maintainer of the scope
 
 cd src
 pnpm run trust:configure -- --dry-run   # print the plan
-pnpm run trust:configure                # apply it to all 17 packages
+pnpm run trust:configure                # apply it to all 18 packages
 pnpm run trust:list                     # show what is configured
 ```
 
 Run it from a terminal, never from CI — granting trust should not be automated
 by the thing being trusted.
+
+npm can only hold trust settings for a package that exists, so a new package needs
+one publish by hand before this script can configure it. Publish a placeholder
+version rather than the one being released: the release workflow fails on a version
+already on the registry, and a hand publish has no provenance. Do it from a copy
+outside the workspace, because npm cannot read `workspace:` ranges:
+
+```bash
+cd src/packages/<new-package>
+pnpm run build
+D=$(mktemp -d); cp -R dist package.json README.md LICENSE CHANGELOG.md "$D"; cd "$D"
+npm pkg set version=0.0.1
+npm publish --access public --tag bootstrap
+```
 
 **A trusted publisher can only be attached to a package that already exists on
 npm** — the registry's token exchange endpoint is per package. A brand-new

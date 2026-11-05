@@ -1,0 +1,47 @@
+---
+title: Mix Avatar Styles
+description: "Combine features across @avatar-generator styles, such as Illustrated hair with Faces eyes, or replace a single feature with your own drawing."
+---
+
+`mixStyles` builds a new style by taking features from others. The result works
+everywhere a style does: `createAvatar`, every framework wrapper, and `mixStyles`
+itself.
+
+```ts
+import { createAvatar, mixStyles } from "@avatar-generator/core";
+import { anime } from "@avatar-generator/style-anime";
+import { faces } from "@avatar-generator/style-faces";
+import { illustrated } from "@avatar-generator/style-illustrated";
+
+const mixed = mixStyles(faces, {
+    hair: illustrated, // take the feature from another style
+    eyes: { style: anime, options: { eyeStyle: "sparkly" } }, // with options for that style
+    nose: null, // remove it
+    mouth: ({ cx, cy, size }) => `<circle cx="${cx}" cy="${cy + size * 0.2}" r="2"/>`, // draw your own
+});
+
+createAvatar(mixed, { seed: "user-42", size: 96 });
+```
+
+## Mixable features
+
+| Style         | Features                                                                                                         |
+| ------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `faces`       | `body`, `hair`, `ears`, `head`, `eyes`, `eyebrows`, `nose`, `mouth`, `blush`                                     |
+| `illustrated` | `body`, `hair`, `ears`, `head`, `eyebrows`, `eyes`, `nose`, `mouth`, `facial-hair`, `glasses`, `earrings`, `hat` |
+| `anime`       | `body`, `hair`, `ears`, `head`, `eyebrows`, `eyes`, `nose`, `mouth`, `expressions`, `accessories`                |
+
+Any style built with [`defineStyle`](/guides/custom-styles/) can be mixed too. A
+feature the base lacks is added on top, so `mixStyles(faces, { glasses: illustrated })`
+gives faces glasses. An unknown feature throws, naming the ones that exist.
+
+## How it behaves
+
+- **A swap changes only what you swapped.** Each style decides independently from
+  the same seed, so taking eyes from another style leaves the hair exactly as it was.
+- **Features line up.** Each bundled face style declares where its head is, and
+  donor features are mapped onto the base's head, so hair drawn for a taller head
+  does not float above a shorter one.
+- **Options stay with their style.** A donor gets the shared options (`size`,
+  `colors`, `theme` and so on) plus whatever you pass in `options`. The base's
+  `hairStyle: "flat-top"` never reaches a donor that has no such hair.
