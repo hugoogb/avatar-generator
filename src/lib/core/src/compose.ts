@@ -24,6 +24,12 @@ export interface StyleDefinition<T extends AvatarOptions = AvatarOptions, S = un
     validate?(options: T): void;
     /** Where this style draws its head, so that mixes can align to it. */
     head?(size: number): HeadBox;
+    /**
+     * Draw in a fixed coordinate space of this size, and let the SVG scale it.
+     * Layers see this as `size`, so they can use plain numbers and every detail
+     * stays in proportion at any rendered size.
+     */
+    canvas?: number;
 }
 
 function renderLayers<T extends AvatarOptions, S>(layers: StyleLayer<T, S>[], options: T, traits: S): string {
@@ -48,9 +54,13 @@ function assemble<T extends AvatarOptions, S>(style: Omit<ComposableStyle<T, S>,
         ...style,
         create(options) {
             composed.validate?.(options);
-            const traits = composed.prepare(options, createRandom(options.seed));
-            const backgroundColor = composed.background(options, createRandom(options.seed));
-            return buildSvg(renderLayers(composed.layers, options, traits), options, backgroundColor);
+            const { canvas } = composed;
+            const drawing = canvas === undefined ? options : { ...options, size: canvas };
+            const traits = composed.prepare(drawing, createRandom(options.seed));
+            // Its own stream: sharing one would tie the background to the first
+            // thing `prepare` draws, so that a skin tone followed the background.
+            const backgroundColor = composed.background(drawing, createRandom(`${options.seed}:background`));
+            return buildSvg(renderLayers(composed.layers, drawing, traits), options, backgroundColor, { canvas });
         },
     };
     return composed;
@@ -96,6 +106,7 @@ export function defineStyle<T extends AvatarOptions = AvatarOptions, S = undefin
         background: definition.background ?? ((options, random) => random.pick(options.colors ?? DEFAULT_COLORS)),
         validate: definition.validate,
         head: definition.head,
+        canvas: definition.canvas,
     });
 }
 
@@ -310,5 +321,6 @@ export function mixStyles<T extends AvatarOptions, S>(
         },
         background: (options, random) => base.background(options, random),
         head: base.head,
+        canvas: base.canvas,
     }) as unknown as ComposableStyle<T, unknown>;
 }

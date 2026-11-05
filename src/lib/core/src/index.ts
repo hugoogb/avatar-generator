@@ -15,6 +15,7 @@ export type {
     StyleLayer,
 } from "./types";
 export type { FeatureSource, MixOptions, StyleDefinition } from "./compose";
+export type { BuildSvgOptions } from "./svg";
 export type { AvatarGroupItem, AvatarGroupOptions, AvatarGroupResult } from "./group";
 export type { RenderToStringOptions } from "./ssr";
 export type { ViewerPreferences } from "./viewer";
@@ -24,6 +25,7 @@ export type { AvatarTransitionOptions } from "./transition";
 export { createRandom } from "./random";
 export { validateOption } from "./validation";
 export { animationCss, resolveAnimations } from "./animation";
+export { contrastRatio, pickContrasting, readableColor } from "./color";
 export {
     adaptForImage,
     adaptGroupForImage,
@@ -49,6 +51,7 @@ export {
     DEFAULT_COLORS,
     escapeXml,
     EYE_COLORS,
+    HAIR_COLORS,
     layerGroup,
     scopeSvgIds,
     SKIN_TONES,

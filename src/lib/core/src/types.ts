@@ -204,6 +204,8 @@ export interface ComposableStyle<T extends AvatarOptions = AvatarOptions, S = un
      * taller head does not float above a shorter one.
      */
     head?(size: number): HeadBox;
+    /** Size of the coordinate space this style draws in, when it has a fixed one. */
+    canvas?: number;
 }
 
 /**
