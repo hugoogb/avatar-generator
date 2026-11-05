@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/angular",
-    "version": "3.0.1",
+    "version": "3.0.2",
     "description": "Deterministic SVG avatar component for Angular 17 through 21, in eleven styles",
     "keywords": [
         "avatar",

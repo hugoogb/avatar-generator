@@ -53,9 +53,12 @@ const names = PACKAGE_DIRS.map((dir) => JSON.parse(readFileSync(join(SRC, dir, "
  * side rather than in the local cache. So give it time before concluding a
  * package is missing: a wrong "missing" here sends someone chasing a
  * publishing failure that never happened.
+ *
+ * The 3.0.1 release took about five minutes to become fully visible, so this
+ * waits for up to nine and a half.
  */
-const ATTEMPTS = 5;
-const BACKOFF_MS = 15_000;
+const ATTEMPTS = 20;
+const BACKOFF_MS = 30_000;
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
