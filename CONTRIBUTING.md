@@ -160,10 +160,17 @@ git push origin v3.0.0
 
 The tag triggers `.github/workflows/release.yml`, which re-runs typecheck, tests,
 the build, `publint`, `attw` and the Node smoke test against the tagged tree,
-verifies the tag matches every package version, publishes, and then confirms
-every package resolves from the registry at that version with a provenance
-attestation, so a version published by hand fails the run. Nothing publishes on a
-merge.
+verifies the tag matches every package version, publishes, and creates the GitHub
+release. Last, it confirms every package resolves from the registry at that
+version with a provenance attestation, waiting up to nine and a half minutes
+because npm can take minutes to show a package. A failure at that point is an
+alarm: the release has already happened, so go and look at the registry. Nothing
+publishes on a merge.
+
+If a version is already on the registry, the publish step still publishes the
+other packages, then fails on the run's first attempt, because this workflow
+cannot have published it. Re-running the failed job treats those packages as
+skipped, which makes it safe to recover a partially failed release.
 
 `workflow_dispatch` runs the same workflow with `dry_run` on by default.
 
@@ -218,10 +225,11 @@ pnpm publish --recursive --access public --no-git-checks   # prompts for 2FA
 pnpm run trust:configure                              # now every package exists
 ```
 
-Afterwards tag as usual. The release workflow treats a version that is already
-on the registry as "already published — skipped" rather than a failure, so
-tagging a bootstrap release still produces the GitHub release and the
-post-publish verification, and re-running a partially failed release is safe.
+The version you published by hand has no provenance, so the simplest path is to
+leave it untagged and make the next version the first tagged release. If you do
+tag it, the publish step fails on its first attempt. Re-running the failed job
+creates the GitHub release, and verification then fails for any package without
+an attestation, which is expected here.
 
 From the next version onward there is nothing manual: bump, tag, push.
 

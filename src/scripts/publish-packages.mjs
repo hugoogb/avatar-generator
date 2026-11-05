@@ -91,12 +91,10 @@ try {
             published.push(name);
             console.log(`  ${DRY_RUN ? "would publish" : "published"} ${name}@${version}`);
         } catch (err) {
-            // Publishing a version that is already on the registry is not a
-            // failure worth stopping for. It happens on the bootstrap release
-            // (packages published by hand so they can be granted a trusted
-            // publisher) and when re-running after a partial release. npm
-            // refuses to overwrite, which is the behaviour we want; treating it
-            // as fatal would just make the run unrepeatable.
+            // A version already on the registry must not stop the loop: npm
+            // refuses to overwrite it, which is the behaviour we want, and the
+            // remaining packages still need publishing. Whether it counts as a
+            // failure is decided after the loop.
             const message = String(err.stderr || err.message);
             if (/cannot publish over|EPUBLISHCONFLICT|previously published version/i.test(message)) {
                 skipped.push(name);
@@ -130,6 +128,21 @@ if (failures.length > 0) {
         "\nIf this is the first release for a package, note that a trusted publisher" +
             "\ncan only be attached to a package that already exists on npm. See the" +
             "\nReleasing section of CONTRIBUTING.md.",
+    );
+    process.exit(1);
+}
+
+// On a re-run, a skip is how a partial release recovers. On the first attempt
+// nothing in this workflow can have published these, so something else did, and
+// they will have no provenance. That is how 3.0.0 passed this step having
+// published nothing.
+if (skipped.length > 0 && process.env.GITHUB_RUN_ATTEMPT === "1") {
+    console.error(`\n${published.length} published, but ${skipped.length} were already on the registry:`);
+    for (const name of skipped) console.error(`  ${name}`);
+    console.error(
+        "\nThis workflow did not publish them, so they have no provenance. If that is" +
+            "\nexpected, re-run the failed job to continue, and expect verification to" +
+            "\nfail. See the Releasing section of CONTRIBUTING.md.",
     );
     process.exit(1);
 }

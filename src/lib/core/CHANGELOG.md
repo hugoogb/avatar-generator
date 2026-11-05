@@ -1,5 +1,11 @@
 # @avatar-generator/core
 
+## 3.0.2
+
+### Patch Changes
+
+- No package changes. This release is the first to run the reordered release workflow, which creates the GitHub release before verifying the registry, and fails on a first attempt when a version is already published.
+
 ## 3.0.1
 
 ### Patch Changes
