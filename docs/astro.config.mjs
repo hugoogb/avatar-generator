@@ -49,6 +49,9 @@ const structuredData = {
 export default defineConfig({
     // Starlight needs this to emit canonical URLs, og:url and the sitemap.
     site: SITE,
+    // Every page lives at a trailing-slash URL. docs/vercel.json makes Vercel 308 the
+    // slash-less form, so Google never sees two URLs for one page.
+    trailingSlash: "always",
     integrations: [
         starlight({
             title: "@avatar-generator",
