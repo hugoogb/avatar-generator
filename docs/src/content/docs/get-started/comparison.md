@@ -5,7 +5,7 @@ sidebar:
     label: Comparison
 ---
 
-**Choose @avatar-generator** if you want official components for several frameworks, MIT licensing across every style, and support for Node.js 18. **Choose another library** if you need a hosted avatar API, more than eleven styles, or languages other than JavaScript.
+**Choose @avatar-generator** if you want official components for several frameworks, MIT licensing across every style, and support for Node.js 18. **Choose another library** if you need a hosted avatar API, more than fifteen styles, or languages other than JavaScript.
 
 DiceBear, Boring Avatars and Jdenticon are all good, and far more widely used than @avatar-generator. If adoption and track record matter most to you, weigh that heavily.
 
@@ -15,7 +15,7 @@ Checked in November 2026 against each project's documentation and npm listing. T
 
 |                               | @avatar-generator                                                    | [DiceBear](https://www.dicebear.com/)                         | [Boring Avatars](https://github.com/boringdesigners/boring-avatars) | [Jdenticon](https://jdenticon.com/) |
 | ----------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------- | ----------------------------------- |
-| **Styles**                    | 11                                                                   | 61                                                            | 6                                                                   | Identicons only                     |
+| **Styles**                    | 15                                                                   | 61                                                            | 6                                                                   | Identicons only                     |
 | **License**                   | MIT for all packages                                                 | MIT for the code; artwork licenses vary by style              | MIT                                                                 | MIT                                 |
 | **Framework support**         | Components for React, Vue, Svelte and Angular, plus a custom element | Usage guides for Angular, React, React Native, Vue and Svelte | React component                                                     | Plain JavaScript library            |
 | **Languages**                 | JavaScript and TypeScript                                            | JavaScript, PHP, Python, Rust, Go, Dart, C#                   | JavaScript                                                          | JavaScript, C#, PHP                 |
@@ -47,4 +47,4 @@ Jdenticon does one thing: geometric identicons. It also runs in C# and PHP, so i
 - **A React app that wants gradient avatars:** Boring Avatars
 - **Identicons only:** Jdenticon
 
-To see the eleven @avatar-generator styles, open the [Style Gallery](/reference/gallery/) or try your own seed in the [Playground](/get-started/playground/).
+To see the fifteen @avatar-generator styles, open the [Style Gallery](/reference/gallery/) or try your own seed in the [Playground](/get-started/playground/).

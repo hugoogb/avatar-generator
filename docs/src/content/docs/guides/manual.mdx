@@ -55,13 +55,31 @@ import { abstract } from "@avatar-generator/style-abstract";
 import { emoji } from "@avatar-generator/style-emoji";
 import { animals } from "@avatar-generator/style-animals";
 import { gradient } from "@avatar-generator/style-gradient";
+import { robots } from "@avatar-generator/style-robots";
+import { portraits } from "@avatar-generator/style-portraits";
+import { creatures } from "@avatar-generator/style-creatures";
+import { marks } from "@avatar-generator/style-marks";
 
-// One seed, eleven different deterministic results
+// One seed, fifteen different deterministic results
 const seed = "user-123";
 
-const all = [initials, geometric, pixels, rings, faces, illustrated, anime, abstract, emoji, animals, gradient].map(
-    (style) => createAvatar(style, { seed }),
-);
+const all = [
+    initials,
+    geometric,
+    pixels,
+    rings,
+    faces,
+    illustrated,
+    anime,
+    abstract,
+    emoji,
+    animals,
+    gradient,
+    robots,
+    portraits,
+    creatures,
+    marks,
+].map((style) => createAvatar(style, { seed }));
 ```
 
 ## Shared options
@@ -277,6 +295,62 @@ createAvatar(gradient, {
     pattern: "waves", // "none" | "dots" | "stripes" | "waves" | "grid"
     colorStops: 3, // 2 or 3 (default: 2)
 });
+```
+
+### Robots
+
+```ts
+import { robots } from "@avatar-generator/style-robots";
+
+createAvatar(robots, {
+    seed: "build-bot",
+    headShape: "dome", // "box" | "rounded" | "dome" | "capsule"
+    antenna: "dish", // "none" | "ball" | "double" | "dish" | "bolt"
+    eyeStyle: "visor", // "round" | "visor" | "cyclops" | "pixel" | "screen"
+    mouthStyle: "grille", // "grille" | "slot" | "smile" | "none"
+    metalColors: ["#B8C2CF"], // default: silvers, pastels, gunmetal and copper
+});
+```
+
+### Portraits
+
+```ts
+import { portraits } from "@avatar-generator/style-portraits";
+
+createAvatar(portraits, {
+    seed: "unique-id",
+    hairStyle: "curly", // "crop" | "side-part" | "curly" | "afro" | "long" | "bob" | "bun" | "locs" | "bald"
+    eyeStyle: "smiling", // "dots" | "lidded" | "smiling" | "lashes"
+    mouthStyle: "smirk", // "smile" | "grin" | "soft" | "smirk"
+    glasses: true,
+    facialHair: false,
+    ink: "#1C2430", // default: the theme foreground, else white or near-black
+});
+```
+
+### Creatures
+
+```ts
+import { creatures } from "@avatar-generator/style-creatures";
+
+createAvatar(creatures, {
+    seed: "unique-id",
+    bodyShape: "pear", // "round" | "tall" | "pear" | "wobbly"
+    horns: "curly", // "none" | "nubs" | "curly" | "antennae"
+    eyes: 3, // 1 | 2 | 3
+    mouthStyle: "tooth", // "smile" | "tooth" | "open" | "tongue"
+    markings: "spots", // "none" | "spots" | "belly"
+    bodyColors: ["#8BE06B"], // default: bright made-up colours
+});
+```
+
+### Marks
+
+```ts
+import { marks } from "@avatar-generator/style-marks";
+
+createAvatar(marks, { seed: "Acme Inc", symbol: "spark" }); // one of the ten symbols
+createAvatar(marks, { seed: "Acme Inc", letter: true }); // the seed's first letter on a badge
 ```
 
 ## Building option pickers

@@ -22,6 +22,27 @@ import { COMPOSITIONS as ABSTRACT_COMPOSITIONS } from "@avatar-generator/style-a
 import { EXPRESSIONS as EMOJI_EXPRESSIONS } from "@avatar-generator/style-emoji";
 import { ANIMALS } from "@avatar-generator/style-animals";
 import { DIRECTIONS as GRADIENT_DIRECTIONS, PATTERNS as GRADIENT_PATTERNS } from "@avatar-generator/style-gradient";
+import {
+    HEAD_SHAPES as ROBOTS_HEAD_SHAPES,
+    ANTENNAS as ROBOTS_ANTENNAS,
+    EYE_STYLES as ROBOTS_EYE_STYLES,
+    MOUTH_STYLES as ROBOTS_MOUTH_STYLES,
+    METAL_COLORS as ROBOTS_METAL_COLORS,
+} from "@avatar-generator/style-robots";
+import {
+    HAIR_STYLES as PORTRAITS_HAIR_STYLES,
+    EYE_STYLES as PORTRAITS_EYE_STYLES,
+    MOUTH_STYLES as PORTRAITS_MOUTH_STYLES,
+} from "@avatar-generator/style-portraits";
+import {
+    BODY_SHAPES as CREATURES_BODY_SHAPES,
+    HORNS as CREATURES_HORNS,
+    EYE_COUNTS as CREATURES_EYE_COUNTS,
+    MOUTH_STYLES as CREATURES_MOUTH_STYLES,
+    MARKINGS as CREATURES_MARKINGS,
+    BODY_COLORS as CREATURES_BODY_COLORS,
+} from "@avatar-generator/style-creatures";
+import { SYMBOLS as MARKS_SYMBOLS } from "@avatar-generator/style-marks";
 
 describe("exported style constants", () => {
     const suites: Array<[string, unknown[], number]> = [
@@ -43,6 +64,21 @@ describe("exported style constants", () => {
         ["animals ANIMALS", ANIMALS, 8],
         ["gradient DIRECTIONS", GRADIENT_DIRECTIONS, 3],
         ["gradient PATTERNS", GRADIENT_PATTERNS, 5],
+        ["robots HEAD_SHAPES", ROBOTS_HEAD_SHAPES, 4],
+        ["robots ANTENNAS", ROBOTS_ANTENNAS, 5],
+        ["robots EYE_STYLES", ROBOTS_EYE_STYLES, 5],
+        ["robots MOUTH_STYLES", ROBOTS_MOUTH_STYLES, 4],
+        ["robots METAL_COLORS", ROBOTS_METAL_COLORS, 9],
+        ["portraits HAIR_STYLES", PORTRAITS_HAIR_STYLES, 9],
+        ["portraits EYE_STYLES", PORTRAITS_EYE_STYLES, 4],
+        ["portraits MOUTH_STYLES", PORTRAITS_MOUTH_STYLES, 4],
+        ["creatures BODY_SHAPES", CREATURES_BODY_SHAPES, 4],
+        ["creatures HORNS", CREATURES_HORNS, 4],
+        ["creatures EYE_COUNTS", CREATURES_EYE_COUNTS, 3],
+        ["creatures MOUTH_STYLES", CREATURES_MOUTH_STYLES, 4],
+        ["creatures MARKINGS", CREATURES_MARKINGS, 3],
+        ["creatures BODY_COLORS", CREATURES_BODY_COLORS, 10],
+        ["marks SYMBOLS", MARKS_SYMBOLS, 10],
     ];
 
     it.each(suites)("%s has the expected number of entries", (_name, arr, count) => {

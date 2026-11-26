@@ -7,7 +7,7 @@
 
 **@avatar-generator** is an open-source JavaScript and TypeScript library that
 generates deterministic SVG avatars from any seed string, such as a username or
-email address. It has eleven styles and no runtime dependencies, and works with
+email address. It has fifteen styles and no runtime dependencies, and works with
 React, Vue, Svelte, Angular, a custom element, or plain JavaScript.
 
 [Documentation](https://avatar-generator.hugoogb.dev/) ·
@@ -20,7 +20,7 @@ React, Vue, Svelte, Angular, a custom element, or plain JavaScript.
 
 ## Features
 
-- **11 styles** — Initials, Geometric, Pixels, Rings, Faces, Illustrated, Anime, Abstract, Emoji, Animals, Gradient
+- **15 styles** — Initials, Geometric, Pixels, Rings, Faces, Illustrated, Anime, Abstract, Emoji, Animals, Gradient, Robots, Portraits, Creatures, Marks
 - **Deterministic** — within a release, the same seed always produces byte-identical SVG
 - **Production-ready at any size** — legible from 24px to 256px, with text that clears 4.5:1 contrast
 - **Tree-shakeable** — each style is its own package; you bundle only what you import
@@ -62,19 +62,23 @@ it together with at least one style.
 
 ## Available styles
 
-| Style       | Package                               | Description                                      |
-| ----------- | ------------------------------------- | ------------------------------------------------ |
-| Initials    | `@avatar-generator/style-initials`    | Letter initials on colored backgrounds           |
-| Geometric   | `@avatar-generator/style-geometric`   | GitHub-style symmetrical identicon grids         |
-| Pixels      | `@avatar-generator/style-pixels`      | 8-bit retro pixel faces                          |
-| Rings       | `@avatar-generator/style-rings`       | Concentric rings, segmented and dashed variants  |
-| Faces       | `@avatar-generator/style-faces`       | Minimal flat geometric faces                     |
-| Illustrated | `@avatar-generator/style-illustrated` | Detailed cartoon faces with accessories          |
-| Anime       | `@avatar-generator/style-anime`       | Anime/manga-inspired faces with expressive eyes  |
-| Abstract    | `@avatar-generator/style-abstract`    | Mondrian/Kandinsky/Bauhaus-inspired compositions |
-| Emoji       | `@avatar-generator/style-emoji`       | Yellow emoji-style expressive faces              |
-| Animals     | `@avatar-generator/style-animals`     | Cute animal avatars (cat, dog, fox, panda, …)    |
-| Gradient    | `@avatar-generator/style-gradient`    | Smooth gradients with pattern overlays           |
+| Style       | Package                               | Description                                        |
+| ----------- | ------------------------------------- | -------------------------------------------------- |
+| Initials    | `@avatar-generator/style-initials`    | Letter initials on colored backgrounds             |
+| Geometric   | `@avatar-generator/style-geometric`   | GitHub-style symmetrical identicon grids           |
+| Pixels      | `@avatar-generator/style-pixels`      | 8-bit retro pixel faces                            |
+| Rings       | `@avatar-generator/style-rings`       | Concentric rings, segmented and dashed variants    |
+| Faces       | `@avatar-generator/style-faces`       | Minimal flat geometric faces                       |
+| Illustrated | `@avatar-generator/style-illustrated` | Detailed cartoon faces with accessories            |
+| Anime       | `@avatar-generator/style-anime`       | Anime/manga-inspired faces with expressive eyes    |
+| Abstract    | `@avatar-generator/style-abstract`    | Mondrian/Kandinsky/Bauhaus-inspired compositions   |
+| Emoji       | `@avatar-generator/style-emoji`       | Yellow emoji-style expressive faces                |
+| Animals     | `@avatar-generator/style-animals`     | Cute animal avatars (cat, dog, fox, panda, …)      |
+| Gradient    | `@avatar-generator/style-gradient`    | Smooth gradients with pattern overlays             |
+| Robots      | `@avatar-generator/style-robots`      | Robots for bots, AI agents and service accounts    |
+| Portraits   | `@avatar-generator/style-portraits`   | Single-colour ink portraits for professional tools |
+| Creatures   | `@avatar-generator/style-creatures`   | Friendly made-up monsters                          |
+| Marks       | `@avatar-generator/style-marks`       | Logo-like badges for teams and organisations       |
 
 ## Framework packages
 

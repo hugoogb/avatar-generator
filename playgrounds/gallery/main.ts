@@ -35,10 +35,10 @@ import {
 } from "@avatar-style-faces/src";
 import { geometric } from "@avatar-style-geometric/src";
 import { DIRECTIONS, gradient, PATTERNS } from "@avatar-style-gradient/src";
-import { robots } from "@avatar-style-robots/src";
-import { portraits } from "@avatar-style-portraits/src";
-import { creatures } from "@avatar-style-creatures/src";
-import { marks } from "@avatar-style-marks/src";
+import { ANTENNAS, EYE_STYLES as ROBOTS_EYES, robots } from "@avatar-style-robots/src";
+import { HAIR_STYLES as PORTRAITS_HAIR, portraits } from "@avatar-style-portraits/src";
+import { BODY_SHAPES, creatures, HORNS } from "@avatar-style-creatures/src";
+import { marks, SYMBOLS } from "@avatar-style-marks/src";
 import {
     EYE_STYLES as ILLUSTRATED_EYES,
     EYEBROW_STYLES as ILLUSTRATED_BROWS,
@@ -241,6 +241,35 @@ const sections: Section[] = [
         ),
     },
     {
+        title: "Robots: eyes and antennas",
+        items: ROBOTS_EYES.flatMap((eyeStyle) =>
+            ANTENNAS.slice(0, 3).map((antenna) =>
+                card(asStyle(robots), { seed: `${eyeStyle}-${antenna}`, eyeStyle, antenna }),
+            ),
+        ),
+    },
+    {
+        title: "Portraits: hair, with and without glasses",
+        items: PORTRAITS_HAIR.flatMap((hairStyle) =>
+            [false, true].map((glasses) => card(asStyle(portraits), { seed: `${hairStyle}`, hairStyle, glasses })),
+        ),
+    },
+    {
+        title: "Creatures: bodies and horns",
+        items: BODY_SHAPES.flatMap((bodyShape) =>
+            HORNS.map((horns) => card(asStyle(creatures), { seed: `${bodyShape}-${horns}`, bodyShape, horns })),
+        ),
+    },
+    {
+        title: "Marks: symbols and letters",
+        items: [
+            ...SYMBOLS.map((symbol) => card(asStyle(marks), { seed: "Acme Inc", symbol })),
+            ...["Acme Inc", "ben@example.com", "李华", "🚀 Launch"].map((seed) =>
+                card(asStyle(marks), { seed, letter: true }),
+            ),
+        ],
+    },
+    {
         title: "Initials: names",
         items: ["Ana Li", "ana.li@example.com", "Madonna", "José García", "李 小龙", "🙂 Ana", "user-42", "  "].map(
             (seed) => card(asStyle(initials), { seed }),
@@ -314,6 +343,10 @@ const sections: Section[] = [
             mix("anime + illustrated hair", mixStyles(anime, { hair: illustrated }), seed),
             mix("anime + faces mouth", mixStyles(anime, { mouth: faces }), seed),
             mix("faces + glasses, no nose", mixStyles(faces, { glasses: illustrated, nose: null }), seed),
+            mix("faces + robot eyes", mixStyles(faces, { eyes: robots }), seed),
+            mix("robots + faces mouth", mixStyles(robots, { mouth: faces }), seed),
+            mix("portraits + illustrated hair", mixStyles(portraits, { hair: illustrated }), seed),
+            mix("creatures + anime eyes", mixStyles(creatures, { eyes: anime }), seed),
         ]),
     },
 

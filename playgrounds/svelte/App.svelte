@@ -12,6 +12,10 @@
     import { emoji } from "@avatar-style-emoji/src";
     import { animals } from "@avatar-style-animals/src";
     import { gradient } from "@avatar-style-gradient/src";
+    import { robots } from "@avatar-style-robots/src";
+    import { portraits } from "@avatar-style-portraits/src";
+    import { creatures } from "@avatar-style-creatures/src";
+    import { marks } from "@avatar-style-marks/src";
     import {
         INITIALS_OPTIONS,
         GEOMETRIC_OPTIONS,
@@ -24,6 +28,10 @@
         EMOJI_OPTIONS,
         ANIMALS_OPTIONS,
         GRADIENT_OPTIONS,
+        ROBOTS_OPTIONS,
+        PORTRAITS_OPTIONS,
+        CREATURES_OPTIONS,
+        MARKS_OPTIONS,
         GROUP_OPTIONS,
         GROUP_SEEDS,
     } from "../consts";
@@ -40,6 +48,10 @@
         { title: "Emoji", style: emoji, options: EMOJI_OPTIONS },
         { title: "Animals", style: animals, options: ANIMALS_OPTIONS },
         { title: "Gradient", style: gradient, options: GRADIENT_OPTIONS },
+        { title: "Robots", style: robots, options: ROBOTS_OPTIONS },
+        { title: "Portraits", style: portraits, options: PORTRAITS_OPTIONS },
+        { title: "Creatures", style: creatures, options: CREATURES_OPTIONS },
+        { title: "Marks", style: marks, options: MARKS_OPTIONS },
     ];
 </script>
 

@@ -219,6 +219,53 @@ For `@avatar-generator/style-gradient`:
 | `pattern`    | `string` | (random) | Overlay pattern: `"none"`, `"dots"`, `"stripes"`, `"waves"`, `"grid"` |
 | `colorStops` | `number` | `2`      | Number of color stops in the gradient (2 or 3)                        |
 
+### RobotsOptions
+
+For `@avatar-generator/style-robots`:
+
+| Option        | Type       | Default        | Description                                                                               |
+| ------------- | ---------- | -------------- | ----------------------------------------------------------------------------------------- |
+| `headShape`   | `string`   | (random)       | Override head shape: `"box"`, `"rounded"`, `"dome"`, `"capsule"`                          |
+| `antenna`     | `string`   | (random)       | Override what sits on top: `"none"`, `"ball"`, `"double"`, `"dish"`, `"bolt"`             |
+| `eyeStyle`    | `string`   | (random)       | Override eyes: `"round"`, `"visor"`, `"cyclops"`, `"pixel"`, `"screen"`                   |
+| `mouthStyle`  | `string`   | (random)       | Override mouth: `"grille"`, `"slot"`, `"smile"`, `"none"`                                 |
+| `metalColors` | `string[]` | `METAL_COLORS` | Custom body palette; the pick stays apart from the background where the palette allows it |
+
+### PortraitsOptions
+
+For `@avatar-generator/style-portraits`:
+
+| Option       | Type      | Default  | Description                                                                                                               |
+| ------------ | --------- | -------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `hairStyle`  | `string`  | (random) | Override hair: `"crop"`, `"side-part"`, `"curly"`, `"afro"`, `"long"`, `"bob"`, `"bun"`, `"locs"`, `"bald"`               |
+| `eyeStyle`   | `string`  | (random) | Override eyes: `"dots"`, `"lidded"`, `"smiling"`, `"lashes"`                                                              |
+| `mouthStyle` | `string`  | (random) | Override mouth: `"smile"`, `"grin"`, `"soft"`, `"smirk"`                                                                  |
+| `glasses`    | `boolean` | (random) | Force glasses on or off                                                                                                   |
+| `facialHair` | `boolean` | (random) | Force facial hair on or off                                                                                               |
+| `ink`        | `string`  | (theme)  | The one colour everything is drawn in. Defaults to the theme foreground, else white or near-black, whichever reads better |
+
+### CreaturesOptions
+
+For `@avatar-generator/style-creatures`:
+
+| Option       | Type       | Default       | Description                                                             |
+| ------------ | ---------- | ------------- | ----------------------------------------------------------------------- |
+| `bodyShape`  | `string`   | (random)      | Override body shape: `"round"`, `"tall"`, `"pear"`, `"wobbly"`          |
+| `horns`      | `string`   | (random)      | Override what grows on top: `"none"`, `"nubs"`, `"curly"`, `"antennae"` |
+| `eyes`       | `number`   | (random)      | Override the number of eyes: `1`, `2` or `3`                            |
+| `mouthStyle` | `string`   | (random)      | Override mouth: `"smile"`, `"tooth"`, `"open"`, `"tongue"`              |
+| `markings`   | `string`   | (random)      | Override body markings: `"none"`, `"spots"`, `"belly"`                  |
+| `bodyColors` | `string[]` | `BODY_COLORS` | Custom body colour palette (bright made-up colours)                     |
+
+### MarksOptions
+
+For `@avatar-generator/style-marks`:
+
+| Option   | Type      | Default  | Description                                                                                                                               |
+| -------- | --------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `symbol` | `string`  | (random) | Pin one symbol: `"bars"`, `"arc"`, `"chevron"`, `"circles"`, `"quarters"`, `"diamond"`, `"spark"`, `"peak"`, `"cube"`, `"wave"`           |
+| `letter` | `boolean` | `false`  | Draw the seed's first letter on a badge instead of a symbol. A seed with no letter or digit in it, such as a lone emoji, keeps its symbol |
+
 ## Platform API
 
 | Function                                              | Guide                                              |
