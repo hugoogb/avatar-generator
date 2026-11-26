@@ -1,0 +1,9 @@
+# None of these needs its install script for the playgrounds: esbuild ships its
+# binary as an optional dependency, and the rest are optional native speedups
+# with JavaScript fallbacks. pnpm 11 fails an install with unapproved build
+# scripts, so record the decision.
+allowBuilds:
+    "@parcel/watcher": false
+    esbuild: false
+    lmdb: false
+    msgpackr-extract: false
