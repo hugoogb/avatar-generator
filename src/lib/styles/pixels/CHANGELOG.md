@@ -1,5 +1,11 @@
 # @avatar-generator/style-pixels
 
+## 3.3.0
+
+### Patch Changes
+
+- @avatar-generator/core@3.3.0
+
 ## 3.2.0
 
 ### Patch Changes

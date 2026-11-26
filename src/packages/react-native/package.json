@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/react-native",
-    "version": "3.2.0",
+    "version": "3.3.0",
     "description": "Deterministic SVG avatar component for React Native, in fifteen styles",
     "keywords": [
         "avatar",
