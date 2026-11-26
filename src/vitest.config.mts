@@ -27,6 +27,7 @@ export default defineConfig({
             "@avatar-generator/style-creatures": here("./lib/styles/creatures/src/index.ts"),
             "@avatar-generator/style-marks": here("./lib/styles/marks/src/index.ts"),
             "@avatar-generator/react": here("./packages/react/src/index.ts"),
+            "@avatar-generator/react-native": here("./packages/react-native/src/index.ts"),
             "@avatar-generator/vue": here("./packages/vue/src/index.ts"),
             "@avatar-generator/angular": here("./packages/angular/src/index.ts"),
             "@avatar-generator/web-component": here("./packages/web-component/src/index.ts"),

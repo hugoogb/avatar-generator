@@ -20,7 +20,14 @@ import { PACKAGE_DIRS } from "./packages.mjs";
 const SRC = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 /** Peer dependencies the framework wrappers need present just to be loadable. */
-const PEERS = { react: "^19", vue: "^3", svelte: "^4", "@angular/core": "^19" };
+const PEERS = {
+    react: "^19",
+    vue: "^3",
+    svelte: "^4",
+    "@angular/core": "^19",
+    "react-native": "^0.87",
+    "react-native-svg": "^15",
+};
 
 /**
  * The Svelte entry resolves to a raw `.svelte` component under the `svelte`
@@ -38,6 +45,7 @@ const NOT_NODE_LOADABLE = new Set(["@avatar-generator/svelte"]);
  */
 const RESOLVE_ONLY = new Map([
     ["@avatar-generator/angular", "partial-Ivy declarations are linked by the Angular build, not by Node"],
+    ["@avatar-generator/react-native", "react-native ships Flow source that only Metro can load"],
 ]);
 
 /**

@@ -111,6 +111,7 @@ export default defineConfig({
                     items: [
                         { label: "Manual Usage", slug: "guides/manual" },
                         { label: "React Usage", slug: "guides/react" },
+                        { label: "React Native Usage", slug: "guides/react-native" },
                         { label: "Angular Usage", slug: "guides/angular" },
                         { label: "Vue Usage", slug: "guides/vue" },
                         { label: "Svelte Usage", slug: "guides/svelte" },

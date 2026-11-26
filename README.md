@@ -14,7 +14,7 @@ React, Vue, Svelte, Angular, a custom element, or plain JavaScript.
 [Style gallery](https://avatar-generator.hugoogb.dev/reference/gallery/) ·
 [Comparison with DiceBear, Boring Avatars and Jdenticon](https://avatar-generator.hugoogb.dev/get-started/comparison/)
 
-> **Install the 3.x line.** v3.2.0 is the current release and the only supported
+> **Install the 3.x line.** v3.3.0 is the current release and the only supported
 > one — 1.x and 2.x should not be used. See
 > [Versions & Support](https://avatar-generator.hugoogb.dev/reference/versioning/).
 
@@ -85,12 +85,13 @@ it together with at least one style.
 | Package                           | For                                           | Guide                                                                       |
 | --------------------------------- | --------------------------------------------- | --------------------------------------------------------------------------- |
 | `@avatar-generator/react`         | React 18 and 19                               | [React](https://avatar-generator.hugoogb.dev/guides/react/)                 |
+| `@avatar-generator/react-native`  | React Native 0.77+, with `react-native-svg`   | [React Native](https://avatar-generator.hugoogb.dev/guides/react-native/)   |
 | `@avatar-generator/vue`           | Vue 3                                         | [Vue](https://avatar-generator.hugoogb.dev/guides/vue/)                     |
 | `@avatar-generator/svelte`        | Svelte 4 and 5                                | [Svelte](https://avatar-generator.hugoogb.dev/guides/svelte/)               |
 | `@avatar-generator/angular`       | Angular 17 through 21, standalone or NgModule | [Angular](https://avatar-generator.hugoogb.dev/guides/angular/)             |
 | `@avatar-generator/web-component` | Any framework, or none                        | [Web Component](https://avatar-generator.hugoogb.dev/guides/web-component/) |
 
-All twenty-two packages are released together at one version — mixing majors is
+All twenty-three packages are released together at one version — mixing majors is
 not supported.
 
 ## Documentation

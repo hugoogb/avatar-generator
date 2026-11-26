@@ -1,0 +1,102 @@
+---
+title: React Native Avatar Component
+description: "Generate deterministic SVG avatars in React Native and Expo with @avatar-generator/react-native, rendered through react-native-svg."
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+`@avatar-generator/react-native` wraps `createAvatar` in a component that hands
+the generated SVG to [`react-native-svg`](https://github.com/software-mansion/react-native-svg).
+It works with React Native 0.77 or later, including Expo, and needs no native
+code of its own.
+
+## Install
+
+```sh
+npm install @avatar-generator/core @avatar-generator/react-native @avatar-generator/style-initials react-native-svg
+```
+
+In an Expo app, install `react-native-svg` with `npx expo install react-native-svg`
+so you get the version that matches your SDK. In a bare React Native app, run
+`pod install` in `ios/` afterwards.
+
+## Basic usage
+
+```tsx
+import { Avatar } from "@avatar-generator/react-native";
+import { initials } from "@avatar-generator/style-initials";
+
+function UserProfile({ user }) {
+    return <Avatar style={initials} options={{ seed: user.id, name: user.name, size: 48 }} alt={user.name} />;
+}
+```
+
+Every style package works here, the same as on the web. The `style` prop takes
+the style object, so it cannot also take React Native layout styles. Use
+`containerStyle` for those:
+
+```tsx
+<Avatar style={faces} options={{ seed: user.id, size: 40 }} containerStyle={{ marginRight: 8 }} alt="" />
+```
+
+## Groups
+
+```tsx
+import { AvatarGroup } from "@avatar-generator/react-native";
+import { faces } from "@avatar-generator/style-faces";
+
+<AvatarGroup style={faces} items={["ana", "ben", "chi", "dee"]} options={{ size: 40, max: 3 }} alt="Project team" />;
+```
+
+The group renders as one SVG sized to fit. See [Avatar Groups](/guides/avatar-group/)
+for every option.
+
+## Props
+
+| Prop             | Type                      | Default    | Description                             |
+| ---------------- | ------------------------- | ---------- | --------------------------------------- |
+| `style`          | `Style<T>`                | (required) | The style object to render with         |
+| `options`        | `T extends AvatarOptions` | (required) | Seed and style-specific options         |
+| `alt`            | `string`                  | `"Avatar"` | Accessibility label; `""` is decorative |
+| `containerStyle` | `StyleProp<ViewStyle>`    | —          | Layout styles for the SVG view          |
+| `testID`         | `string`                  | —          | Identifier for end-to-end tests         |
+
+`AvatarGroup` takes the same props, with `items` and an optional group
+`options` in place of `options`. Its `alt` defaults to the group's label.
+
+## Accessibility
+
+The avatar is exposed to VoiceOver and TalkBack as one image labelled with
+`alt`. Pass `alt=""` when the name is already shown as text next to it, and
+screen readers skip the avatar.
+
+## Themes
+
+`theme: "light"`, `"dark"`, `"high-contrast"` and custom themes work as on the
+web. `theme: "auto"` follows the device:
+
+- The system colour scheme picks light or dark, through `useColorScheme()`.
+- **Increase Contrast** on iOS, or **High contrast text** on Android, picks the
+  high-contrast theme. Contrast wins over the colour scheme, as it does on the web.
+
+The avatar re-renders when either setting changes.
+
+## What differs from the web
+
+`react-native-svg` does not run CSS inside an SVG, so two features are not
+available:
+
+- **Animation.** `animation` is ignored, and avatars render still. See
+  [Animation](/guides/animation/) for what it does on the web.
+- **Transitions.** `createAvatarTransition` has no React Native component.
+
+<Aside type="note" title="Same seed, same avatar">
+    Apart from animation, the drawing is the one `createAvatar` produces, so a seed looks the same in your app and on
+    your website.
+</Aside>
+
+## Memoization
+
+As in the [React guide](/guides/react/#memoization), the component memoizes on
+the identity of `style` and `options`. In a long `FlatList`, give each row a
+stable `options` object with `useMemo` inside the row component.

@@ -121,7 +121,7 @@ pnpm run smoke           # pack, install and load every package from real Node
 pnpm run verify:publish  # build + both of the above
 ```
 
-`pnpm run smoke` packs all 22 packages, installs the tarballs into a throwaway
+`pnpm run smoke` packs all 23 packages, installs the tarballs into a throwaway
 project and loads each one from Node as ESM and as CommonJS, generates an avatar
 from every style, and compiles the published Svelte component with no
 preprocessor configured.
@@ -206,7 +206,7 @@ npm login                   # as a maintainer of the scope
 
 cd src
 pnpm run trust:configure -- --dry-run   # print the plan
-pnpm run trust:configure                # apply it to all 22 packages
+pnpm run trust:configure                # apply it to all 23 packages
 pnpm run trust:list                     # show what is configured
 ```
 

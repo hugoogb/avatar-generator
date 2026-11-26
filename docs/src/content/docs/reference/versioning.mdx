@@ -60,8 +60,8 @@ them forever, pin an exact version rather than a `^` range.
 
 ## What the version number covers
 
-All twenty-two packages — `@avatar-generator/core`, the fifteen style packages, the
-five framework wrappers and `create-avatar-style` — are released together from one fixed version
+All twenty-three packages — `@avatar-generator/core`, the fifteen style packages, the
+six framework wrappers and `create-avatar-style` — are released together from one fixed version
 group. `@avatar-generator/react@3.0.0` is always meant to be used with
 `@avatar-generator/core@3.0.0` and `@avatar-generator/style-faces@3.0.0`.
 
@@ -117,7 +117,7 @@ declare it explicitly rather than relying on a transitive install.
 Every published tarball is built and checked in CI before it goes out:
 
 - `publint --strict` on the manifest and `attw` on type resolution
-- A smoke test that packs all twenty-two packages, installs the tarballs into a
+- A smoke test that packs all twenty-three packages, installs the tarballs into a
   throwaway project, loads each from real Node as both ESM and CommonJS,
   generates an avatar from every style, and compiles the published Svelte
   component with no preprocessor configured
