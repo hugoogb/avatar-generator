@@ -20,7 +20,11 @@
             "@avatar-generator/style-abstract": ["./lib/styles/abstract/src"],
             "@avatar-generator/style-emoji": ["./lib/styles/emoji/src"],
             "@avatar-generator/style-animals": ["./lib/styles/animals/src"],
-            "@avatar-generator/style-gradient": ["./lib/styles/gradient/src"]
+            "@avatar-generator/style-gradient": ["./lib/styles/gradient/src"],
+            "@avatar-generator/style-robots": ["./lib/styles/robots/src"],
+            "@avatar-generator/style-portraits": ["./lib/styles/portraits/src"],
+            "@avatar-generator/style-creatures": ["./lib/styles/creatures/src"],
+            "@avatar-generator/style-marks": ["./lib/styles/marks/src"]
         }
     },
     "include": ["lib/**/src/**/*.ts", "packages/**/src/**/*.ts"]

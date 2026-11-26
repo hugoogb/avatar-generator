@@ -253,7 +253,7 @@ Fix synchronization issues between source, playgrounds, and documentation.
 ### CDN bundle
 
 - [x] Browser bundle `dist/avatar-generator.global.js` in `@avatar-generator/web-component`:
-      core, all eleven styles and both elements, exposed as `window.AvatarGenerator`
+      core, every built-in style and both elements, exposed as `window.AvatarGenerator`
 - [x] `unpkg` and `jsdelivr` manifest fields, so the bare package URL serves it
 - [x] `avatar-style`, `seed`, `size` and `options` attributes, so plain HTML renders with no JavaScript
 - [x] `registerStyle` for naming styles from bundler builds and custom styles
@@ -261,4 +261,9 @@ Fix synchronization issues between source, playgrounds, and documentation.
 
 ### More styles
 
-- [ ] New styles _(scope to be decided)_
+- [x] `@avatar-generator/style-robots` — bots, AI agents and service accounts
+- [x] `@avatar-generator/style-portraits` — single-colour ink portraits for professional tools
+- [x] `@avatar-generator/style-creatures` — friendly made-up monsters
+- [x] `@avatar-generator/style-marks` — logo-like badges for teams and organisations
+- [x] Hand-publish a `0.0.1` placeholder of each and configure trusted publishing, so that
+      3.2.0 can go through the release workflow

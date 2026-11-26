@@ -6,7 +6,7 @@ import * as bundle from "../src/global";
 
 describe("browser bundle entry", () => {
     it("registers every built-in style for the avatar-style attribute", () => {
-        expect(Object.keys(bundle.styles)).toHaveLength(11);
+        expect(Object.keys(bundle.styles)).toHaveLength(15);
         for (const name of Object.keys(bundle.styles)) {
             document.body.innerHTML = `<avatar-generator avatar-style="${name}" seed="x"></avatar-generator>`;
             const src = document.body.firstElementChild?.shadowRoot?.querySelector("img")?.getAttribute("src");

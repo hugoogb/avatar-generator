@@ -11,6 +11,10 @@ import { abstract } from "@avatar-style-abstract/src";
 import { emoji } from "@avatar-style-emoji/src";
 import { animals } from "@avatar-style-animals/src";
 import { gradient } from "@avatar-style-gradient/src";
+import { robots } from "@avatar-style-robots/src";
+import { portraits } from "@avatar-style-portraits/src";
+import { creatures } from "@avatar-style-creatures/src";
+import { marks } from "@avatar-style-marks/src";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
 import {
@@ -25,6 +29,10 @@ import {
     EMOJI_OPTIONS,
     ANIMALS_OPTIONS,
     GRADIENT_OPTIONS,
+    ROBOTS_OPTIONS,
+    PORTRAITS_OPTIONS,
+    CREATURES_OPTIONS,
+    MARKS_OPTIONS,
     GROUP_OPTIONS,
     GROUP_SEEDS,
 } from "../consts";
@@ -81,6 +89,14 @@ const App = () => {
             <StyleSection title="Animals" style={animals} options={ANIMALS_OPTIONS} />
 
             <StyleSection title="Gradient" style={gradient} options={GRADIENT_OPTIONS} />
+
+            <StyleSection title="Robots" style={robots} options={ROBOTS_OPTIONS} />
+
+            <StyleSection title="Portraits" style={portraits} options={PORTRAITS_OPTIONS} />
+
+            <StyleSection title="Creatures" style={creatures} options={CREATURES_OPTIONS} />
+
+            <StyleSection title="Marks" style={marks} options={MARKS_OPTIONS} />
 
             <h2>Avatar group</h2>
             <AvatarGroup style={faces} items={GROUP_SEEDS} options={GROUP_OPTIONS} alt="Project team" />

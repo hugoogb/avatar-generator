@@ -121,7 +121,7 @@ pnpm run smoke           # pack, install and load every package from real Node
 pnpm run verify:publish  # build + both of the above
 ```
 
-`pnpm run smoke` packs all 18 packages, installs the tarballs into a throwaway
+`pnpm run smoke` packs all 22 packages, installs the tarballs into a throwaway
 project and loads each one from Node as ESM and as CommonJS, generates an avatar
 from every style, and compiles the published Svelte component with no
 preprocessor configured.
@@ -206,7 +206,7 @@ npm login                   # as a maintainer of the scope
 
 cd src
 pnpm run trust:configure -- --dry-run   # print the plan
-pnpm run trust:configure                # apply it to all 18 packages
+pnpm run trust:configure                # apply it to all 22 packages
 pnpm run trust:list                     # show what is configured
 ```
 
@@ -220,12 +220,16 @@ already on the registry, and a hand publish has no provenance. Do it from a copy
 outside the workspace, because npm cannot read `workspace:` ranges:
 
 ```bash
-cd src/packages/<new-package>
-pnpm run build
-D=$(mktemp -d); cp -R dist package.json README.md LICENSE CHANGELOG.md "$D"; cd "$D"
+cd src && pnpm run build
+cd lib/styles/<new-style>   # or packages/<new-package>
+D=$(mktemp -d); cp -R dist package.json README.md LICENSE "$D"; cd "$D"
 npm pkg set version=0.0.1
+# Only if it depends on another workspace package, swap the workspace range for a real one:
+npm pkg set "dependencies.@avatar-generator/core=^3.1.0"   # the core version on npm
 npm publish --access public --tag bootstrap
 ```
+
+A new package has no `CHANGELOG.md` until changesets versions it, so the copy leaves it out.
 
 **A trusted publisher can only be attached to a package that already exists on
 npm** — the registry's token exchange endpoint is per package. A brand-new

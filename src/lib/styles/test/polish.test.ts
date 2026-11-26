@@ -14,6 +14,10 @@ import { emoji } from "@avatar-generator/style-emoji";
 import { faces } from "@avatar-generator/style-faces";
 import { geometric } from "@avatar-generator/style-geometric";
 import { gradient } from "@avatar-generator/style-gradient";
+import { robots } from "@avatar-generator/style-robots";
+import { portraits } from "@avatar-generator/style-portraits";
+import { creatures } from "@avatar-generator/style-creatures";
+import { marks } from "@avatar-generator/style-marks";
 import { illustrated } from "@avatar-generator/style-illustrated";
 import { initials } from "@avatar-generator/style-initials";
 import { pixels } from "@avatar-generator/style-pixels";
@@ -164,6 +168,10 @@ describe("scaling", () => {
         ["rings", rings],
         ["abstract", abstract],
         ["gradient", gradient],
+        ["robots", robots],
+        ["portraits", portraits],
+        ["creatures", creatures],
+        ["marks", marks],
     ])("%s draws the same artwork at every size", (_name, style) => {
         const at = (size: number) =>
             createAvatar(style as typeof faces, { seed: "x", size }).svg.replace(/ width="\d+" height="\d+"/, "");
@@ -222,6 +230,10 @@ describe("artwork defects", () => {
         ["abstract", abstract],
         ["rings", rings],
         ["gradient", gradient],
+        ["robots", robots],
+        ["portraits", portraits],
+        ["creatures", creatures],
+        ["marks", marks],
         ["geometric", geometric],
         ["animals", animals],
         ["emoji", emoji],

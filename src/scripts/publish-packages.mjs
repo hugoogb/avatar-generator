@@ -41,6 +41,10 @@ const PACKAGE_DIRS = [
         "emoji",
         "animals",
         "gradient",
+        "robots",
+        "portraits",
+        "creatures",
+        "marks",
     ].map((s) => `lib/styles/${s}`),
     ...["react", "angular", "vue", "svelte", "web-component", "create-avatar-style"].map((p) => `packages/${p}`),
 ];
@@ -54,7 +58,7 @@ const failures = [];
 
 try {
     // ---- 1. Pack everything first -----------------------------------------
-    // Packing all 18 before publishing any means a packing mistake cannot
+    // Packing all 22 before publishing any means a packing mistake cannot
     // leave half the scope released — npm publishes are permanent.
     const packDir = join(workdir, "tarballs");
     const packed = [];

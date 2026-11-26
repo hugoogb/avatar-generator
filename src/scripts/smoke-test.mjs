@@ -32,6 +32,10 @@ const PACKAGE_DIRS = [
         "emoji",
         "animals",
         "gradient",
+        "robots",
+        "portraits",
+        "creatures",
+        "marks",
     ].map((s) => `lib/styles/${s}`),
     ...["react", "angular", "vue", "svelte", "web-component", "create-avatar-style"].map((p) => `packages/${p}`),
 ];
@@ -313,12 +317,12 @@ for (const [file, call] of [["Avatar.svelte", "createAvatar"], ["AvatarGroup.sve
         const api = window.eval(`${code}\n;AvatarGenerator`);
 
         const styleCount = Object.keys(api?.styles ?? {}).length;
-        if (styleCount !== 11) throw new Error(`AvatarGenerator.styles has ${styleCount} styles, expected 11`);
+        if (styleCount !== 15) throw new Error(`AvatarGenerator.styles has ${styleCount} styles, expected 15`);
         const img = window.document.querySelector("avatar-generator").shadowRoot?.querySelector("img");
         if (!img?.getAttribute("src")?.startsWith("data:image/svg+xml")) {
             throw new Error('<avatar-generator avatar-style="faces"> did not render');
         }
-        console.log(`  ✓ ${manifest.unpkg} renders plain HTML and exposes AvatarGenerator with 11 styles`);
+        console.log(`  ✓ ${manifest.unpkg} renders plain HTML and exposes AvatarGenerator with 15 styles`);
     } catch (err) {
         fail(`browser bundle — ${err.message}`);
     } finally {

@@ -33,7 +33,7 @@ const connected = new Set<{ refresh(): void }>();
 /**
  * Makes a style available to the `avatar-style` attribute, under its own
  * `name` unless you give another. Elements already on the page that name it
- * render straight away. The CDN bundle registers all eleven built-in styles.
+ * render straight away. The CDN bundle registers all fifteen built-in styles.
  *
  * @param style - The style to register
  * @param name - The name the attribute uses (default: `style.name`)

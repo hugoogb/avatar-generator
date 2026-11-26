@@ -1,7 +1,7 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 
 export const SITE_SUMMARY =
-    "@avatar-generator is an open-source (MIT) JavaScript and TypeScript library that generates deterministic SVG avatars from any seed string. It has eleven styles, each in its own package, no runtime dependencies, and official components for React, Vue, Svelte and Angular, plus a custom element.";
+    "@avatar-generator is an open-source (MIT) JavaScript and TypeScript library that generates deterministic SVG avatars from any seed string. It has fifteen styles, each in its own package, no runtime dependencies, and official components for React, Vue, Svelte and Angular, plus a custom element.";
 
 const SECTIONS = [
     { heading: "Get started", prefix: "get-started/" },

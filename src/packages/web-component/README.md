@@ -10,7 +10,7 @@ deterministic SVG avatars, where the same seed always renders the same avatar.
 <avatar-generator avatar-style="faces" seed="ana" size="48"></avatar-generator>
 ```
 
-The script bundles core and all eleven styles, and exposes the API as `window.AvatarGenerator`.
+The script bundles core and all fifteen styles, and exposes the API as `window.AvatarGenerator`.
 
 ## Install
 
@@ -42,8 +42,8 @@ registerStyle(initials); // <avatar-generator avatar-style="initials" seed="Ana"
 
 ## Styles
 
-Any of the eleven style packages works here:
-`@avatar-generator/style-initials`, `@avatar-generator/style-geometric`, `@avatar-generator/style-pixels`, `@avatar-generator/style-rings`, `@avatar-generator/style-faces`, `@avatar-generator/style-illustrated`, `@avatar-generator/style-anime`, `@avatar-generator/style-abstract`, `@avatar-generator/style-emoji`, `@avatar-generator/style-animals`, `@avatar-generator/style-gradient`
+Any of the fifteen style packages works here:
+`@avatar-generator/style-initials`, `@avatar-generator/style-geometric`, `@avatar-generator/style-pixels`, `@avatar-generator/style-rings`, `@avatar-generator/style-faces`, `@avatar-generator/style-illustrated`, `@avatar-generator/style-anime`, `@avatar-generator/style-abstract`, `@avatar-generator/style-emoji`, `@avatar-generator/style-animals`, `@avatar-generator/style-gradient`, `@avatar-generator/style-robots`, `@avatar-generator/style-portraits`, `@avatar-generator/style-creatures`, `@avatar-generator/style-marks`
 
 See the [Web Component guide](https://avatar-generator.hugoogb.dev/guides/web-component/) for the full prop list.
 

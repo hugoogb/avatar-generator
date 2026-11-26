@@ -2,7 +2,7 @@
  * Entry for the no-build browser bundle, `dist/avatar-generator.global.js`.
  *
  * One `<script>` tag defines `<avatar-generator>` and `<avatar-generator-group>`,
- * registers all eleven built-in styles for the `avatar-style` attribute, and
+ * registers all fifteen built-in styles for the `avatar-style` attribute, and
  * exposes core, the styles and the element helpers as `window.AvatarGenerator`.
  * The npm ESM and CommonJS builds do not include it.
  */
@@ -13,6 +13,10 @@ import { emoji } from "@avatar-generator/style-emoji";
 import { faces } from "@avatar-generator/style-faces";
 import { geometric } from "@avatar-generator/style-geometric";
 import { gradient } from "@avatar-generator/style-gradient";
+import { robots } from "@avatar-generator/style-robots";
+import { portraits } from "@avatar-generator/style-portraits";
+import { creatures } from "@avatar-generator/style-creatures";
+import { marks } from "@avatar-generator/style-marks";
 import { illustrated } from "@avatar-generator/style-illustrated";
 import { initials } from "@avatar-generator/style-initials";
 import { pixels } from "@avatar-generator/style-pixels";
@@ -27,6 +31,10 @@ export const styles = {
     faces,
     geometric,
     gradient,
+    robots,
+    portraits,
+    creatures,
+    marks,
     illustrated,
     initials,
     pixels,

@@ -1,13 +1,13 @@
 ---
 title: Avatar Generator Playground
-description: "Try every @avatar-generator style in your browser: type a seed and watch eleven SVG avatars update, or run the six local playgrounds."
+description: "Try every @avatar-generator style in your browser: type a seed and watch fifteen SVG avatars update, or run the six local playgrounds."
 ---
 
 import { Steps, Tabs, TabItem, Code, Aside } from "@astrojs/starlight/components";
 import Playground from "../../../components/Playground.astro";
 
-Try all eleven styles below. Change the seed and watch every style change
-together — same input, eleven different deterministic outputs.
+Try all fifteen styles below. Change the seed and watch every style change
+together — same input, fifteen different deterministic outputs.
 
 <Playground />
 
@@ -68,19 +68,23 @@ To check that all six still build — which CI does on every pull request:
 
 ## Styles you can try
 
-| Style       | Package                               | Description                                      |
-| ----------- | ------------------------------------- | ------------------------------------------------ |
-| Initials    | `@avatar-generator/style-initials`    | Letter initials on colored backgrounds           |
-| Geometric   | `@avatar-generator/style-geometric`   | GitHub-style symmetrical identicon grids         |
-| Pixels      | `@avatar-generator/style-pixels`      | 8-bit retro pixel faces                          |
-| Rings       | `@avatar-generator/style-rings`       | Concentric rings, segmented and dashed variants  |
-| Faces       | `@avatar-generator/style-faces`       | Minimal flat geometric faces                     |
-| Illustrated | `@avatar-generator/style-illustrated` | Detailed cartoon faces with accessories          |
-| Anime       | `@avatar-generator/style-anime`       | Anime/manga-inspired faces with expressive eyes  |
-| Abstract    | `@avatar-generator/style-abstract`    | Mondrian/Kandinsky/Bauhaus-inspired compositions |
-| Emoji       | `@avatar-generator/style-emoji`       | Yellow emoji-style expressive faces              |
-| Animals     | `@avatar-generator/style-animals`     | Cute animal avatars (cat, dog, fox, panda, …)    |
-| Gradient    | `@avatar-generator/style-gradient`    | Smooth gradients with pattern overlays           |
+| Style       | Package                               | Description                                        |
+| ----------- | ------------------------------------- | -------------------------------------------------- |
+| Initials    | `@avatar-generator/style-initials`    | Letter initials on colored backgrounds             |
+| Geometric   | `@avatar-generator/style-geometric`   | GitHub-style symmetrical identicon grids           |
+| Pixels      | `@avatar-generator/style-pixels`      | 8-bit retro pixel faces                            |
+| Rings       | `@avatar-generator/style-rings`       | Concentric rings, segmented and dashed variants    |
+| Faces       | `@avatar-generator/style-faces`       | Minimal flat geometric faces                       |
+| Illustrated | `@avatar-generator/style-illustrated` | Detailed cartoon faces with accessories            |
+| Anime       | `@avatar-generator/style-anime`       | Anime/manga-inspired faces with expressive eyes    |
+| Abstract    | `@avatar-generator/style-abstract`    | Mondrian/Kandinsky/Bauhaus-inspired compositions   |
+| Emoji       | `@avatar-generator/style-emoji`       | Yellow emoji-style expressive faces                |
+| Animals     | `@avatar-generator/style-animals`     | Cute animal avatars (cat, dog, fox, panda, …)      |
+| Gradient    | `@avatar-generator/style-gradient`    | Smooth gradients with pattern overlays             |
+| Robots      | `@avatar-generator/style-robots`      | Robots for bots, AI agents and service accounts    |
+| Portraits   | `@avatar-generator/style-portraits`   | Single-colour ink portraits for professional tools |
+| Creatures   | `@avatar-generator/style-creatures`   | Friendly made-up monsters                          |
+| Marks       | `@avatar-generator/style-marks`       | Logo-like badges for teams and organisations       |
 
 Every style produces a deterministic avatar from the seed you give it: the same
 seed always returns the same SVG.
