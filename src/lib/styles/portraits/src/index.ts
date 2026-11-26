@@ -72,6 +72,9 @@ const CX = 32;
 const EYE_X = 26.6;
 const EYE_Y = 29;
 const LINE = 2.4;
+/** Where each lens sits: nearer the middle and a little higher than the eyes. */
+const LENS_X = 27.2;
+const LENS_Y = 28.4;
 
 /** An egg-shaped face, a little narrower at the jaw. */
 const FACE =
@@ -217,7 +220,7 @@ function hairFront(traits: PortraitsTraits): string {
         }
         case "bob":
             return fill(
-                "M 18.8 40 L 18.6 26 C 18.6 15.5 24 11 32 11 C 40 11 45.4 15.5 45.4 26 L 45.2 40 L 42.4 40 C 42.6 33 42.6 27 42 20 Q 32 21 22 20 C 21.4 27 21.4 33 21.6 40 Z",
+                "M 18.8 40 L 18.6 26 C 18.6 15.5 24 11 32 11 C 40 11 45.4 15.5 45.4 26 L 45.2 40 L 43 40 C 43.4 33 43.4 27 42.6 20 Q 32 21 21.4 20 C 20.6 27 20.6 33 21 40 Z",
                 ink,
             );
         case "bun":
@@ -277,6 +280,8 @@ function drawHead(traits: PortraitsTraits): string {
 
 function drawEyes(traits: PortraitsTraits): string {
     const { ink } = traits;
+    // Behind lenses, plain dots keep the glass clear: anything more reads as a mask.
+    if (traits.glasses) return pair(`<circle cx="${LENS_X}" cy="${LENS_Y}" r="1.1" fill="${ink}"/>`);
     const x = EYE_X;
     const y = EYE_Y;
     switch (traits.eyeStyle) {
@@ -315,31 +320,33 @@ function drawEyebrows(traits: PortraitsTraits): string {
 function drawGlasses(traits: PortraitsTraits): string {
     if (!traits.glasses) return "";
     const { ink } = traits;
+    // Small lenses with background all round them, so frames, hair and the
+    // face edge stay apart at any size.
     const lens = traits.roundGlasses
-        ? `<circle cx="${EYE_X}" cy="${EYE_Y}" r="4.1"`
-        : `<rect x="${EYE_X - 4.6}" y="${EYE_Y - 3.4}" width="9.2" height="6.8" rx="2.2"`;
+        ? `<circle cx="${LENS_X}" cy="${LENS_Y}" r="2.8"`
+        : `<rect x="${LENS_X - 2.8}" y="${LENS_Y - 2.6}" width="5.6" height="5.2" rx="1.8"`;
     return (
-        pair(
-            `${lens} fill="none" stroke="${ink}" stroke-width="2.2"/>` +
-                stroke(`M 22 ${EYE_Y - 0.6} L 20.4 28`, ink, 2.2),
-        ) + stroke(`M 30.6 ${EYE_Y - 0.4} Q 32 ${EYE_Y - 1.6} 33.4 ${EYE_Y - 0.4}`, ink, 2.2)
+        pair(`${lens} fill="none" stroke="${ink}" stroke-width="2.2"/>`) +
+        stroke(`M 30.6 ${LENS_Y - 1.2} Q 32 ${LENS_Y - 2.2} 33.4 ${LENS_Y - 1.2}`, ink, 2.2)
     );
 }
 
 function drawNose(traits: PortraitsTraits): string {
-    const { ink } = traits;
-    let nose: string;
+    // Under glasses, a shorter nose starts below the lenses rather than between them.
+    const { ink, glasses } = traits;
+    let d: string;
     switch (traits.nose) {
         case "hook":
-            nose = stroke("M 32.6 30 C 33.6 32 34.6 33.6 32.2 34.4", ink, 2.2);
+            d = glasses ? "M 32.6 32.8 C 33.4 33.6 34.2 34.2 32.2 34.8" : "M 32.6 30 C 33.6 32 34.6 33.6 32.2 34.4";
             break;
         case "button":
-            nose = stroke("M 30.4 33.6 Q 32 35.2 33.6 33.6", ink, 2.2);
+            d = glasses ? "M 30.4 34 Q 32 35.6 33.6 34" : "M 30.4 33.6 Q 32 35.2 33.6 33.6";
             break;
         case "angle":
-            nose = stroke("M 32 30 L 31 34 L 33 34.2", ink, 2.2);
+            d = glasses ? "M 32 32.8 L 31.3 34.6 L 33 34.8" : "M 32 30 L 31 34 L 33 34.2";
             break;
     }
+    const nose = stroke(d, ink, 2.2);
     return traits.flip ? mirrored(nose) : nose;
 }
 

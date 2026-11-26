@@ -26,7 +26,7 @@ describe("options", () => {
         ["eyeStyle", EYE_STYLES],
         ["mouthStyle", MOUTH_STYLES],
     ] as const)("draws every %s differently", (option, values) => {
-        const drawn = values.map((value) => render({ seed: "x", [option]: value }));
+        const drawn = values.map((value) => render({ seed: "x", glasses: false, [option]: value }));
         expect(new Set(drawn).size).toBe(values.length);
     });
 
@@ -113,6 +113,46 @@ describe("brow line", () => {
         for (const seed of SEEDS.slice(0, 20)) {
             expect(render({ seed, glasses: true, classes: true })).not.toContain("ag-layer-eyebrows");
             expect(render({ seed, glasses: false, classes: true })).toContain("ag-layer-eyebrows");
+        }
+    });
+
+    /** The left lens's outer edge, frame included. The right lens is its mirror image. */
+    const lensBox = (glasses: string) => {
+        const frame = 1.1;
+        const circle = /<circle cx="([\d.]+)" cy="([\d.]+)" r="([\d.]+)"/.exec(glasses);
+        if (circle) {
+            const [cx, cy, r] = circle.slice(1).map(Number);
+            return { left: cx - r - frame, right: cx + r + frame, top: cy - r - frame, bottom: cy + r + frame };
+        }
+        const rect = /<rect x="([\d.]+)" y="([\d.]+)" width="([\d.]+)" height="([\d.]+)"/.exec(glasses);
+        const [x, y, width, height] = (rect as RegExpExecArray).slice(1).map(Number);
+        return { left: x - frame, right: x + width + frame, top: y - frame, bottom: y + height + frame };
+    };
+
+    it.each(HAIR_STYLES)("leaves background round %s glasses", (hairStyle) => {
+        for (const seed of SEEDS.slice(0, 20)) {
+            const svg = render({ seed, hairStyle, glasses: true, classes: true });
+            const lens = lensBox(layer(svg, "glasses"));
+            // At least 2.5 below the lowest a fringe may reach, 2 inside the face's
+            // edge (its outline's inner side is at x 21.2), and apart at the bridge.
+            expect(lens.top, seed).toBeGreaterThanOrEqual(21 + 2.5);
+            expect(lens.left, seed).toBeGreaterThanOrEqual(21.2 + 2);
+            expect(lens.right, seed).toBeLessThan(31.4);
+
+            const beside = points(layer(svg, "hair-front")).filter(
+                ([x, y]) =>
+                    y >= lens.top &&
+                    y <= lens.bottom &&
+                    ((x > lens.left - 2 && x < lens.right + 2) || (x > 64 - lens.right - 2 && x < 64 - lens.left + 2)),
+            );
+            expect(beside, `${hairStyle} ${seed}`).toEqual([]);
+        }
+    });
+
+    it("draws plain dot eyes behind glasses", () => {
+        for (const eyeStyle of EYE_STYLES) {
+            const eyes = layer(render({ seed: "x", eyeStyle, glasses: true, classes: true }), "eyes");
+            expect(eyes, eyeStyle).toMatch(/^<circle [^>]*\/><g transform="[^"]+"><circle [^>]*\/><\/g>$/);
         }
     });
 });
