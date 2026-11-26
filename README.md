@@ -90,7 +90,7 @@ it together with at least one style.
 | `@avatar-generator/angular`       | Angular 17 through 21, standalone or NgModule | [Angular](https://avatar-generator.hugoogb.dev/guides/angular/)             |
 | `@avatar-generator/web-component` | Any framework, or none                        | [Web Component](https://avatar-generator.hugoogb.dev/guides/web-component/) |
 
-All eighteen packages are released together at one version — mixing majors is
+All twenty-two packages are released together at one version — mixing majors is
 not supported.
 
 ## Documentation

@@ -58,7 +58,7 @@ const failures = [];
 
 try {
     // ---- 1. Pack everything first -----------------------------------------
-    // Packing all 18 before publishing any means a packing mistake cannot
+    // Packing all 22 before publishing any means a packing mistake cannot
     // leave half the scope released — npm publishes are permanent.
     const packDir = join(workdir, "tarballs");
     const packed = [];
