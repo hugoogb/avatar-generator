@@ -23,6 +23,16 @@ const avatar = createAvatar(marks, {
 img.src = avatar.toDataUri();
 ```
 
+## Options
+
+| Option   | Values                                                                                                          | Default       |
+| -------- | --------------------------------------------------------------------------------------------------------------- | ------------- |
+| `symbol` | `"bars"`, `"arc"`, `"chevron"`, `"circles"`, `"quarters"`, `"diamond"`, `"spark"`, `"peak"`, `"cube"`, `"wave"` | from the seed |
+| `letter` | `true` badges the seed's first letter instead of a symbol (an email uses its local part; emoji are skipped)     | `false`       |
+
+The mark is white or near-black, whichever reads better on the background, or the theme's
+foreground. With `transparent: true` it takes the palette colour instead, so it shows on any page.
+
 Options left unset are chosen deterministically from the seed. See the
 [API reference](https://avatar-generator.hugoogb.dev/reference/avatar/) for every option this style accepts,
 or the [configurator](https://avatar-generator.hugoogb.dev/reference/configurator/) to try them interactively.
