@@ -1,0 +1,9 @@
+# Neither package needs its install script here: esbuild ships its binary as an
+# optional dependency, and the site builds without a compiled sharp. pnpm 11
+# fails an install with unapproved build scripts, so record the decision.
+# Vercel installs with pnpm 9, which rejects this file without a packages list.
+packages:
+    - "."
+allowBuilds:
+    esbuild: false
+    sharp: false

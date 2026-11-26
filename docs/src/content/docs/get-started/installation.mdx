@@ -173,6 +173,19 @@ framework or from a plain HTML page.
     </TabItem>
 </Tabs>
 
+### No build step
+
+For a plain HTML page, load the browser bundle from a CDN instead of installing
+anything. It includes core, all eleven styles and the custom elements:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@avatar-generator/web-component@3"></script>
+<avatar-generator avatar-style="faces" seed="ana"></avatar-generator>
+```
+
+See [From a CDN](/guides/web-component/#from-a-cdn-with-no-build) for the
+attributes and for pinning a version.
+
 ## Available styles
 
 Every style is its own tree-shakeable package. Install only the ones you import.
