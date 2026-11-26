@@ -241,10 +241,10 @@ const SYMBOL_VARIANTS: Record<MarksSymbol, Variant[]> = {
                 `<path d="${star(C - 3, C + 3, 14, 2.5)}" ${paint(ink)}/><path d="${star(C + 10, C - 10, 6.5, 1.2)}" ${paint(ink, true)}/>`,
             turns: [0, 270],
         },
-        // Eight points, the diagonal four lighter.
+        // A spark inside a lighter ring, clear of it all round.
         {
             draw: (ink) =>
-                `<path d="${star(C, C, 13, 2.5)}" transform="rotate(45 ${C} ${C})" ${paint(ink, true)}/><path d="${star(C, C, 17, 3)}" ${paint(ink)}/>`,
+                `<circle cx="${C}" cy="${C}" r="15.5" ${line(ink, 4, true)}/><path d="${star(C, C, 11, 1.8)}" ${paint(ink)}/>`,
             turns: UPRIGHT,
         },
     ],
