@@ -220,12 +220,16 @@ already on the registry, and a hand publish has no provenance. Do it from a copy
 outside the workspace, because npm cannot read `workspace:` ranges:
 
 ```bash
-cd src/packages/<new-package>
-pnpm run build
-D=$(mktemp -d); cp -R dist package.json README.md LICENSE CHANGELOG.md "$D"; cd "$D"
+cd src && pnpm run build
+cd lib/styles/<new-style>   # or packages/<new-package>
+D=$(mktemp -d); cp -R dist package.json README.md LICENSE "$D"; cd "$D"
 npm pkg set version=0.0.1
+# Only if it depends on another workspace package, swap the workspace range for a real one:
+npm pkg set "dependencies.@avatar-generator/core=^$(node -p "require('$OLDPWD/../../core/package.json').version")"
 npm publish --access public --tag bootstrap
 ```
+
+A new package has no `CHANGELOG.md` until changesets versions it, so the copy leaves it out.
 
 **A trusted publisher can only be attached to a package that already exists on
 npm** — the registry's token exchange endpoint is per package. A brand-new
