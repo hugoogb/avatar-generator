@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/web-component",
-    "version": "3.1.0",
+    "version": "3.2.0",
     "description": "Framework-agnostic <avatar-generator> custom element for deterministic SVG avatars",
     "keywords": [
         "avatar",
@@ -26,6 +26,8 @@
     "main": "./dist/index.cjs",
     "module": "./dist/index.js",
     "types": "./dist/index.d.ts",
+    "unpkg": "./dist/avatar-generator.global.js",
+    "jsdelivr": "./dist/avatar-generator.global.js",
     "exports": {
         ".": {
             "import": {
@@ -50,16 +52,32 @@
         "node": ">=18"
     },
     "scripts": {
-        "build": "tsup src/index.ts --format esm,cjs --dts --sourcemap --clean --target es2020",
+        "build": "tsup src/index.ts --format esm,cjs --dts --sourcemap --clean --target es2020 && pnpm run build:global",
         "typecheck": "tsc -p tsconfig.json",
         "publint": "publint --strict",
-        "attw": "attw --pack ."
+        "attw": "attw --pack .",
+        "build:global": "tsup --entry.avatar-generator src/global.ts --format iife --global-name AvatarGenerator --minify --sourcemap --target es2020"
     },
     "peerDependencies": {
         "@avatar-generator/core": "workspace:^"
     },
     "devDependencies": {
         "@avatar-generator/core": "workspace:*",
+        "@avatar-generator/style-abstract": "workspace:*",
+        "@avatar-generator/style-animals": "workspace:*",
+        "@avatar-generator/style-anime": "workspace:*",
+        "@avatar-generator/style-emoji": "workspace:*",
+        "@avatar-generator/style-faces": "workspace:*",
+        "@avatar-generator/style-geometric": "workspace:*",
+        "@avatar-generator/style-gradient": "workspace:*",
+        "@avatar-generator/style-robots": "workspace:*",
+        "@avatar-generator/style-portraits": "workspace:*",
+        "@avatar-generator/style-creatures": "workspace:*",
+        "@avatar-generator/style-marks": "workspace:*",
+        "@avatar-generator/style-illustrated": "workspace:*",
+        "@avatar-generator/style-initials": "workspace:*",
+        "@avatar-generator/style-pixels": "workspace:*",
+        "@avatar-generator/style-rings": "workspace:*",
         "tsup": "^8.5.0"
     },
     "publishConfig": {

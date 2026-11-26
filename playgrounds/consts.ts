@@ -9,6 +9,10 @@ import type { GeometricOptions } from "@avatar-style-geometric/src";
 import type { GradientOptions } from "@avatar-style-gradient/src";
 import type { IllustratedOptions } from "@avatar-style-illustrated/src";
 import type { InitialsOptions } from "@avatar-style-initials/src";
+import type { CreaturesOptions } from "@avatar-style-creatures/src";
+import type { MarksOptions } from "@avatar-style-marks/src";
+import type { PortraitsOptions } from "@avatar-style-portraits/src";
+import type { RobotsOptions } from "@avatar-style-robots/src";
 import type { PixelsOptions } from "@avatar-style-pixels/src";
 import type { RingsOptions } from "@avatar-style-rings/src";
 
@@ -147,6 +151,42 @@ export const GRADIENT_OPTIONS: GradientOptions[] = [
     { seed: "gradient-5", size: 100, square: true, pattern: "grid" },
     { seed: "gradient-6", size: 80, colorStops: 3 },
     { seed: "gradient-7", size: 80, colors: ["#FF6B9D", "#FFD600"], pattern: "none" },
+];
+
+// Robots style options
+export const ROBOTS_OPTIONS: RobotsOptions[] = [
+    { seed: "robots-1", size: 80 },
+    { seed: "robots-2", size: 80, antenna: "dish", eyeStyle: "visor" },
+    { seed: "robots-3", size: 80, headShape: "dome", eyeStyle: "cyclops", mouthStyle: "grille" },
+    { seed: "robots-4", size: 80, headShape: "capsule", antenna: "double", eyeStyle: "screen" },
+    { seed: "robots-5", size: 100, square: true, headShape: "box", antenna: "bolt", mouthStyle: "smile" },
+];
+
+// Portraits style options
+export const PORTRAITS_OPTIONS: PortraitsOptions[] = [
+    { seed: "portraits-1", size: 80 },
+    { seed: "portraits-2", size: 80, hairStyle: "curly", eyeStyle: "smiling", glasses: true },
+    { seed: "portraits-3", size: 80, hairStyle: "long", eyeStyle: "lashes", mouthStyle: "smirk" },
+    { seed: "portraits-4", size: 80, hairStyle: "bald", facialHair: true, mouthStyle: "grin" },
+    { seed: "portraits-5", size: 100, square: true, hairStyle: "bun", eyeStyle: "lidded" },
+];
+
+// Creatures style options
+export const CREATURES_OPTIONS: CreaturesOptions[] = [
+    { seed: "creatures-1", size: 80 },
+    { seed: "creatures-2", size: 80, bodyShape: "pear", horns: "curly", eyes: 3 },
+    { seed: "creatures-3", size: 80, bodyShape: "tall", horns: "antennae", mouthStyle: "tongue" },
+    { seed: "creatures-4", size: 80, bodyShape: "wobbly", eyes: 1, markings: "spots" },
+    { seed: "creatures-5", size: 100, square: true, bodyShape: "round", horns: "nubs", markings: "belly" },
+];
+
+// Marks style options
+export const MARKS_OPTIONS: MarksOptions[] = [
+    { seed: "marks-1", size: 80 },
+    { seed: "marks-2", size: 80, symbol: "spark" },
+    { seed: "marks-3", size: 80, symbol: "cube" },
+    { seed: "Acme Inc", size: 80, letter: true },
+    { seed: "marks-5", size: 100, square: true, symbol: "wave" },
 ];
 
 // AvatarGroup, with idle animation, shown by every framework playground.

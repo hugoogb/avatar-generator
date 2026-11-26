@@ -23,27 +23,10 @@ import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { PACKAGE_DIRS } from "./packages.mjs";
 
 const SRC = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DRY_RUN = process.argv.includes("--dry-run");
-
-const PACKAGE_DIRS = [
-    "lib/core",
-    ...[
-        "initials",
-        "geometric",
-        "pixels",
-        "rings",
-        "faces",
-        "illustrated",
-        "anime",
-        "abstract",
-        "emoji",
-        "animals",
-        "gradient",
-    ].map((s) => `lib/styles/${s}`),
-    ...["react", "angular", "vue", "svelte", "web-component", "create-avatar-style"].map((p) => `packages/${p}`),
-];
 
 const run = (cmd, args, cwd) => execFileSync(cmd, args, { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
 
@@ -54,7 +37,7 @@ const failures = [];
 
 try {
     // ---- 1. Pack everything first -----------------------------------------
-    // Packing all 18 before publishing any means a packing mistake cannot
+    // Packing all 22 before publishing any means a packing mistake cannot
     // leave half the scope released — npm publishes are permanent.
     const packDir = join(workdir, "tarballs");
     const packed = [];

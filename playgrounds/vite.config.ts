@@ -58,6 +58,10 @@ export default defineConfig(({ mode }) => {
                 "@avatar-style-emoji": resolve(__dirname, "../src/lib/styles/emoji"),
                 "@avatar-style-animals": resolve(__dirname, "../src/lib/styles/animals"),
                 "@avatar-style-gradient": resolve(__dirname, "../src/lib/styles/gradient"),
+                "@avatar-style-robots": resolve(__dirname, "../src/lib/styles/robots"),
+                "@avatar-style-portraits": resolve(__dirname, "../src/lib/styles/portraits"),
+                "@avatar-style-creatures": resolve(__dirname, "../src/lib/styles/creatures"),
+                "@avatar-style-marks": resolve(__dirname, "../src/lib/styles/marks"),
                 // Package name aliases for internal imports between packages
                 "@avatar-generator/core": resolve(__dirname, "../src/lib/core/src"),
                 "@avatar-generator/react": resolve(__dirname, "../src/packages/react/src"),
@@ -76,6 +80,10 @@ export default defineConfig(({ mode }) => {
                 "@avatar-generator/style-emoji": resolve(__dirname, "../src/lib/styles/emoji/src"),
                 "@avatar-generator/style-animals": resolve(__dirname, "../src/lib/styles/animals/src"),
                 "@avatar-generator/style-gradient": resolve(__dirname, "../src/lib/styles/gradient/src"),
+                "@avatar-generator/style-robots": resolve(__dirname, "../src/lib/styles/robots/src"),
+                "@avatar-generator/style-portraits": resolve(__dirname, "../src/lib/styles/portraits/src"),
+                "@avatar-generator/style-creatures": resolve(__dirname, "../src/lib/styles/creatures/src"),
+                "@avatar-generator/style-marks": resolve(__dirname, "../src/lib/styles/marks/src"),
             },
         },
     };

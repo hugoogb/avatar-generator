@@ -1,11 +1,22 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
+import { readdirSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+
+// The gallery, playground and configurator render with the real packages,
+// straight from the monorepo source, so the site always shows what users get.
+const lib = (path) => fileURLToPath(new URL(`../src/lib/${path}/src/index.ts`, import.meta.url));
+const styleAliases = Object.fromEntries(
+    readdirSync(new URL("../src/lib/styles/", import.meta.url), { withFileTypes: true })
+        .filter((entry) => entry.isDirectory() && entry.name !== "test")
+        .map((entry) => [`@avatar-generator/style-${entry.name}`, lib(`styles/${entry.name}`)]),
+);
 
 const SITE = "https://avatar-generator.hugoogb.dev";
 const OG_IMAGE = `${SITE}/og.png`;
 const DESCRIPTION =
-    "Open-source JavaScript library that generates deterministic SVG avatars in eleven styles, for React, Vue, Svelte, Angular, web components and plain JS.";
+    "Open-source JavaScript library that generates deterministic SVG avatars in fifteen styles, for React, Vue, Svelte, Angular, web components and plain JS.";
 
 // The @id values point at the entities hugoogb.dev already publishes, so search
 // engines can join this site and the portfolio into one author and project.
@@ -52,6 +63,11 @@ export default defineConfig({
     // Every page lives at a trailing-slash URL. docs/vercel.json makes Vercel 308 the
     // slash-less form, so Google never sees two URLs for one page.
     trailingSlash: "always",
+    vite: {
+        resolve: {
+            alias: { "@avatar-generator/core": lib("core"), ...styleAliases },
+        },
+    },
     integrations: [
         starlight({
             title: "@avatar-generator",
@@ -67,7 +83,7 @@ export default defineConfig({
                     tag: "meta",
                     attrs: {
                         property: "og:image:alt",
-                        content: "@avatar-generator: deterministic SVG avatars for JavaScript, in eleven styles",
+                        content: "@avatar-generator: deterministic SVG avatars for JavaScript, in fifteen styles",
                     },
                 },
                 { tag: "meta", attrs: { name: "twitter:image", content: OG_IMAGE } },

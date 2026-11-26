@@ -19,6 +19,10 @@ import { abstract } from "@avatar-style-abstract/src";
 import { emoji } from "@avatar-style-emoji/src";
 import { animals } from "@avatar-style-animals/src";
 import { gradient } from "@avatar-style-gradient/src";
+import { robots } from "@avatar-style-robots/src";
+import { portraits } from "@avatar-style-portraits/src";
+import { creatures } from "@avatar-style-creatures/src";
+import { marks } from "@avatar-style-marks/src";
 import {
     GEOMETRIC_OPTIONS,
     INITIALS_OPTIONS,
@@ -31,6 +35,10 @@ import {
     EMOJI_OPTIONS,
     ANIMALS_OPTIONS,
     GRADIENT_OPTIONS,
+    ROBOTS_OPTIONS,
+    PORTRAITS_OPTIONS,
+    CREATURES_OPTIONS,
+    MARKS_OPTIONS,
 } from "../consts";
 
 const app = document.getElementById("app");
@@ -49,6 +57,10 @@ if (app) {
         { name: "Emoji", style: emoji, options: EMOJI_OPTIONS },
         { name: "Animals", style: animals, options: ANIMALS_OPTIONS },
         { name: "Gradient", style: gradient, options: GRADIENT_OPTIONS },
+        { name: "Robots", style: robots, options: ROBOTS_OPTIONS },
+        { name: "Portraits", style: portraits, options: PORTRAITS_OPTIONS },
+        { name: "Creatures", style: creatures, options: CREATURES_OPTIONS },
+        { name: "Marks", style: marks, options: MARKS_OPTIONS },
     ];
 
     styles.forEach(({ name, style, options }) => {

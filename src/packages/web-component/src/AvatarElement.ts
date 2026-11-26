@@ -24,16 +24,71 @@ import {
 const HTMLElementBase: typeof HTMLElement =
     typeof HTMLElement === "undefined" ? (class {} as unknown as typeof HTMLElement) : HTMLElement;
 
+/** Styles the `avatar-style` attribute can name, filled by {@link registerStyle}. */
+const styleRegistry = new Map<string, Style<AvatarOptions>>();
+
+/** Connected elements, so a style registered late can paint the ones naming it. */
+const connected = new Set<{ refresh(): void }>();
+
+/**
+ * Makes a style available to the `avatar-style` attribute, under its own
+ * `name` unless you give another. Elements already on the page that name it
+ * render straight away. The CDN bundle registers all fifteen built-in styles.
+ *
+ * @param style - The style to register
+ * @param name - The name the attribute uses (default: `style.name`)
+ *
+ * @example
+ * ```ts
+ * import { registerStyle } from "@avatar-generator/web-component";
+ * import { faces } from "@avatar-generator/style-faces";
+ *
+ * registerStyle(faces); // <avatar-generator avatar-style="faces" seed="ana">
+ * ```
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- any style's options extend AvatarOptions
+export function registerStyle(style: Style<any>, name: string = style.name): void {
+    styleRegistry.set(name, style);
+    for (const el of connected) el.refresh();
+}
+
+/** Parses a JSON attribute, reporting bad JSON instead of breaking every render. */
+function parseJsonAttribute<T>(el: HTMLElement, attribute: string): T | undefined {
+    const raw = el.getAttribute(attribute);
+    if (raw === null) return undefined;
+    try {
+        return JSON.parse(raw) as T;
+    } catch {
+        console.error(`<${el.localName}>: the "${attribute}" attribute is not valid JSON:`, raw);
+        return undefined;
+    }
+}
+
+/** The `styleImpl` property, else the style the `avatar-style` attribute names. */
+function resolveStyle(el: HTMLElement, property: Style<AvatarOptions> | null): Style<AvatarOptions> | null {
+    if (property) return property;
+    const name = el.getAttribute("avatar-style");
+    return name === null ? null : (styleRegistry.get(name) ?? null);
+}
+
 /**
  * Framework-agnostic custom element that renders an avatar.
  *
- * The element exposes two JavaScript properties — `styleImpl` (the avatar
- * style) and `options` (its config). We deliberately avoid a `style`
- * property name because `HTMLElement.style` already exists. Properties are
- * used rather than attributes because `Style` is a JS object, not a
- * stringifiable value.
+ * From JavaScript, set two properties: `styleImpl` (the avatar style) and
+ * `options` (its config). We deliberately avoid a `style` property name
+ * because `HTMLElement.style` already exists.
  *
- * @example
+ * From plain HTML, use attributes: `avatar-style` names a style added with
+ * {@link registerStyle}, `seed` and `size` set those options, and `options`
+ * takes JSON for the rest. When a property and an attribute set the same
+ * thing, the property wins.
+ *
+ * @example HTML, with the CDN bundle
+ * ```html
+ * <avatar-generator avatar-style="faces" seed="ana" size="48"></avatar-generator>
+ * ```
+ *
+ * @example JavaScript
  * ```ts
  * import "@avatar-generator/web-component";
  * import { initials } from "@avatar-generator/style-initials";
@@ -81,31 +136,55 @@ export class AvatarElement extends HTMLElementBase {
     }
 
     static get observedAttributes(): string[] {
-        return ["alt"];
+        return ["alt", "avatar-style", "seed", "size", "options"];
     }
 
     attributeChangedCallback(name: string, _old: string | null, value: string | null): void {
         if (name === "alt") {
             this._img.alt = value ?? "Avatar";
+        } else {
+            this._render();
         }
     }
 
     connectedCallback(): void {
         this._img.alt = this.alt;
         this._stopWatching = subscribeViewerPreferences(() => this._render());
+        connected.add(this);
         this._render();
     }
 
     disconnectedCallback(): void {
         this._stopWatching?.();
         this._stopWatching = null;
+        connected.delete(this);
+    }
+
+    /** Renders again, e.g. after a style this element names was registered. */
+    refresh(): void {
+        this._render();
+    }
+
+    /** Attribute options first, then the `options` property on top. */
+    private _resolveOptions(): AvatarOptions | null {
+        const seed = this.getAttribute("seed");
+        const size = this.getAttribute("size");
+        const merged: Partial<AvatarOptions> = {
+            ...parseJsonAttribute<Partial<AvatarOptions>>(this, "options"),
+            ...(seed !== null && { seed }),
+            ...(size !== null && { size: Number(size) }),
+            ...this._options,
+        };
+        return typeof merged.seed === "string" ? (merged as AvatarOptions) : null;
     }
 
     private _render(): void {
-        if (!this._styleImpl || !this._options) return;
-        const result = createAvatar(this._styleImpl, adaptForImage(this._options));
+        const style = resolveStyle(this, this._styleImpl);
+        const options = style && this._resolveOptions();
+        if (!style || !options) return;
+        const result = createAvatar(style, adaptForImage(options));
         this._img.src = result.toDataUri();
-        const size = this._options.size ?? 64;
+        const size = options.size ?? 64;
         this._img.width = size;
         this._img.height = size;
     }
@@ -114,10 +193,18 @@ export class AvatarElement extends HTMLElementBase {
 /**
  * Custom element for a row of overlapping avatars.
  *
- * Like {@link AvatarElement}, it takes JavaScript properties rather than
- * attributes: `styleImpl`, `items` and `options`.
+ * Like {@link AvatarElement}, it takes JavaScript properties (`styleImpl`,
+ * `items` and `options`) or, from plain HTML, attributes: `avatar-style`,
+ * `items` as a JSON array and `options` as JSON. A property wins over the
+ * matching attribute.
  *
- * @example
+ * @example HTML, with the CDN bundle
+ * ```html
+ * <avatar-generator-group avatar-style="faces" items='["ana","ben","chi"]' options='{"size":40}'>
+ * </avatar-generator-group>
+ * ```
+ *
+ * @example JavaScript
  * ```ts
  * const el = document.createElement("avatar-generator-group");
  * el.styleImpl = faces;
@@ -171,21 +258,32 @@ export class AvatarGroupElement extends HTMLElementBase {
     }
 
     static get observedAttributes(): string[] {
-        return ["alt"];
+        return ["alt", "avatar-style", "items", "options"];
     }
 
-    attributeChangedCallback(): void {
-        this._applyAlt();
+    attributeChangedCallback(name: string): void {
+        if (name === "alt") {
+            this._applyAlt();
+        } else {
+            this._render();
+        }
     }
 
     connectedCallback(): void {
         this._stopWatching = subscribeViewerPreferences(() => this._render());
+        connected.add(this);
         this._render();
     }
 
     disconnectedCallback(): void {
         this._stopWatching?.();
         this._stopWatching = null;
+        connected.delete(this);
+    }
+
+    /** Renders again, e.g. after a style this element names was registered. */
+    refresh(): void {
+        this._render();
     }
 
     private _applyAlt(): void {
@@ -193,8 +291,11 @@ export class AvatarGroupElement extends HTMLElementBase {
     }
 
     private _render(): void {
-        if (!this._styleImpl || !this._items) return;
-        const group = createAvatarGroup(this._styleImpl, ...adaptGroupForImage(this._items, this._options));
+        const style = resolveStyle(this, this._styleImpl);
+        const items = this._items ?? parseJsonAttribute<AvatarGroupItem[]>(this, "items");
+        if (!style || !items) return;
+        const options = { ...parseJsonAttribute<AvatarGroupOptions>(this, "options"), ...this._options };
+        const group = createAvatarGroup(style, ...adaptGroupForImage(items, options));
         this._label = group.label;
         this._img.src = group.toDataUri();
         this._img.width = group.width;

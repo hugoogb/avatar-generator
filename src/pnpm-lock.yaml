@@ -105,6 +105,16 @@ importers:
         specifier: ^8.5.0
         version: 8.5.1(postcss@8.5.26)(typescript@5.9.3)(yaml@2.9.0)
 
+  lib/styles/creatures:
+    dependencies:
+      '@avatar-generator/core':
+        specifier: workspace:^
+        version: link:../../core
+    devDependencies:
+      tsup:
+        specifier: ^8.5.0
+        version: 8.5.1(postcss@8.5.26)(typescript@5.9.3)(yaml@2.9.0)
+
   lib/styles/emoji:
     dependencies:
       '@avatar-generator/core':
@@ -165,6 +175,16 @@ importers:
         specifier: ^8.5.0
         version: 8.5.1(postcss@8.5.26)(typescript@5.9.3)(yaml@2.9.0)
 
+  lib/styles/marks:
+    dependencies:
+      '@avatar-generator/core':
+        specifier: workspace:^
+        version: link:../../core
+    devDependencies:
+      tsup:
+        specifier: ^8.5.0
+        version: 8.5.1(postcss@8.5.26)(typescript@5.9.3)(yaml@2.9.0)
+
   lib/styles/pixels:
     dependencies:
       '@avatar-generator/core':
@@ -175,7 +195,27 @@ importers:
         specifier: ^8.5.0
         version: 8.5.1(postcss@8.5.26)(typescript@5.9.3)(yaml@2.9.0)
 
+  lib/styles/portraits:
+    dependencies:
+      '@avatar-generator/core':
+        specifier: workspace:^
+        version: link:../../core
+    devDependencies:
+      tsup:
+        specifier: ^8.5.0
+        version: 8.5.1(postcss@8.5.26)(typescript@5.9.3)(yaml@2.9.0)
+
   lib/styles/rings:
+    dependencies:
+      '@avatar-generator/core':
+        specifier: workspace:^
+        version: link:../../core
+    devDependencies:
+      tsup:
+        specifier: ^8.5.0
+        version: 8.5.1(postcss@8.5.26)(typescript@5.9.3)(yaml@2.9.0)
+
+  lib/styles/robots:
     dependencies:
       '@avatar-generator/core':
         specifier: workspace:^
@@ -264,6 +304,51 @@ importers:
       '@avatar-generator/core':
         specifier: workspace:*
         version: link:../../lib/core
+      '@avatar-generator/style-abstract':
+        specifier: workspace:*
+        version: link:../../lib/styles/abstract
+      '@avatar-generator/style-animals':
+        specifier: workspace:*
+        version: link:../../lib/styles/animals
+      '@avatar-generator/style-anime':
+        specifier: workspace:*
+        version: link:../../lib/styles/anime
+      '@avatar-generator/style-creatures':
+        specifier: workspace:*
+        version: link:../../lib/styles/creatures
+      '@avatar-generator/style-emoji':
+        specifier: workspace:*
+        version: link:../../lib/styles/emoji
+      '@avatar-generator/style-faces':
+        specifier: workspace:*
+        version: link:../../lib/styles/faces
+      '@avatar-generator/style-geometric':
+        specifier: workspace:*
+        version: link:../../lib/styles/geometric
+      '@avatar-generator/style-gradient':
+        specifier: workspace:*
+        version: link:../../lib/styles/gradient
+      '@avatar-generator/style-illustrated':
+        specifier: workspace:*
+        version: link:../../lib/styles/illustrated
+      '@avatar-generator/style-initials':
+        specifier: workspace:*
+        version: link:../../lib/styles/initials
+      '@avatar-generator/style-marks':
+        specifier: workspace:*
+        version: link:../../lib/styles/marks
+      '@avatar-generator/style-pixels':
+        specifier: workspace:*
+        version: link:../../lib/styles/pixels
+      '@avatar-generator/style-portraits':
+        specifier: workspace:*
+        version: link:../../lib/styles/portraits
+      '@avatar-generator/style-rings':
+        specifier: workspace:*
+        version: link:../../lib/styles/rings
+      '@avatar-generator/style-robots':
+        specifier: workspace:*
+        version: link:../../lib/styles/robots
       tsup:
         specifier: ^8.5.0
         version: 8.5.1(postcss@8.5.26)(typescript@5.9.3)(yaml@2.9.0)

@@ -5,4 +5,4 @@ import { register, registerGroup } from "./AvatarElement";
 register();
 registerGroup();
 
-export { AvatarElement, AvatarGroupElement, register, registerGroup } from "./AvatarElement";
+export { AvatarElement, AvatarGroupElement, register, registerGroup, registerStyle } from "./AvatarElement";

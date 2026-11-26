@@ -9,6 +9,33 @@ import { Aside } from "@astrojs/starlight/components";
 can drop an avatar into any HTML page with no framework. It works equally well
 inside React, Vue, Svelte, Solid, or anything else that can set a DOM property.
 
+## From a CDN, with no build
+
+One `<script>` tag gives you both elements and all fifteen styles, about 32 KB
+gzipped. Choose a style with the `avatar-style` attribute:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@avatar-generator/web-component@3"></script>
+
+<avatar-generator avatar-style="faces" seed="ana" size="48" alt="Ana"></avatar-generator>
+<avatar-generator-group avatar-style="faces" items='["ana","ben","chi"]' options='{"size":40}'></avatar-generator-group>
+```
+
+`https://unpkg.com/@avatar-generator/web-component@3` serves the same file,
+`dist/avatar-generator.global.js`. The script also exposes everything in
+`@avatar-generator/core`, plus `styles`, as `window.AvatarGenerator`:
+
+```html
+<script>
+    const avatar = AvatarGenerator.createAvatar(AvatarGenerator.styles.pixels, { seed: "ana" });
+</script>
+```
+
+<Aside title="Pin a version in production">
+    `@3` follows the newest 3.x release, and a minor release can redraw a style. Pin an exact version, such as `@3.2.0`,
+    if your avatars must not change. The browser bundle exists from 3.2.0.
+</Aside>
+
 ## Installation
 
 ```bash
@@ -33,29 +60,35 @@ document.body.append(el);
 
 <Aside title="Why `styleImpl` and not `style`">
     Every `HTMLElement` already has a `style` property for inline CSS. Overriding it would break the platform, so the
-    avatar style goes on `styleImpl`. Both it and `options` must be set as JS properties, not attributes — a `Style` is
-    an object, and objects do not survive stringification into an attribute.
+    avatar style goes on `styleImpl`.
 </Aside>
 
 Setting `styleImpl` or `options` triggers an immediate re-render. Nothing
 renders until both are set.
 
-## In a plain HTML page
+## Attributes, with a bundler
+
+The attributes the CDN bundle uses work from npm too. Register the styles you
+want to name with `registerStyle`, which uses the style's own name unless you
+give another:
+
+```ts
+import { registerStyle } from "@avatar-generator/web-component";
+import { faces } from "@avatar-generator/style-faces";
+
+registerStyle(faces); // or registerStyle(faces, "team")
+```
 
 ```html
-<script type="module">
-    import "@avatar-generator/web-component";
-    import { initials } from "@avatar-generator/style-initials";
-
-    customElements.whenDefined("avatar-generator").then(() => {
-        const el = document.querySelector("avatar-generator");
-        el.styleImpl = initials;
-        el.options = { seed: "Hugo GB", size: 64 };
-    });
-</script>
-
-<avatar-generator alt="Hugo GB"></avatar-generator>
+<avatar-generator avatar-style="faces" seed="ana" size="48"></avatar-generator>
 ```
+
+Elements already on the page render as soon as their style is registered. An
+`avatar-style` naming a style nobody registered renders nothing.
+
+When a property and an attribute set the same thing, the property wins:
+`styleImpl` over `avatar-style`, and each key of `options` over the `seed`,
+`size` and `options` attributes.
 
 ## Custom tag name
 
@@ -87,11 +120,22 @@ ignored.
 
 ## Properties and attributes
 
-| Name        | Kind      | Default    | Description                                                  |
-| ----------- | --------- | ---------- | ------------------------------------------------------------ |
-| `styleImpl` | property  | (required) | The avatar `Style` object — must be set as a JS property     |
-| `options`   | property  | (required) | Avatar options for that style — must be set as a JS property |
-| `alt`       | attribute | `"Avatar"` | Alt text for the internal `<img>`                            |
+| Name           | Kind      | Default    | Description                                                          |
+| -------------- | --------- | ---------- | -------------------------------------------------------------------- |
+| `styleImpl`    | property  |            | The avatar `Style` object                                            |
+| `options`      | property  |            | Avatar options for that style                                        |
+| `avatar-style` | attribute |            | Name of a style added with `registerStyle` (the CDN bundle adds all) |
+| `seed`         | attribute |            | The seed                                                             |
+| `size`         | attribute | `64`       | Size in pixels                                                       |
+| `options`      | attribute |            | Any other options, as JSON: `options='{"square":true}'`              |
+| `alt`          | attribute | `"Avatar"` | Alt text for the internal `<img>`                                    |
+
+An avatar renders once it has a style (`styleImpl` or `avatar-style`) and a
+seed (from `options` or `seed`).
+
+`<avatar-generator-group>` takes `styleImpl`, `items` and `options` as
+properties, or `avatar-style`, `items` (a JSON array) and `options` (JSON) as
+attributes, plus `alt`.
 
 ## Styling
 
