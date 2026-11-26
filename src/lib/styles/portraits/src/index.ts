@@ -193,14 +193,14 @@ function hairFront(traits: PortraitsTraits): string {
             );
         case "side-part": {
             const hair = fill(
-                "M 18.8 28 C 17.4 15 23 9.4 31 9.4 C 41 9.4 46.6 15.5 45.2 28 L 43.8 28 C 43.6 23 42.6 21 40.6 20.2 C 35 21.4 29.4 19.2 26.6 15.6 C 24.6 18.6 21.2 21.6 20.2 28 Z",
+                "M 18.8 28 C 17.4 15 23 9.4 31 9.4 C 41 9.4 46.6 15.5 45.2 28 L 43.8 28 C 43.6 22 42.8 19.6 40.6 19 C 35 19.8 29.4 18.6 26.6 15.2 C 24.6 18.6 21.2 21.6 20.2 28 Z",
                 ink,
             );
             return traits.flip ? mirrored(hair) : hair;
         }
         case "curly":
             return fill(
-                `M 19 30 C 18.4 18 24 11 32 11 C 40 11 45.6 18 45 30 L 43.8 30 C 43.4 25 42.4 22.6 41.6 21.6 ${scallop(32, 4, 18, 58, 122, 5).replace(/^/, "L ")} C 21.6 22.6 20.6 25 20.2 30 Z`,
+                `M 19 30 C 18.4 18 24 11 32 11 C 40 11 45.6 18 45 30 L 43.8 30 C 43.4 25 42.4 22.6 41.6 21.6 ${scallop(32, 1.2, 18, 58, 122, 5).replace(/^/, "L ")} C 21.6 22.6 20.6 25 20.2 30 Z`,
                 ink,
             );
         case "afro":
@@ -210,14 +210,14 @@ function hairFront(traits: PortraitsTraits): string {
             );
         case "long": {
             const hair = fill(
-                "M 30 14.2 C 26 15 23.2 18 22.2 24 C 21.2 30 21.4 38 22 47 L 18.2 47 L 18.2 26 C 18.4 15 24 10.6 32 10.6 C 40 10.6 45.6 15 45.8 26 L 45.8 47 L 42 47 C 42.6 38 42.8 30 41.8 24 C 40.4 17.6 35.4 14.2 30 14.2 Z",
+                "M 30 14.2 C 26 15 22.4 17.6 21.4 24 C 20.6 30 21 38 21.8 47 L 18.2 47 L 18.2 26 C 18.4 15 24 10.6 32 10.6 C 40 10.6 45.6 15 45.8 26 L 45.8 47 L 42.2 47 C 43 38 43.4 30 42.6 24 C 41.6 17.6 35.4 14.2 30 14.2 Z",
                 ink,
             );
             return traits.flip ? mirrored(hair) : hair;
         }
         case "bob":
             return fill(
-                "M 18.8 40 L 18.6 26 C 18.6 15.5 24 11 32 11 C 40 11 45.4 15.5 45.4 26 L 45.2 40 L 42.4 40 C 42.6 33 42.6 27 41.8 22.2 Q 32 23.6 22.2 22.2 C 21.4 27 21.4 33 21.6 40 Z",
+                "M 18.8 40 L 18.6 26 C 18.6 15.5 24 11 32 11 C 40 11 45.4 15.5 45.4 26 L 45.2 40 L 42.4 40 C 42.6 33 42.6 27 42 20 Q 32 21 22 20 C 21.4 27 21.4 33 21.6 40 Z",
                 ink,
             );
         case "bun":
@@ -293,20 +293,22 @@ function drawEyes(traits: PortraitsTraits): string {
         case "lashes":
             return pair(
                 `<ellipse cx="${x}" cy="${y}" rx="1.9" ry="2.2" fill="${ink}"/>` +
-                    stroke(`M ${x - 2.2} ${y - 1.4} L ${x - 3.8} ${y - 2.8}`, ink, 2.2),
+                    stroke(`M ${x - 2.3} ${y - 1} L ${x - 3.9} ${y - 1.8}`, ink, 2.2),
             );
     }
 }
 
 function drawEyebrows(traits: PortraitsTraits): string {
+    // The top of a frame stands in for the brows: both would merge into one dark band.
+    if (traits.glasses) return "";
     const { ink } = traits;
     switch (traits.brow) {
         case "straight":
-            return pair(stroke("M 23.4 24.4 L 29.4 23.9", ink));
+            return pair(stroke("M 23.8 24.4 L 29.4 23.9", ink));
         case "arched":
-            return pair(stroke("M 23.2 25 Q 25.8 22.4 29.4 23.8", ink));
+            return pair(stroke("M 23.8 25 Q 26.2 22.4 29.4 23.8", ink));
         case "soft":
-            return pair(stroke("M 23.4 24.6 Q 27 23 29.6 24.2", ink));
+            return pair(stroke("M 23.8 24.6 Q 27.2 23 29.6 24.2", ink));
     }
 }
 

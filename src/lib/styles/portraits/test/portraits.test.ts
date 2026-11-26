@@ -78,6 +78,45 @@ describe("ink", () => {
     });
 });
 
+describe("brow line", () => {
+    /** Every point a path passes through or bends towards, arcs by their end points. */
+    const points = (markup: string): [number, number][] => {
+        const found: [number, number][] = [];
+        for (const [, d] of markup.matchAll(/ d="([^"]+)"/g)) {
+            for (const [, command, args] of d.matchAll(/([MLCQA])([^MLCQAZ]*)/g)) {
+                const numbers = args
+                    .trim()
+                    .split(/[\s,]+/)
+                    .filter(Boolean)
+                    .map(Number);
+                const pairs = command === "A" ? [numbers.slice(5)] : [];
+                if (command !== "A") for (let i = 0; i < numbers.length; i += 2) pairs.push(numbers.slice(i, i + 2));
+                for (const [x, y] of pairs) found.push([x, y]);
+            }
+        }
+        return found;
+    };
+    const layer = (svg: string, name: string) =>
+        new RegExp(`ag-layer-${name}">(.*?)</g>(?=<g class="ag-layer|$)`).exec(svg)?.[1] ?? "";
+
+    it.each(HAIR_STYLES)("keeps a %s fringe clear above the brows", (hairStyle) => {
+        for (const seed of SEEDS.slice(0, 20)) {
+            const hair = layer(render({ seed, hairStyle, classes: true }), "hair-front");
+            // Brows span x 22.6–41.4 and their top edge sits at y 22.1 or lower.
+            if (hairStyle !== "bald") expect(points(hair).length).toBeGreaterThan(4);
+            const low = points(hair).filter(([x, y]) => x > 22.6 && x < 41.4 && y > 21);
+            expect(low, `${hairStyle} ${seed}`).toEqual([]);
+        }
+    });
+
+    it("lets glasses frames stand in for the brows", () => {
+        for (const seed of SEEDS.slice(0, 20)) {
+            expect(render({ seed, glasses: true, classes: true })).not.toContain("ag-layer-eyebrows");
+            expect(render({ seed, glasses: false, classes: true })).toContain("ag-layer-eyebrows");
+        }
+    });
+});
+
 describe("artwork", () => {
     it("draws the same artwork at every size", () => {
         const at = (size: number, hairStyle?: PortraitsOptions["hairStyle"]) =>
