@@ -253,7 +253,7 @@ Fix synchronization issues between source, playgrounds, and documentation.
 ### CDN bundle
 
 - [x] Browser bundle `dist/avatar-generator.global.js` in `@avatar-generator/web-component`:
-      core, all eleven styles and both elements, exposed as `window.AvatarGenerator`
+      core, every built-in style and both elements, exposed as `window.AvatarGenerator`
 - [x] `unpkg` and `jsdelivr` manifest fields, so the bare package URL serves it
 - [x] `avatar-style`, `seed`, `size` and `options` attributes, so plain HTML renders with no JavaScript
 - [x] `registerStyle` for naming styles from bundler builds and custom styles
