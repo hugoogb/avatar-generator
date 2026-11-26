@@ -14,30 +14,9 @@ import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { PACKAGE_DIRS } from "./packages.mjs";
 
 const SRC = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-
-const PACKAGE_DIRS = [
-    "lib/core",
-    ...[
-        "initials",
-        "geometric",
-        "pixels",
-        "rings",
-        "faces",
-        "illustrated",
-        "anime",
-        "abstract",
-        "emoji",
-        "animals",
-        "gradient",
-        "robots",
-        "portraits",
-        "creatures",
-        "marks",
-    ].map((s) => `lib/styles/${s}`),
-    ...["react", "angular", "vue", "svelte", "web-component", "create-avatar-style"].map((p) => `packages/${p}`),
-];
 
 const expected = process.argv[2]?.trim();
 if (!expected) {

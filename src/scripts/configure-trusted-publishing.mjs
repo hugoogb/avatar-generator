@@ -24,34 +24,13 @@ import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { PACKAGE_DIRS } from "./packages.mjs";
 
 const SRC = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 const REPOSITORY = "hugoogb/avatar-generator";
 /** Workflow filename inside .github/workflows, which is what npm matches on. */
 const WORKFLOW = "release.yml";
-
-const PACKAGE_DIRS = [
-    "lib/core",
-    ...[
-        "initials",
-        "geometric",
-        "pixels",
-        "rings",
-        "faces",
-        "illustrated",
-        "anime",
-        "abstract",
-        "emoji",
-        "animals",
-        "gradient",
-        "robots",
-        "portraits",
-        "creatures",
-        "marks",
-    ].map((s) => `lib/styles/${s}`),
-    ...["react", "angular", "vue", "svelte", "web-component", "create-avatar-style"].map((p) => `packages/${p}`),
-];
 
 const DRY_RUN = process.argv.includes("--dry-run");
 const LIST = process.argv.includes("--list");
