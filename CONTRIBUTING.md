@@ -225,7 +225,7 @@ cd lib/styles/<new-style>   # or packages/<new-package>
 D=$(mktemp -d); cp -R dist package.json README.md LICENSE "$D"; cd "$D"
 npm pkg set version=0.0.1
 # Only if it depends on another workspace package, swap the workspace range for a real one:
-npm pkg set "dependencies.@avatar-generator/core=^$(node -p "require('$OLDPWD/../../core/package.json').version")"
+npm pkg set "dependencies.@avatar-generator/core=^3.1.0"   # the core version on npm
 npm publish --access public --tag bootstrap
 ```
 
