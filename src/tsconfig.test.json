@@ -22,6 +22,7 @@
             "@avatar-generator/style-creatures": ["./lib/styles/creatures/src/index.ts"],
             "@avatar-generator/style-marks": ["./lib/styles/marks/src/index.ts"],
             "@avatar-generator/react": ["./packages/react/src/index.ts"],
+            "@avatar-generator/react-native": ["./packages/react-native/src/index.ts"],
             "@avatar-generator/vue": ["./packages/vue/src/index.ts"],
             "@avatar-generator/angular": ["./packages/angular/src/index.ts"],
             "@avatar-generator/web-component": ["./packages/web-component/src/index.ts"]

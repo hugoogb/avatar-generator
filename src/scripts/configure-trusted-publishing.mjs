@@ -4,7 +4,7 @@
  * npm has no organisation-level trusted publishing: the configuration lives on
  * each individual package. There is no setting that covers `@avatar-generator/*`
  * in one go. What npm does support is doing it in bulk from the CLI, which is
- * what this script is for — 22 packages in one run instead of 22 trips through
+ * what this script is for — 23 packages in one run instead of 23 trips through
  * the website.
  *
  * Requires npm >= 11.5.1 (`npm trust` does not exist before that) and an
