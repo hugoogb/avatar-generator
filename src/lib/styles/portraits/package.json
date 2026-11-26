@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/style-portraits",
-    "version": "3.2.0",
+    "version": "3.3.0",
     "description": "Single-colour portrait avatars for professional tools, for @avatar-generator/core",
     "keywords": [
         "avatar",

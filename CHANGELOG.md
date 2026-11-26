@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com).
 
+## [3.3.0] — React Native
+
+Everything here is additive. Every style draws exactly what it drew in 3.2.0.
+
+### Added
+
+- `@avatar-generator/react-native`: `Avatar` and `AvatarGroup` for React Native
+  0.77 or later and Expo, rendered through `react-native-svg`. Props match the
+  React package, plus `containerStyle` and `testID`
+- `theme: "auto"` on React Native follows the device's colour scheme, and picks
+  the high-contrast theme when Increase Contrast (iOS) or High contrast text
+  (Android) is on
+- A [React Native guide](https://avatar-generator.hugoogb.dev/guides/react-native/)
+
+### Not supported on React Native
+
+- Animation and transitions: `react-native-svg` does not run the CSS that drives them
+
+### Fixed
+
+- `@avatar-generator/react-native@3.2.0`, published by hand to set up trusted
+  publishing, accepted `react-native` 0.73 to 0.76, where it throws on mount. 3.3.0
+  requires 0.77, the first release with the contrast APIs it reads
+
 ## [3.2.0] — No-build use and four new styles
 
 Everything here is additive. Existing styles draw exactly what they drew in 3.1.0.

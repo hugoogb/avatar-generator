@@ -1,6 +1,6 @@
 {
     "name": "@avatar-generator/core",
-    "version": "3.2.0",
+    "version": "3.3.0",
     "description": "Generate deterministic SVG avatars from any seed, in fifteen styles, with no runtime dependencies",
     "keywords": [
         "avatar",

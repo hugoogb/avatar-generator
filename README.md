@@ -14,7 +14,7 @@ React, Vue, Svelte, Angular, a custom element, or plain JavaScript.
 [Style gallery](https://avatar-generator.hugoogb.dev/reference/gallery/) ·
 [Comparison with DiceBear, Boring Avatars and Jdenticon](https://avatar-generator.hugoogb.dev/get-started/comparison/)
 
-> **Install the 3.x line.** v3.2.0 is the current release and the only supported
+> **Install the 3.x line.** v3.3.0 is the current release and the only supported
 > one — 1.x and 2.x should not be used. See
 > [Versions & Support](https://avatar-generator.hugoogb.dev/reference/versioning/).
 
