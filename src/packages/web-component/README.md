@@ -3,6 +3,15 @@
 Framework-agnostic custom element for [`@avatar-generator`](https://github.com/hugoogb/avatar-generator) —
 deterministic SVG avatars, where the same seed always renders the same avatar.
 
+## From a CDN, no build
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@avatar-generator/web-component@3"></script>
+<avatar-generator avatar-style="faces" seed="ana" size="48"></avatar-generator>
+```
+
+The script bundles core and all eleven styles, and exposes the API as `window.AvatarGenerator`.
+
 ## Install
 
 ```bash
@@ -20,6 +29,15 @@ import { initials } from "@avatar-generator/style-initials";
 const el = document.querySelector("avatar-generator");
 el.styleImpl = initials;
 el.options = { seed: "john.doe@example.com", size: 64 };
+```
+
+Or register a style and use attributes:
+
+```ts
+import { registerStyle } from "@avatar-generator/web-component";
+import { initials } from "@avatar-generator/style-initials";
+
+registerStyle(initials); // <avatar-generator avatar-style="initials" seed="Ana">
 ```
 
 ## Styles

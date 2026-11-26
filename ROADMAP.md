@@ -131,7 +131,7 @@ Fix synchronization issues between source, playgrounds, and documentation.
 
 ### Distribution
 
-- [ ] CDN/standalone script bundle for no-build usage _(deferred — separate conversation)_
+- [x] CDN/standalone script bundle for no-build usage _(shipped in 3.2.0)_
 
 ---
 
@@ -243,3 +243,22 @@ Fix synchronization issues between source, playgrounds, and documentation.
 
 - [x] Publish `create-avatar-style` once by hand as a `0.0.1` placeholder and configure
       trusted publishing for it, so that 3.1.0 can go through the release workflow
+
+---
+
+## v3.2.0 — No-build use and more styles
+
+**Theme**: Reach people without a bundler, and widen the style range.
+
+### CDN bundle
+
+- [x] Browser bundle `dist/avatar-generator.global.js` in `@avatar-generator/web-component`:
+      core, all eleven styles and both elements, exposed as `window.AvatarGenerator`
+- [x] `unpkg` and `jsdelivr` manifest fields, so the bare package URL serves it
+- [x] `avatar-style`, `seed`, `size` and `options` attributes, so plain HTML renders with no JavaScript
+- [x] `registerStyle` for naming styles from bundler builds and custom styles
+- [x] Smoke test loads the packed bundle and renders plain HTML
+
+### More styles
+
+- [ ] New styles _(scope to be decided)_
