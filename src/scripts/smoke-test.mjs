@@ -15,30 +15,9 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Window } from "happy-dom";
+import { PACKAGE_DIRS } from "./packages.mjs";
 
 const SRC = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-
-const PACKAGE_DIRS = [
-    "lib/core",
-    ...[
-        "initials",
-        "geometric",
-        "pixels",
-        "rings",
-        "faces",
-        "illustrated",
-        "anime",
-        "abstract",
-        "emoji",
-        "animals",
-        "gradient",
-        "robots",
-        "portraits",
-        "creatures",
-        "marks",
-    ].map((s) => `lib/styles/${s}`),
-    ...["react", "angular", "vue", "svelte", "web-component", "create-avatar-style"].map((p) => `packages/${p}`),
-];
 
 /** Peer dependencies the framework wrappers need present just to be loadable. */
 const PEERS = { react: "^19", vue: "^3", svelte: "^4", "@angular/core": "^19" };

@@ -4,6 +4,42 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com).
 
+## [3.2.0] — No-build use and four new styles
+
+Everything here is additive. Existing styles draw exactly what they drew in 3.1.0.
+
+### Added
+
+#### No-build browser bundle
+
+- `@avatar-generator/web-component` ships `dist/avatar-generator.global.js`: one
+  `<script src="https://cdn.jsdelivr.net/npm/@avatar-generator/web-component@3">`
+  defines both elements, registers every built-in style and exposes the API as
+  `window.AvatarGenerator`. About 32 KB gzipped; unpkg serves it too
+- `<avatar-generator>` takes `avatar-style`, `seed`, `size` and `options` (JSON)
+  attributes, and `<avatar-generator-group>` takes `avatar-style`, `items` and
+  `options`, so plain HTML renders with no JavaScript. A property still wins over
+  the matching attribute
+- `registerStyle(style, name?)` names a style for the `avatar-style` attribute in
+  bundler builds and for custom styles
+
+#### Four new styles
+
+- `@avatar-generator/style-robots`: robots for bots, AI agents and service accounts
+- `@avatar-generator/style-portraits`: single-colour ink portraits for professional
+  tools; the ink always reads at 4.5:1 or better
+- `@avatar-generator/style-creatures`: friendly made-up monsters
+- `@avatar-generator/style-marks`: logo-like badges for workspaces, teams and
+  organisations, with `letter: true` for the seed's first letter
+- Robots, Portraits and Creatures are layered, so their features mix with Faces,
+  Illustrated and Anime through `mixStyles`
+
+### Fixed
+
+- The documentation site's gallery, playground and configurator now render with the
+  real packages. They used hand-written look-alikes, so they never showed the 3.1.0
+  artwork, and the configurator's preview did not match the code it printed
+
 ## [3.1.0] — Platform
 
 **Every seed looks different from 3.0.x.** All eleven styles were redrawn, so if you

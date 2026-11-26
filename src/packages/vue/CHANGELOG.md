@@ -1,5 +1,11 @@
 # @avatar-generator/vue
 
+## 3.2.0
+
+### Patch Changes
+
+- @avatar-generator/core@3.2.0
+
 ## 3.1.0
 
 ### Minor Changes
