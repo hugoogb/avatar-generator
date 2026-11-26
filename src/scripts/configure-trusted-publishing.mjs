@@ -45,6 +45,10 @@ const PACKAGE_DIRS = [
         "emoji",
         "animals",
         "gradient",
+        "robots",
+        "portraits",
+        "creatures",
+        "marks",
     ].map((s) => `lib/styles/${s}`),
     ...["react", "angular", "vue", "svelte", "web-component", "create-avatar-style"].map((p) => `packages/${p}`),
 ];

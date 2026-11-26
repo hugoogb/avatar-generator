@@ -35,6 +35,10 @@ import {
 } from "@avatar-style-faces/src";
 import { geometric } from "@avatar-style-geometric/src";
 import { DIRECTIONS, gradient, PATTERNS } from "@avatar-style-gradient/src";
+import { robots } from "@avatar-style-robots/src";
+import { portraits } from "@avatar-style-portraits/src";
+import { creatures } from "@avatar-style-creatures/src";
+import { marks } from "@avatar-style-marks/src";
 import {
     EYE_STYLES as ILLUSTRATED_EYES,
     EYEBROW_STYLES as ILLUSTRATED_BROWS,
@@ -62,6 +66,10 @@ const STYLES: [string, AnyStyle][] = [
     ["emoji", asStyle(emoji)],
     ["animals", asStyle(animals)],
     ["gradient", asStyle(gradient)],
+    ["robots", asStyle(robots)],
+    ["portraits", asStyle(portraits)],
+    ["creatures", asStyle(creatures)],
+    ["marks", asStyle(marks)],
 ];
 
 const SEEDS = [

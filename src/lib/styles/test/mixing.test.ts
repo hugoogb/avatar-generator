@@ -7,6 +7,10 @@ import { emoji } from "@avatar-generator/style-emoji";
 import { faces } from "@avatar-generator/style-faces";
 import { geometric } from "@avatar-generator/style-geometric";
 import { gradient } from "@avatar-generator/style-gradient";
+import { robots } from "@avatar-generator/style-robots";
+import { portraits } from "@avatar-generator/style-portraits";
+import { creatures } from "@avatar-generator/style-creatures";
+import { marks } from "@avatar-generator/style-marks";
 import { illustrated } from "@avatar-generator/style-illustrated";
 import { initials } from "@avatar-generator/style-initials";
 import { pixels } from "@avatar-generator/style-pixels";
@@ -154,6 +158,10 @@ describe("options stay opt-in for every style", () => {
         ["emoji", emoji as Style<AvatarOptions>],
         ["animals", animals as Style<AvatarOptions>],
         ["gradient", gradient as Style<AvatarOptions>],
+        ["robots", robots as Style<AvatarOptions>],
+        ["portraits", portraits as Style<AvatarOptions>],
+        ["creatures", creatures as Style<AvatarOptions>],
+        ["marks", marks as Style<AvatarOptions>],
     ];
 
     it.each(all)("%s renders every new option", (_name, style) => {

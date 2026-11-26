@@ -12,6 +12,10 @@ import { abstract } from "@avatar-generator/style-abstract";
 import { emoji } from "@avatar-generator/style-emoji";
 import { animals } from "@avatar-generator/style-animals";
 import { gradient } from "@avatar-generator/style-gradient";
+import { robots } from "@avatar-generator/style-robots";
+import { portraits } from "@avatar-generator/style-portraits";
+import { creatures } from "@avatar-generator/style-creatures";
+import { marks } from "@avatar-generator/style-marks";
 
 const styles: Array<[string, Style<AvatarOptions>]> = [
     ["initials", initials as Style<AvatarOptions>],
@@ -25,6 +29,10 @@ const styles: Array<[string, Style<AvatarOptions>]> = [
     ["emoji", emoji as Style<AvatarOptions>],
     ["animals", animals as Style<AvatarOptions>],
     ["gradient", gradient as Style<AvatarOptions>],
+    ["robots", robots as Style<AvatarOptions>],
+    ["portraits", portraits as Style<AvatarOptions>],
+    ["creatures", creatures as Style<AvatarOptions>],
+    ["marks", marks as Style<AvatarOptions>],
 ];
 
 // Locked seeds and sizes so snapshots change only when a style's
