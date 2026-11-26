@@ -1,7 +1,8 @@
 # @avatar-generator/style-robots
 
 Robots avatar style for [`@avatar-generator/core`](https://www.npmjs.com/package/@avatar-generator/core).
-Robot avatars for bots, AI agents and service accounts.
+Friendly robot avatars for bots, AI agents, service accounts and API keys: a metal head on
+shoulders with glowing eyes, in a body colour kept apart from the background.
 
 ## Install
 
@@ -22,6 +23,16 @@ const avatar = createAvatar(robots, {
 
 img.src = avatar.toDataUri();
 ```
+
+## Options
+
+| Option        | Values                                                 |
+| ------------- | ------------------------------------------------------ |
+| `headShape`   | `box`, `rounded`, `dome`, `capsule`                    |
+| `antenna`     | `none`, `ball`, `double`, `dish`, `bolt`               |
+| `eyeStyle`    | `round`, `visor`, `cyclops`, `pixel`, `screen`         |
+| `mouthStyle`  | `grille`, `slot`, `smile`, `none`                      |
+| `metalColors` | Body palette; the pick stays apart from the background |
 
 Options left unset are chosen deterministically from the seed. See the
 [API reference](https://avatar-generator.hugoogb.dev/reference/avatar/) for every option this style accepts,
