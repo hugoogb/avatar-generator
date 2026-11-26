@@ -1,7 +1,8 @@
 # @avatar-generator/style-portraits
 
 Portraits avatar style for [`@avatar-generator/core`](https://www.npmjs.com/package/@avatar-generator/core).
-Single-colour portrait avatars for professional tools.
+Calm, single-colour head-and-shoulders portraits for business and professional tools.
+Everything is drawn in one ink that reads on the background, so contrast is guaranteed.
 
 ## Install
 
@@ -22,6 +23,14 @@ const avatar = createAvatar(portraits, {
 
 img.src = avatar.toDataUri();
 ```
+
+Options:
+
+- `hairStyle`: `"crop"`, `"side-part"`, `"curly"`, `"afro"`, `"long"`, `"bob"`, `"bun"`, `"locs"` or `"bald"`
+- `eyeStyle`: `"dots"`, `"lidded"`, `"smiling"` or `"lashes"`
+- `mouthStyle`: `"smile"`, `"grin"`, `"soft"` or `"smirk"`
+- `glasses`, `facialHair`: `true` or `false`
+- `ink`: the one colour everything is drawn in
 
 Options left unset are chosen deterministically from the seed. See the
 [API reference](https://avatar-generator.hugoogb.dev/reference/avatar/) for every option this style accepts,
