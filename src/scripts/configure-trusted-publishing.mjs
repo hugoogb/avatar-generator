@@ -13,7 +13,7 @@
  * automated by the thing being trusted.
  *
  *   npm login
- *   node scripts/configure-trusted-publishing.mjs --dry-run   # print the plan
+ *   node scripts/configure-trusted-publishing.mjs --dry-run   # show what is configured and what would be
  *   node scripts/configure-trusted-publishing.mjs             # apply it
  *   node scripts/configure-trusted-publishing.mjs --list      # show current state
  *
@@ -102,40 +102,75 @@ if (LIST) {
 console.log(`Repository: ${REPOSITORY}`);
 console.log(`Workflow:   .github/workflows/${WORKFLOW}`);
 console.log(`Packages:   ${names.length}`);
-console.log(DRY_RUN ? "\nDry run — nothing will be changed.\n" : "");
+console.log(DRY_RUN ? "\nDry run — nothing will be changed. + marks what would be configured.\n" : "");
+
+/**
+ * What npm already has for a package: its trusted publishers, `"missing"` when
+ * the package is not on npm, or `"unknown"` when npm would not say without a
+ * 2FA approval (reading is usually allowed inside npm's 2FA window, not always).
+ */
+function currentTrust(name) {
+    try {
+        const out = npm(["trust", "list", name, "--json"]).trim();
+        if (!out) return [];
+        const parsed = JSON.parse(out);
+        return Array.isArray(parsed) ? parsed : [parsed];
+    } catch {
+        try {
+            npm(["view", name, "name"]);
+            return "unknown";
+        } catch {
+            return "missing";
+        }
+    }
+}
+
+const ours = (entry) => entry.type === "github" && entry.repository === REPOSITORY && entry.file === WORKFLOW;
 
 const failures = [];
 let configured = 0;
+let already = 0;
 
 for (const name of names) {
     const args = ["trust", "github", name, "--repository", REPOSITORY, "--file", WORKFLOW, "--allow-publish", "--yes"];
+    const existing = currentTrust(name);
 
-    if (DRY_RUN) {
-        console.log(`  npm ${args.join(" ")}`);
-        continue;
-    }
-
-    try {
-        npmInTerminal(args);
-        configured++;
-        console.log(`  ✓ ${name}`);
-    } catch {
-        failures.push(name);
-        console.error(`  ✗ ${name} — see npm's error above`);
+    if (existing === "missing") {
+        failures.push(`${name} — not on npm yet; publish a placeholder by hand first (see CONTRIBUTING.md)`);
+        console.error(`  ✗ ${name} — not on npm yet`);
+    } else if (existing !== "unknown" && existing.some(ours)) {
+        already++;
+        console.log(`  = ${name} — already trusts ${WORKFLOW}`);
+    } else if (existing !== "unknown" && existing.length > 0) {
+        // npm allows one GitHub publisher per package and rejects a second with
+        // 409 Conflict, so a different one has to be removed by hand first.
+        const other = existing.map((e) => `${e.type} ${e.repository ?? ""} ${e.file ?? ""}`.trim()).join(", ");
+        failures.push(`${name} — already trusts something else (${other}); remove it with \`npm trust revoke\``);
+        console.error(`  ✗ ${name} — trusts something else: ${other}`);
+    } else if (DRY_RUN) {
+        const note = existing === "unknown" ? "  (could not read its current setting without 2FA)" : "";
+        console.log(`  + npm ${args.join(" ")}${note}`);
+    } else {
+        try {
+            npmInTerminal(args);
+            configured++;
+            console.log(`  ✓ ${name}`);
+        } catch {
+            failures.push(`${name} — see npm's error above; 409 Conflict means it already has a trusted publisher`);
+            console.error(`  ✗ ${name} — see npm's error above`);
+        }
     }
 
     // Rate limiting: npm's docs suggest ~2s between calls.
     await sleep(2000);
 }
 
-if (DRY_RUN) process.exit(0);
-
+const summary = `${configured} configured now, ${already} already configured`;
 if (failures.length > 0) {
-    console.error(`\n${configured} configured, ${failures.length} failed:`);
-    for (const name of failures) console.error(`  ${name}`);
-    console.error("\nA package must already exist on npm before a trusted publisher can be attached to it.");
+    console.error(`\n${summary}, ${failures.length} need attention:`);
+    for (const failure of failures) console.error(`  ${failure}`);
     process.exit(1);
 }
 
-console.log(`\nConfigured trusted publishing for ${configured} package(s).`);
-console.log("Releases can now publish from CI with no NPM_TOKEN.");
+console.log(`\n${DRY_RUN ? "Dry run: " : ""}${summary}.`);
+if (!DRY_RUN) console.log("Releases can now publish from CI with no NPM_TOKEN.");
