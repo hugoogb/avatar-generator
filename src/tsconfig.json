@@ -6,6 +6,7 @@
             "create-avatar-style": ["./packages/create-avatar-style/src"],
             "@avatar-generator/core": ["./lib/core/src"],
             "@avatar-generator/react": ["./packages/react/src"],
+            "@avatar-generator/react-native": ["./packages/react-native/src"],
             "@avatar-generator/angular": ["./packages/angular/src"],
             "@avatar-generator/vue": ["./packages/vue/src"],
             "@avatar-generator/svelte": ["./packages/svelte/src"],
