@@ -261,4 +261,9 @@ Fix synchronization issues between source, playgrounds, and documentation.
 
 ### More styles
 
-- [ ] New styles _(scope to be decided)_
+- [x] `@avatar-generator/style-robots` — bots, AI agents and service accounts
+- [x] `@avatar-generator/style-portraits` — single-colour ink portraits for professional tools
+- [x] `@avatar-generator/style-creatures` — friendly made-up monsters
+- [x] `@avatar-generator/style-marks` — logo-like badges for teams and organisations
+- [ ] Hand-publish a `0.0.1` placeholder of each and configure trusted publishing, so that
+      3.2.0 can go through the release workflow
