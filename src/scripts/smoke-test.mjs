@@ -14,6 +14,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "nod
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { Window } from "happy-dom";
 
 const SRC = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -289,6 +290,39 @@ for (const [file, call] of [["Avatar.svelte", "createAvatar"], ["AvatarGroup.sve
         process.stdout.write(run("node", ["compile-svelte.mjs"], app));
     } catch (err) {
         fail(`svelte component — ${errorLine(err)}`);
+    }
+
+    // ---- 9. The CDN bundle must work from one <script> tag ----------------
+    // unpkg and jsDelivr serve the file the manifest's `unpkg`/`jsdelivr`
+    // fields name, so check that file, as packed, upgrades plain HTML.
+    console.log("\nBrowser bundle:");
+    const window = new Window({
+        settings: { enableJavaScriptEvaluation: true, suppressInsecureJavaScriptEnvironmentWarning: true },
+    });
+    try {
+        const wcDir = join(app, "node_modules", "@avatar-generator", "web-component");
+        const manifest = JSON.parse(readFileSync(join(wcDir, "package.json"), "utf8"));
+        if (!manifest.unpkg || manifest.unpkg !== manifest.jsdelivr) {
+            throw new Error(`unpkg (${manifest.unpkg}) and jsdelivr (${manifest.jsdelivr}) must name the same file`);
+        }
+        const code = readFileSync(join(wcDir, manifest.unpkg), "utf8");
+
+        window.document.body.innerHTML = `<avatar-generator avatar-style="faces" seed="ana" size="48"></avatar-generator>`;
+        // happy-dom evaluates inside an eval, where a top-level `var` stays
+        // local, so read the global back from the same evaluation.
+        const api = window.eval(`${code}\n;AvatarGenerator`);
+
+        const styleCount = Object.keys(api?.styles ?? {}).length;
+        if (styleCount !== 11) throw new Error(`AvatarGenerator.styles has ${styleCount} styles, expected 11`);
+        const img = window.document.querySelector("avatar-generator").shadowRoot?.querySelector("img");
+        if (!img?.getAttribute("src")?.startsWith("data:image/svg+xml")) {
+            throw new Error('<avatar-generator avatar-style="faces"> did not render');
+        }
+        console.log(`  ✓ ${manifest.unpkg} renders plain HTML and exposes AvatarGenerator with 11 styles`);
+    } catch (err) {
+        fail(`browser bundle — ${err.message}`);
+    } finally {
+        await window.happyDOM.close();
     }
 } finally {
     rmSync(workdir, { recursive: true, force: true });
