@@ -2,7 +2,8 @@
     "extends": "../../tsconfig.base.json",
     "compilerOptions": {
         "paths": {
-            "@avatar-generator/core": ["../../lib/core/src"]
+            "@avatar-generator/core": ["../../lib/core/src"],
+            "@avatar-generator/style-*": ["../../lib/styles/*/src"]
         }
     },
     "include": ["src"]
