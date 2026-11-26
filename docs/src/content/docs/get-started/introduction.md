@@ -8,7 +8,7 @@ seed — a user ID, an email, anything stringy — pick a style, and get the sam
 avatar back every time, on every platform.
 
 :::caution[Install the 3.x line]
-v3.0.0 is the current release and the only supported one. The 2.x tarballs on
+v3.2.0 is the current release and the only supported one. The 2.x tarballs on
 npm cannot be loaded by Node, and most of the 2.x line was never published at
 all. See [Versions & Support](/reference/versioning/).
 :::
